@@ -29,8 +29,13 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-  };
+
+    // "mailto" linkini oluştur
+    const mailtoLink = `mailto:turkmenasil@hotmail.com?subject=Contact from ${formData.name}&body=Name: ${formData.name}%0D%0AEmail: ${formData.email}%0D%0AMessage: ${formData.message}`;
+
+    // Kullanıcıyı mail istemcisine yönlendir
+    window.location.href = mailtoLink;
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-cyan-900 text-white">
