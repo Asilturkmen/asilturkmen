@@ -18,7 +18,7 @@ const Hero = ({ language }: HeroProps) => {
         <section
             id="home"
             ref={ref}
-            className="min-h-screen flex items-center justify-center relative overflow-hidden"
+            className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 md:pt-0"
         >
             {/* Subtle gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-orange-900/10" />
