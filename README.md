@@ -1,6 +1,6 @@
 # 👨‍💻 Asil Türkmen | Portfolio
 
-![Project Hero](public/hero-preview.png)
+![Project Hero](public/hero-preview-v2.png)
 
 <div align="center">
 
