@@ -26,6 +26,8 @@ function App() {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Intersection observers for sections
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [aboutRef, aboutInView] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -33,10 +35,40 @@ function App() {
   const [projectsRef, projectsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [contactRef, contactInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:turkmenasil@hotmail.com?subject=Contact from ${formData.name}&body=Name: ${formData.name}%0D%0AEmail: ${formData.email}%0D%0AMessage: ${formData.message}`;
-    window.location.href = mailtoLink;
+    setIsSubmitting(true);
+
+    const formDataToSend = {
+      access_key: "856f7b76-916d-4768-ae34-020e0f6052fc",
+      name: formData.name,
+      email: formData.email,
+      message: formData.message
+    };
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataToSend)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(language === 'tr' ? '✅ Mesajınız başarıyla gönderildi!' : '✅ Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        alert(language === 'tr' ? '❌ Mesaj gönderilemedi. Lütfen tekrar deneyin.' : '❌ Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(language === 'tr' ? '❌ Bir hata oluştu. Lütfen tekrar deneyin.' : '❌ An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDownloadCV = () => {
@@ -93,7 +125,7 @@ function App() {
           description: 'Kuzey Kıbrıs\'ta Pamuklu Köyü\'nde bulunan otantik köy restoranı için modern ve responsive web sitesi. İnteraktif galeri, Google Maps entegrasyonu, müşteri yorumları ve hızlı iletişim özellikleri ile doğal ürünler ve geleneksel lezzetleri dijital ortamda tanıtıyor.'
         },
         code: 'Kod',
-        demo: 'Demo'
+        visit: 'Ziyaret Et'
       },
       contact: {
         title: 'İletişime Geçin',
@@ -148,7 +180,7 @@ function App() {
           description: 'Modern and responsive website for an authentic village restaurant in Pamuklu Village, North Cyprus. Features interactive gallery, Google Maps integration, customer reviews, and quick contact capabilities to showcase natural products and traditional flavors digitally.'
         },
         code: 'Code',
-        demo: 'Demo'
+        visit: 'Visit'
       },
       contact: {
         title: 'Get In Touch',
@@ -170,9 +202,9 @@ function App() {
 
   // Skills data - Professional badge style
   const skills = {
-    frontend: ['React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Responsive Design'],
-    backend: ['Node.js', 'Python', 'SQL', 'REST APIs', 'Express.js'],
-    tools: ['Git', 'GitHub', 'VS Code', 'Figma', 'npm', 'Vite']
+    frontend: ['React', 'Vue 3', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Pinia', 'Responsive Design'],
+    backend: ['Node.js', 'Python', 'Next.js', 'REST APIs', 'SQL'],
+    tools: ['Git', 'GitHub', 'Vite', 'Vercel', 'VS Code', 'Figma']
   };
 
   // Projects data
@@ -191,7 +223,7 @@ function App() {
       tags: ['Vue 3', 'Pinia', 'Vite', 'TypeScript'],
       image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=800',
       github: 'https://github.com/Sonasil/TRAF101',
-      demo: 'https://github.com/Sonasil/TRAF101'
+      demo: 'https://traf-101.vercel.app/'
     },
     {
       title: t.projects.project3.title,
@@ -199,7 +231,7 @@ function App() {
       tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
       image: yaylaHero,
       github: 'https://github.com/Sonasil/Yaylayemekevi',
-      demo: 'https://yaylayemekevi.vercel.app'
+      demo: 'https://yaylayemekevi.com'
     }
   ];
 
@@ -484,7 +516,7 @@ function App() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={projectsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="card group"
+                className="card group flex flex-col"
               >
                 {/* Project Image */}
                 <div className="relative overflow-hidden rounded-lg mb-4 aspect-video">
@@ -497,8 +529,10 @@ function App() {
                 </div>
 
                 {/* Project Info */}
-                <h3 className="text-xl font-bold mb-3 text-white">{project.title}</h3>
-                <p className="text-slate-400 mb-4 leading-relaxed">{project.description}</p>
+                <div className="flex-grow">
+                  <h3 className="text-xl font-bold mb-3 text-white">{project.title}</h3>
+                  <p className="text-slate-400 mb-4 leading-relaxed">{project.description}</p>
+                </div>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -530,7 +564,7 @@ function App() {
                     className="flex items-center gap-2 text-sm text-slate-300 hover:text-orange-400 transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    {t.projects.demo}
+                    {t.projects.visit}
                   </a>
                 </div>
               </motion.div>
@@ -609,9 +643,9 @@ function App() {
                 />
               </div>
 
-              <button type="submit" className="btn-primary w-full justify-center">
+              <button type="submit" className="btn-primary w-full justify-center" disabled={isSubmitting}>
                 <Send className="w-5 h-5" />
-                {t.contact.send}
+                {isSubmitting ? (language === 'tr' ? 'Gönderiliyor...' : 'Sending...') : t.contact.send}
               </button>
 
             </form>
