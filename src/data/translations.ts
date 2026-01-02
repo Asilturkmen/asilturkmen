@@ -54,7 +54,7 @@ export const translations = {
             emailPlaceholder: 'ornek@email.com',
             messagePlaceholder: 'Mesajınız...',
             or: 'Veya doğrudan bana ulaşın:',
-            footer: '© 2024 Asil Türkmen. Tüm hakları saklıdır.',
+            footer: '© 2026 Asil Türkmen. Tüm hakları saklıdır.',
             success: '✅ Mesajınız başarıyla gönderildi!',
             error: '❌ Mesaj gönderilemedi. Lütfen tekrar deneyin.',
             generalError: '❌ Bir hata oluştu. Lütfen tekrar deneyin.'
@@ -113,7 +113,7 @@ export const translations = {
             emailPlaceholder: 'your.email@example.com',
             messagePlaceholder: 'Your message...',
             or: 'Or reach me directly at:',
-            footer: '© 2024 Asil Türkmen. All rights reserved.',
+            footer: '© 2026 Asil Türkmen. All rights reserved.',
             success: '✅ Message sent successfully!',
             error: '❌ Failed to send message. Please try again.',
             generalError: '❌ An error occurred. Please try again.'

@@ -51,16 +51,31 @@ const Hero = ({ language }: HeroProps) => {
                             <span className="gradient-text">Asil Türkmen</span>
                         </motion.h1>
 
-                        <motion.p
-                            className="text-xl lg:text-2xl text-slate-300 mb-8"
+                        {/* Terminal Styled Role */}
+                        <motion.div
+                            className="text-xl lg:text-2xl mb-8 font-mono"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.4 }}
                         >
-                            {t.role}
-                            <br />
-                            <span className="text-amber-400">{t.university}</span>
-                        </motion.p>
+                            <div className="flex items-center gap-2 mb-1 text-slate-400">
+                                <span className="text-green-400">$</span>
+                                <span className="text-slate-300">whoami</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <span className="text-amber-400">&gt;</span>
+                                <div className="text-slate-300">
+                                    {t.role}
+                                    <br />
+                                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                                        <span className="text-amber-400">{t.university}</span>
+                                        <span className="text-xs px-2 py-0.5 bg-amber-500/10 text-amber-400/80 rounded border border-amber-500/20 font-mono">
+                                            #F59E0B
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
 
                         <motion.div
                             className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
@@ -103,7 +118,7 @@ const Hero = ({ language }: HeroProps) => {
                         </motion.div>
                     </motion.div>
 
-                    {/* Profile Image */}
+                    {/* Profile Image with Floating Binary Particles */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={inView ? { opacity: 1, scale: 1 } : {}}
