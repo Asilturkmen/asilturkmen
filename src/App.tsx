@@ -15,6 +15,7 @@ import {
   Languages
 } from 'lucide-react';
 import profilePic from './img/profile.png';
+import yaylaHero from './img/yayla-hero.jpg';
 
 function App() {
   const [language, setLanguage] = useState<'tr' | 'en'>('en');
@@ -89,7 +90,7 @@ function App() {
         },
         project3: {
           title: '🍽️ Yayla Yemek Evi',
-          description: 'Profesyonel restoran web sitesi. Online rezervasyon sistemi, menü ve fiyat listesi, iletişim sayfası ve modern responsive tasarım ile müşteri deneyimini optimize eden kapsamlı çözüm.'
+          description: 'Kuzey Kıbrıs\'ta Pamuklu Köyü\'nde bulunan otantik köy restoranı için modern ve responsive web sitesi. İnteraktif galeri, Google Maps entegrasyonu, müşteri yorumları ve hızlı iletişim özellikleri ile doğal ürünler ve geleneksel lezzetleri dijital ortamda tanıtıyor.'
         },
         code: 'Kod',
         demo: 'Demo'
@@ -144,7 +145,7 @@ function App() {
         },
         project3: {
           title: '🍽️ Yayla Yemek Evi',
-          description: 'Professional restaurant website featuring online reservation system, menu and pricing, contact page, and modern responsive design to optimize customer experience.'
+          description: 'Modern and responsive website for an authentic village restaurant in Pamuklu Village, North Cyprus. Features interactive gallery, Google Maps integration, customer reviews, and quick contact capabilities to showcase natural products and traditional flavors digitally.'
         },
         code: 'Code',
         demo: 'Demo'
@@ -195,10 +196,10 @@ function App() {
     {
       title: t.projects.project3.title,
       description: t.projects.project3.description,
-      tags: ['React', 'TypeScript', 'Responsive Design'],
-      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+      tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
+      image: yaylaHero,
       github: 'https://github.com/Sonasil/Yaylayemekevi',
-      demo: 'https://github.com/Sonasil/Yaylayemekevi'
+      demo: 'https://yaylayemekevi.vercel.app'
     }
   ];
 
