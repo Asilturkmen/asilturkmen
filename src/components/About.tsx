@@ -27,12 +27,12 @@ const About = ({ language }: AboutProps) => {
                     <p className="section-subtitle">{t.subtitle}</p>
                 </motion.div>
 
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="space-y-6 text-lg text-slate-300 leading-relaxed"
+                        className="space-y-6 text-base md:text-lg text-slate-300 leading-relaxed"
                     >
                         <p>{t.p1}</p>
                         <p>{t.p2}</p>

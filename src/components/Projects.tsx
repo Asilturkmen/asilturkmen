@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Github, ExternalLink } from 'lucide-react';
 import yaylaHero from '../img/yayla-hero.jpg';
+import test2DriveHero from '../img/test2drive-hero.png';
+import hesappcimHero from '../img/hesappcim-hero.png';
 import { translations, Language } from '../data/translations';
 
 interface ProjectsProps {
@@ -17,15 +19,15 @@ const Projects = ({ language }: ProjectsProps) => {
             title: t.project1.title,
             description: t.project1.description,
             tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vercel'],
-            image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800',
+            image: hesappcimHero,
             github: 'https://github.com/Sonasil/HesAppcim',
             demo: 'https://hes-appcim.vercel.app'
         },
         {
-            title: t.project2.title,
+            title: 'Test2Drive',
             description: t.project2.description,
             tags: ['Vue 3', 'Pinia', 'Vite', 'TypeScript'],
-            image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=800',
+            image: test2DriveHero,
             github: 'https://github.com/Sonasil/TRAF101',
             demo: 'https://traf-101.vercel.app/'
         },
@@ -56,7 +58,7 @@ const Projects = ({ language }: ProjectsProps) => {
                     <p className="section-subtitle">{t.subtitle}</p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {projects.map((project, idx) => (
                         <motion.div
                             key={idx}
@@ -78,7 +80,7 @@ const Projects = ({ language }: ProjectsProps) => {
                             {/* Project Info */}
                             <div className="flex-grow">
                                 <h3 className="text-xl font-bold mb-3 text-white">{project.title}</h3>
-                                <p className="text-slate-400 mb-4 leading-relaxed">{project.description}</p>
+                                <p className="text-sm md:text-base text-slate-400 mb-4 leading-relaxed">{project.description}</p>
                             </div>
 
                             {/* Tags */}
@@ -99,7 +101,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                     href={project.github}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-sm text-slate-300 hover:text-amber-400 transition-colors"
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-amber-400 transition-colors rounded-lg hover:bg-amber-500/10"
                                 >
                                     <Github className="w-4 h-4" />
                                     {t.code}
@@ -108,7 +110,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                     href={project.demo}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-sm text-slate-300 hover:text-orange-400 transition-colors"
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-orange-400 transition-colors rounded-lg hover:bg-orange-500/10"
                                 >
                                     <ExternalLink className="w-4 h-4" />
                                     {t.visit}

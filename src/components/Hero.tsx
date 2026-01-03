@@ -43,7 +43,7 @@ const Hero = ({ language }: HeroProps) => {
                         </motion.p>
 
                         <motion.h1
-                            className="text-5xl lg:text-7xl font-bold mb-6"
+                            className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.3 }}
@@ -53,7 +53,7 @@ const Hero = ({ language }: HeroProps) => {
 
                         {/* Terminal Styled Role */}
                         <motion.div
-                            className="text-xl lg:text-2xl mb-8 font-mono"
+                            className="text-lg md:text-xl lg:text-2xl mb-8 font-mono"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.4 }}
@@ -68,8 +68,8 @@ const Hero = ({ language }: HeroProps) => {
                                     {t.role}
                                     <br />
                                     <div className="flex items-center gap-2 flex-wrap mt-1">
-                                        <span className="text-amber-400">{t.university}</span>
-                                        <span className="text-xs px-2 py-0.5 bg-amber-500/10 text-amber-400/80 rounded border border-amber-500/20 font-mono">
+                                        <span className="text-amber-400 break-words">{t.university}</span>
+                                        <span className="text-xs px-2 py-0.5 bg-amber-500/10 text-amber-400/80 rounded border border-amber-500/20 font-mono whitespace-nowrap">
                                             #F59E0B
                                         </span>
                                     </div>
@@ -78,14 +78,14 @@ const Hero = ({ language }: HeroProps) => {
                         </motion.div>
 
                         <motion.div
-                            className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
+                            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start mb-12"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.5 }}
                         >
                             <button
                                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="btn-primary"
+                                className="btn-primary w-full sm:w-auto"
                             >
                                 <Mail className="w-5 h-5" />
                                 {t.cta1}
@@ -93,7 +93,7 @@ const Hero = ({ language }: HeroProps) => {
 
                             <button
                                 onClick={() => setIsCVOpen(true)}
-                                className="btn-secondary"
+                                className="btn-secondary w-full sm:w-auto"
                             >
                                 <Eye className="w-5 h-5" />
                                 {t.cta2}
@@ -125,7 +125,7 @@ const Hero = ({ language }: HeroProps) => {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="relative"
                     >
-                        <div className="relative w-72 h-72 lg:w-96 lg:h-96 mx-auto">
+                        <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
                             {/* Gradient glow effect */}
                             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 opacity-20 blur-3xl" />
 

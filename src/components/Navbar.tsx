@@ -94,27 +94,28 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
                         exit={{ opacity: 0, height: 0 }}
                         className="md:hidden bg-slate-900/95 backdrop-blur-lg border-t border-slate-800"
                     >
-                        <div className="container-custom py-6 flex flex-col gap-4">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={link.href}
-                                    onClick={(e) => handleScrollTo(e, link.href)}
-                                    className="text-lg font-medium text-slate-300 hover:text-amber-400 transition-colors py-2"
-                                >
-                                    {link.name}
-                                </a>
-                            ))}
-
-                            <div className="pt-4 border-t border-slate-800 mt-2">
+                        <div className="container-custom py-6 flex flex-col gap-2">
+                            {/* Language Toggle - Moved to top for better accessibility */}
+                            <div className="pb-4 border-b border-slate-800 mb-2">
                                 <button
                                     onClick={toggleLanguage}
-                                    className="flex items-center gap-2 text-slate-300 hover:text-amber-400"
+                                    className="flex items-center gap-2 text-slate-300 hover:text-amber-400 py-2 w-full"
                                 >
                                     <Languages className="w-5 h-5" />
                                     <span>{language === 'en' ? 'Switch to Turkish' : 'İngilizceye Geç'}</span>
                                 </button>
                             </div>
+
+                            {navLinks.map((link) => (
+                                <a
+                                    key={link.name}
+                                    href={link.href}
+                                    onClick={(e) => handleScrollTo(e, link.href)}
+                                    className="text-lg font-medium text-slate-300 hover:text-amber-400 transition-colors py-3"
+                                >
+                                    {link.name}
+                                </a>
+                            ))}
                         </div>
                     </motion.div>
                 )}

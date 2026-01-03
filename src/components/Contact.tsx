@@ -78,12 +78,12 @@ const Contact = ({ language }: ContactProps) => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="max-w-2xl mx-auto"
+                    className="max-w-2xl mx-auto px-4 sm:px-6"
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+                            <label htmlFor="name" className="block text-sm font-medium text-slate-200 mb-2">
                                 {t.name}
                             </label>
                             <input
@@ -98,7 +98,7 @@ const Contact = ({ language }: ContactProps) => {
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-2">
                                 {t.email}
                             </label>
                             <input
@@ -113,7 +113,7 @@ const Contact = ({ language }: ContactProps) => {
                         </div>
 
                         <div>
-                            <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
+                            <label htmlFor="message" className="block text-sm font-medium text-slate-200 mb-2">
                                 {t.message}
                             </label>
                             <textarea

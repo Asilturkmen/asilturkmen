@@ -34,7 +34,7 @@ const Skills = ({ language }: SkillsProps) => {
                     <p className="section-subtitle">{t.subtitle}</p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
 
                     {/* Frontend */}
                     <motion.div
@@ -54,7 +54,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.frontend.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-1.5 text-sm font-medium bg-slate-800/50 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-amber-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-amber-500/30"
                                 >
                                     {skill}
                                 </span>
@@ -80,7 +80,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.backend.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-1.5 text-sm font-medium bg-slate-800/50 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-orange-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-orange-500/30"
                                 >
                                     {skill}
                                 </span>
@@ -106,7 +106,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.tools.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-1.5 text-sm font-medium bg-slate-800/50 hover:bg-pink-500/20 text-slate-200 hover:text-pink-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-pink-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-pink-500/20 text-slate-200 hover:text-pink-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-pink-500/30"
                                 >
                                     {skill}
                                 </span>
