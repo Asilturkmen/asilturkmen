@@ -47,7 +47,7 @@ export const translations = {
             },
             project4: {
                 title: '📖 NedirBeo',
-                description: 'Kıbrıs Türkçesine ait yerel kelimeleri dijital ortamda toplayan topluluk odaklı sözlük platformu. Kullanıcılar kelime arayıp öğrenebilir, yeni kelime ekleyebilir ve kültürel mirasın gelecek nesillere aktarılmasına katkı sağlayabilir.'
+                description: 'Projenin amacı, geçmişte sıkça kullanılan ancak günümüzde unutulmaya yüz tutmuş kelimeleri yeniden gün yüzüne çıkarmaktır. Bu kelimeleri kayıt altına alarak yeni nesillere öğretmeyi ve dil kültürünün sürekliliğini sağlamayı hedefler.'
             },
             code: 'Kod',
             visit: 'Ziyaret Et'
@@ -116,7 +116,7 @@ export const translations = {
             },
             project4: {
                 title: '📖 NedirBeo',
-                description: 'A community-driven digital dictionary platform focused on preserving Cypriot Turkish local words. Users can search terms, add new entries, and help transfer cultural language heritage to future generations.'
+                description: 'The project aims to bring back words that were frequently used in the past but are now on the verge of being forgotten. By documenting these words, it seeks to teach them to new generations and ensure the continuity of language culture.'
             },
             code: 'Code',
             visit: 'Visit'
