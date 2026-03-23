@@ -141,6 +141,18 @@ const Projects = ({ language }: ProjectsProps) => {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative">
+                <div className="lg:hidden">
+                    <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-700 shadow-xl shadow-blue-900/20">
+                        <img
+                            src={selectedProject.image}
+                            alt={selectedProject.title}
+                            className="w-full h-56 sm:h-72 object-cover"
+                        />
+                        <div className="p-4 border-t border-slate-700 bg-slate-950">
+                            <h3 className="text-xl font-bold text-slate-50">{selectedProject.title}</h3>
+                        </div>
+                    </div>
+                </div>
                 <div className="w-full lg:w-1/2 flex flex-col border-t border-slate-700/90">
                     {filteredAndSortedProjects.map((project, index) => {
                         const isExpanded = expandedProjectId === project.id;
@@ -189,41 +201,9 @@ const Projects = ({ language }: ProjectsProps) => {
                                         >
                                             <div className="pt-6 pb-2">
                                                 <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5 md:p-6">
-                                                    <p className="text-sm md:text-base text-slate-50 leading-7 mb-5">
+                                                    <p className="text-sm md:text-base text-slate-50 leading-7">
                                                         {project.description}
                                                     </p>
-
-                                                    <div className="flex flex-wrap gap-2 mb-5">
-                                                        {project.tags.map((tag) => (
-                                                            <span
-                                                                key={tag}
-                                                                className="px-3 py-1.5 bg-blue-500/15 rounded-full text-xs font-medium text-blue-200 border border-blue-500/40"
-                                                            >
-                                                                {tag}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-
-                                                    <div className="flex flex-col sm:flex-row gap-3">
-                                                        <a
-                                                            href={project.demo}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-900/20 hover:bg-blue-500"
-                                                        >
-                                                            <ExternalLink className="w-4 h-4" /> {t.visit}
-                                                        </a>
-                                                        <a
-                                                            href={project.github}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="flex-1 bg-slate-900 text-slate-50 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-800 hover:border-blue-500/60"
-                                                        >
-                                                            <Github className="w-4 h-4" /> {t.code}
-                                                        </a>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </motion.div>

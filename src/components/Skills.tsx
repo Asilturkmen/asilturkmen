@@ -12,9 +12,9 @@ const Skills = ({ language }: SkillsProps) => {
     const t = translations[language].skills;
 
     const skillsData = {
-        frontend: ['React', 'Vue 3', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Pinia', 'Responsive Design'],
-        backend: ['Node.js', 'Python', 'Next.js', 'REST APIs', 'SQL'],
-        tools: ['Git', 'GitHub', 'Vite', 'Vercel', 'VS Code', 'Figma']
+        frontend: ['React', 'Vue 3', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Responsive Design'],
+        backend: ['Node.js', 'Python', 'Next.js', 'SQL'],
+        tools: ['Git', 'GitHub', 'Vite', 'Vercel']
     };
 
     return (
