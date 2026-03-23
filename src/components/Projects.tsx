@@ -5,6 +5,7 @@ import yaylaHero from '../img/yayla-hero.jpg';
 import test2DriveHero from '../img/test2drive-hero.png';
 import hesappcimHero from '../img/hesappcim-hero.png';
 import nedirBeoHero from '../img/NedirBeo.png';
+import tokenStudiesHero from '../img/TokenStudies.png';
 import { translations, Language } from '../data/translations';
 
 interface ProjectsProps {
@@ -40,14 +41,14 @@ const Projects = ({ language }: ProjectsProps) => {
         },
         {
             id: 3,
-            title: 'Test2Drive',
-            domain: 'Education / Mobility',
-            year: '2024',
-            description: t.project2.description,
-            tags: ['Vue 3', 'Pinia', 'Vite', 'TypeScript'],
-            image: test2DriveHero,
-            github: 'https://github.com/Sonasil/TRAF101',
-            demo: 'https://traf-101.vercel.app/'
+            title: t.project5.title,
+            domain: 'Education / Learning Platform',
+            year: '2025',
+            description: t.project5.description,
+            tags: ['Flask', 'Python', 'PostgreSQL', 'SQLAlchemy'],
+            image: tokenStudiesHero,
+            github: null,
+            demo: 'https://tokenstudies.com'
         },
         {
             id: 4,
@@ -59,6 +60,17 @@ const Projects = ({ language }: ProjectsProps) => {
             image: yaylaHero,
             github: 'https://github.com/Sonasil/Yaylayemekevi',
             demo: 'https://yaylayemekevi.com'
+        },
+        {
+            id: 5,
+            title: 'Test2Drive',
+            domain: 'Education / Mobility',
+            year: '2024',
+            description: t.project2.description,
+            tags: ['Vue 3', 'Pinia', 'Vite', 'TypeScript'],
+            image: test2DriveHero,
+            github: 'https://github.com/Sonasil/TRAF101',
+            demo: 'https://traf-101.vercel.app/'
         }
     ];
 
@@ -221,15 +233,17 @@ const Projects = ({ language }: ProjectsProps) => {
                                                         >
                                                             <ExternalLink className="w-4 h-4" /> {t.visit}
                                                         </a>
-                                                        <a
-                                                            href={project.github}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="flex-1 bg-slate-900 text-slate-50 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-800 hover:border-blue-500/60"
-                                                        >
-                                                            <Github className="w-4 h-4" /> {t.code}
-                                                        </a>
+                                                        {project.github && (
+                                                            <a
+                                                                href={project.github}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="flex-1 bg-slate-900 text-slate-50 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-800 hover:border-blue-500/60"
+                                                            >
+                                                                <Github className="w-4 h-4" /> {t.code}
+                                                            </a>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -319,15 +333,17 @@ const Projects = ({ language }: ProjectsProps) => {
                                                 >
                                                     <ExternalLink className="w-6 h-6" />
                                                 </a>
-                                                <a
-                                                    href={selectedProject.github}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-14 h-14 rounded-full bg-slate-900 text-slate-50 border border-slate-600 flex items-center justify-center hover:bg-slate-800 hover:border-blue-500/70 transition-colors shadow-xl"
-                                                    aria-label={t.code}
-                                                >
-                                                    <Github className="w-6 h-6" />
-                                                </a>
+                                                {selectedProject.github && (
+                                                    <a
+                                                        href={selectedProject.github}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-14 h-14 rounded-full bg-slate-900 text-slate-50 border border-slate-600 flex items-center justify-center hover:bg-slate-800 hover:border-blue-500/70 transition-colors shadow-xl"
+                                                        aria-label={t.code}
+                                                    >
+                                                        <Github className="w-6 h-6" />
+                                                    </a>
+                                                )}
                                             </motion.div>
                                         </div>
                                     </div>

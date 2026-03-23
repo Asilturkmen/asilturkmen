@@ -49,6 +49,10 @@ export const translations = {
                 title: '📖 NedirBeo',
                 description: 'Projenin amacı, geçmişte sıkça kullanılan ancak günümüzde unutulmaya yüz tutmuş kelimeleri yeniden gün yüzüne çıkarmaktır. Bu kelimeleri kayıt altına alarak yeni nesillere öğretmeyi ve dil kültürünün sürekliliğini sağlamayı hedefler.'
             },
+            project5: {
+                title: '📚 TokenStudies',
+                description: 'Öğrencilerin ders notlarını daha hızlı bulmasını ve bilgilerini daha etkili şekilde tekrar etmesini hedefleyen modern bir eğitim platformu projesi.'
+            },
             code: 'Kod',
             visit: 'Ziyaret Et'
         },
@@ -117,6 +121,10 @@ export const translations = {
             project4: {
                 title: '📖 NedirBeo',
                 description: 'The project aims to bring back words that were frequently used in the past but are now on the verge of being forgotten. By documenting these words, it seeks to teach them to new generations and ensure the continuity of language culture.'
+            },
+            project5: {
+                title: '📚 TokenStudies',
+                description: 'A modern learning platform project designed to help students find study notes faster and review their knowledge more effectively.'
             },
             code: 'Code',
             visit: 'Visit'
