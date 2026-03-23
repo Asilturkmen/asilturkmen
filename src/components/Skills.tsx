@@ -44,8 +44,8 @@ const Skills = ({ language }: SkillsProps) => {
                         className="card"
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                                <Code2 className="w-6 h-6 text-amber-400" />
+                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-700/20 flex items-center justify-center">
+                                <Code2 className="w-6 h-6 text-blue-300" />
                             </div>
                             <h3 className="text-xl font-bold">{t.frontend}</h3>
                         </div>
@@ -54,7 +54,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.frontend.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-amber-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-blue-500/20 text-slate-200 hover:text-blue-200 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-blue-500/40"
                                 >
                                     {skill}
                                 </span>
@@ -70,8 +70,8 @@ const Skills = ({ language }: SkillsProps) => {
                         className="card"
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500/20 to-pink-500/20 flex items-center justify-center">
-                                <Database className="w-6 h-6 text-orange-400" />
+                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600/20 to-blue-400/20 flex items-center justify-center">
+                                <Database className="w-6 h-6 text-blue-300" />
                             </div>
                             <h3 className="text-xl font-bold">{t.backend}</h3>
                         </div>
@@ -80,7 +80,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.backend.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-orange-500/20 text-slate-200 hover:text-orange-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-orange-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-blue-500/20 text-slate-200 hover:text-blue-200 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-blue-500/40"
                                 >
                                     {skill}
                                 </span>
@@ -96,8 +96,8 @@ const Skills = ({ language }: SkillsProps) => {
                         className="card"
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center">
-                                <Wrench className="w-6 h-6 text-pink-400" />
+                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-300/20 flex items-center justify-center">
+                                <Wrench className="w-6 h-6 text-blue-300" />
                             </div>
                             <h3 className="text-xl font-bold">{t.tools}</h3>
                         </div>
@@ -106,7 +106,7 @@ const Skills = ({ language }: SkillsProps) => {
                             {skillsData.tools.map((skill, idx) => (
                                 <span
                                     key={idx}
-                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-pink-500/20 text-slate-200 hover:text-pink-300 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-pink-500/30"
+                                    className="px-3 py-2 text-sm font-medium bg-slate-800/50 hover:bg-blue-500/20 text-slate-200 hover:text-blue-200 rounded-lg transition-all duration-300 border border-slate-700/50 hover:border-blue-500/40"
                                 >
                                     {skill}
                                 </span>

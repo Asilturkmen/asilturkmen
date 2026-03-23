@@ -11,12 +11,12 @@
     --color-bg-secondary: #151b35;
     --color-bg-tertiary: #1f2847;
 
-    --color-accent-primary: #f59e0b;
-    --color-accent-primary-light: #fbbf24;
-    --color-accent-secondary: #fb923c;
-    --color-accent-secondary-light: #fdba74;
-    --color-accent-tertiary: #ec4899;
-    --color-accent-tertiary-light: #f472b6;
+    --color-accent-primary: #3b82f6;
+    --color-accent-primary-light: #60a5fa;
+    --color-accent-secondary: #2563eb;
+    --color-accent-secondary-light: #93c5fd;
+    --color-accent-tertiary: #1d4ed8;
+    --color-accent-tertiary-light: #bfdbfe;
 
     --color-text-primary: #ffffff;
     --color-text-secondary: #e5e7eb;
@@ -58,6 +58,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgb(59 130 246 / 0.3);
+    color: #bfdbfe;
   }
 
   h1,
@@ -142,8 +147,8 @@
 
   .card:hover {
     transform: translateY(-8px);
-    border-color: rgba(245, 158, 11, 0.4);
-    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.15);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
   }
 
   /* Button Primary */
@@ -161,7 +166,7 @@
     border: none;
     cursor: pointer;
     transition: all var(--transition-base);
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.45);
   }
 
   @media (min-width: 768px) {
@@ -172,7 +177,7 @@
 
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.55);
   }
 
   .btn-primary:active {
@@ -245,7 +250,7 @@
     outline: none;
     background: rgba(30, 41, 59, 0.9);
     border-color: var(--color-accent-primary);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
 
   .input-field::placeholder {

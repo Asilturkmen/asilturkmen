@@ -43,16 +43,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg py-4 translate-y-0' : 'bg-transparent py-6 md:translate-y-0 -translate-y-full'
                 }`}
         >
-            <div className="container-custom flex justify-between items-center">
-                {/* Logo */}
-                <a
-                    href="#home"
-                    onClick={(e) => handleScrollTo(e, '#home')}
-                    className="text-2xl font-bold gradient-text"
-                >
-                    Asil Türkmen
-                </a>
-
+            <div className="container-custom relative flex items-center justify-end md:justify-center">
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center gap-8">
                     {navLinks.map((link) => (
@@ -60,7 +51,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
                             key={link.name}
                             href={link.href}
                             onClick={(e) => handleScrollTo(e, link.href)}
-                            className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors"
+                            className="text-sm font-medium text-slate-300 hover:text-blue-200 transition-colors"
                         >
                             {link.name}
                         </a>
@@ -69,7 +60,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
                     {/* Language Toggle */}
                     <button
                         onClick={toggleLanguage}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 border border-slate-700/50 hover:border-amber-500/50 rounded-full text-slate-200 hover:text-amber-400 transition-all duration-300"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 border border-slate-700/50 hover:border-blue-500/60 rounded-full text-slate-200 hover:text-blue-200 transition-all duration-300"
                     >
                         <Languages className="w-4 h-4" />
                         <span className="text-xs font-bold">{language === 'en' ? 'TR' : 'EN'}</span>
@@ -99,7 +90,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
                             <div className="pb-4 border-b border-slate-800 mb-2">
                                 <button
                                     onClick={toggleLanguage}
-                                    className="flex items-center gap-2 text-slate-300 hover:text-amber-400 py-2 w-full"
+                                    className="flex items-center gap-2 text-slate-300 hover:text-blue-200 py-2 w-full"
                                 >
                                     <Languages className="w-5 h-5" />
                                     <span>{language === 'en' ? 'Switch to Turkish' : 'İngilizceye Geç'}</span>
@@ -111,7 +102,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
                                     key={link.name}
                                     href={link.href}
                                     onClick={(e) => handleScrollTo(e, link.href)}
-                                    className="text-lg font-medium text-slate-300 hover:text-amber-400 transition-colors py-3"
+                                    className="text-lg font-medium text-slate-300 hover:text-blue-200 transition-colors py-3"
                                 >
                                     {link.name}
                                 </a>

@@ -17,7 +17,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-slate-950">
       <Toaster position="bottom-right" toastOptions={{
         style: {
           background: '#1e293b',

@@ -139,7 +139,7 @@ const Contact = ({ language }: ContactProps) => {
                         <p className="text-slate-400 mb-4">{t.or}</p>
                         <a
                             href="mailto:turkmenasil@hotmail.com"
-                            className="text-amber-400 hover:text-amber-300 transition-colors font-medium"
+                            className="text-blue-200 hover:text-blue-100 transition-colors font-medium"
                         >
                             turkmenasil@hotmail.com
                         </a>

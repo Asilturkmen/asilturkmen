@@ -21,7 +21,7 @@ const Hero = ({ language }: HeroProps) => {
             className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 md:pt-0"
         >
             {/* Subtle gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-orange-900/10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-slate-900/40" />
 
             <div className="container-custom relative z-10">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -34,7 +34,7 @@ const Hero = ({ language }: HeroProps) => {
                         className="text-center lg:text-left"
                     >
                         <motion.p
-                            className="text-lg text-amber-400 font-medium mb-4"
+                            className="text-lg text-blue-200 font-medium mb-4"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.2 }}
@@ -63,15 +63,13 @@ const Hero = ({ language }: HeroProps) => {
                                 <span className="text-slate-300">whoami</span>
                             </div>
                             <div className="flex items-start gap-2">
-                                <span className="text-amber-400">&gt;</span>
+                                <span className="text-blue-400">&gt;</span>
                                 <div className="text-slate-300">
                                     {t.role}
                                     <br />
                                     <div className="flex items-center gap-2 flex-wrap mt-1">
-                                        <span className="text-amber-400 break-words">{t.university}</span>
-                                        <span className="text-xs px-2 py-0.5 bg-amber-500/10 text-amber-400/80 rounded border border-amber-500/20 font-mono whitespace-nowrap">
-                                            #F59E0B
-                                        </span>
+                                        <span className="text-blue-200 break-words">{t.university}</span>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -127,13 +125,13 @@ const Hero = ({ language }: HeroProps) => {
                     >
                         <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
                             {/* Gradient glow effect */}
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 opacity-20 blur-3xl" />
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-400 opacity-20 blur-3xl" />
 
                             {/* Profile image */}
                             <img
                                 src={profilePic}
                                 alt="Asil Türkmen"
-                                className="relative z-10 rounded-full border-4 border-amber-500/30"
+                                className="relative z-10 rounded-full border-4 border-blue-500/40"
                             />
                         </div>
                     </motion.div>
@@ -167,7 +165,7 @@ const Hero = ({ language }: HeroProps) => {
                                     <a
                                         href="/Englishcv.pdf"
                                         download="Asil_Turkmen_CV.pdf"
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 rounded-lg transition-colors border border-amber-500/20"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-200 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/30"
                                     >
                                         <Download className="w-4 h-4" />
                                         {language === 'en' ? 'Download' : 'İndir'}
@@ -194,7 +192,7 @@ const Hero = ({ language }: HeroProps) => {
                                     <a
                                         href="/Englishcv.pdf"
                                         target="_blank"
-                                        className="px-6 py-3 bg-amber-600 text-white rounded-full shadow-lg font-bold"
+                                        className="px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg font-bold"
                                     >
                                         {language === 'en' ? 'Open PDF' : 'PDF\'i Aç'}
                                     </a>

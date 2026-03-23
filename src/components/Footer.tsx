@@ -17,13 +17,13 @@ const Footer = ({ language }: FooterProps) => {
                     </p>
 
                     <div className="flex gap-4">
-                        <a href="https://github.com/Sonasil" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors">
+                        <a href="https://github.com/Sonasil" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-200 transition-colors">
                             <Github className="w-5 h-5" />
                         </a>
-                        <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-orange-400 transition-colors">
+                        <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-300 transition-colors">
                             <Linkedin className="w-5 h-5" />
                         </a>
-                        <a href="https://www.instagram.com/asil_turkmen28/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-400 transition-colors">
+                        <a href="https://www.instagram.com/asil_turkmen28/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
                             <Instagram className="w-5 h-5" />
                         </a>
                     </div>
