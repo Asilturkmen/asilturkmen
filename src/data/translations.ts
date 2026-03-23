@@ -27,6 +27,12 @@ export const translations = {
         projects: {
             title: 'Öne Çıkan Projeler',
             subtitle: 'Son çalışmalarımdan bazıları',
+            searchPlaceholder: 'Proje veya teknoloji ara...',
+            sortNewestFirst: 'Önce En Yeni',
+            sortOldestFirst: 'Önce En Eski',
+            noProjectsFound: '"{query}" için proje bulunamadı',
+            clearSearch: 'Aramayı temizle',
+            noPreview: 'Önizleme bulunamadı',
             project1: {
                 title: '💰 HesAppcım',
                 description: 'Grup harcamalarını takip etmeyi ve borçları dengelemeyi kolaylaştıran modern uygulama. Akıllı hesaplama, otomatik denge, grup yönetimi ve Türkçe/İngilizce dil desteği ile tatil, ev ve buluşmalarınızda hesaplaşma sorununu çözer.'
@@ -38,6 +44,10 @@ export const translations = {
             project3: {
                 title: '🍽️ Yayla Yemek Evi',
                 description: 'Kuzey Kıbrıs\'ta Pamuklu Köyü\'nde bulunan otantik köy restoranı için modern ve responsive web sitesi. İnteraktif galeri, Google Maps entegrasyonu, müşteri yorumları ve hızlı iletişim özellikleri ile doğal ürünler ve geleneksel lezzetleri dijital ortamda tanıtıyor.'
+            },
+            project4: {
+                title: '📖 NedirBeo',
+                description: 'Kıbrıs Türkçesine ait yerel kelimeleri dijital ortamda toplayan topluluk odaklı sözlük platformu. Kullanıcılar kelime arayıp öğrenebilir, yeni kelime ekleyebilir ve kültürel mirasın gelecek nesillere aktarılmasına katkı sağlayabilir.'
             },
             code: 'Kod',
             visit: 'Ziyaret Et'
@@ -86,6 +96,12 @@ export const translations = {
         projects: {
             title: 'Featured Projects',
             subtitle: 'Some of my recent work',
+            searchPlaceholder: 'Search projects or tech...',
+            sortNewestFirst: 'Newest First',
+            sortOldestFirst: 'Oldest First',
+            noProjectsFound: 'No projects found matching "{query}"',
+            clearSearch: 'Clear search',
+            noPreview: 'No preview available',
             project1: {
                 title: '💰 HesAppcım',
                 description: 'A modern expense tracking app that simplifies group spending and debt balancing. Features smart calculations, automatic balance tracking, group management, and bilingual support (TR/EN) for vacations, roommates, and gatherings.'
@@ -97,6 +113,10 @@ export const translations = {
             project3: {
                 title: '🍽️ Yayla Yemek Evi',
                 description: 'Modern and responsive website for an authentic village restaurant in Pamuklu Village, North Cyprus. Features interactive gallery, Google Maps integration, customer reviews, and quick contact capabilities to showcase natural products and traditional flavors digitally.'
+            },
+            project4: {
+                title: '📖 NedirBeo',
+                description: 'A community-driven digital dictionary platform focused on preserving Cypriot Turkish local words. Users can search terms, add new entries, and help transfer cultural language heritage to future generations.'
             },
             code: 'Code',
             visit: 'Visit'
