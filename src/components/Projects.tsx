@@ -6,6 +6,8 @@ import test2DriveHero from '../img/test2drive-hero.png';
 import hesappcimHero from '../img/hesappcim-hero.png';
 import nedirBeoHero from '../img/NedirBeo.png';
 import tokenStudiesHero from '../img/TokenStudies.png';
+import flowersHero from '../img/flowers-hero.png';
+import nottakipHero from '../img/nottakip-hero.svg';
 import { translations, Language } from '../data/translations';
 
 interface ProjectsProps {
@@ -63,6 +65,28 @@ const Projects = ({ language }: ProjectsProps) => {
         },
         {
             id: 5,
+            title: t.project6.title,
+            domain: 'Animation / Creative',
+            year: '2025',
+            description: t.project6.description,
+            tags: ['React', 'TypeScript', 'Vite', 'Framer Motion', 'Tailwind CSS'],
+            image: flowersHero,
+            github: 'https://github.com/Sonasil/Flowers',
+            demo: 'https://flowwersasil.netlify.app/'
+        },
+        {
+            id: 6,
+            title: t.project7.title,
+            domain: 'Telegram / Automation',
+            year: '2026',
+            description: t.project7.description,
+            tags: ['TypeScript', 'Node.js', 'Playwright', 'SQLite', 'Telegraf'],
+            image: nottakipHero,
+            github: 'https://github.com/Sonasil/NotTakip',
+            demo: 'https://github.com/Sonasil/NotTakip'
+        },
+        {
+            id: 7,
             title: 'Test2Drive',
             domain: 'Education / Mobility',
             year: '2024',
@@ -204,7 +228,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                                     <img
                                                         src={project.image}
                                                         alt={project.title}
-                                                        className="w-full h-56 sm:h-72 object-cover"
+                                                        className="w-full h-56 sm:h-72 object-fill"
                                                     />
                                                 </div>
                                                 <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5 md:p-6">
@@ -291,7 +315,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                     <img
                                         src={selectedProject.image}
                                         alt={selectedProject.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-fill"
                                     />
 
                                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">

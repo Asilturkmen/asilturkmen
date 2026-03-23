@@ -53,6 +53,14 @@ export const translations = {
                 title: '📚 TokenStudies',
                 description: 'Öğrencilerin ders notlarını daha hızlı bulmasını ve bilgilerini daha etkili şekilde tekrar etmesini hedefleyen modern bir eğitim platformu projesi.'
             },
+            project6: {
+                title: '🌸 Flowers',
+                description: 'Animasyonlu çiçekler ve parlayan efektler içeren interaktif bir ön yüz deneyimi. React, TypeScript ve Framer Motion ile akıcı geçişler ve görsel vurgular sunar.'
+            },
+            project7: {
+                title: '🎓 Not Takip',
+                description: 'DAÜ Öğrenci Portalı için otomatik not takip ve Telegram bildirim botu. Playwright ile portala giriş yapar, notları periyodik kontrol eder; yeni veya değişen notlarda anında mesaj atar. SQLite ile durum saklar.'
+            },
             code: 'Kod',
             visit: 'Ziyaret Et'
         },
@@ -125,6 +133,14 @@ export const translations = {
             project5: {
                 title: '📚 TokenStudies',
                 description: 'A modern learning platform project designed to help students find study notes faster and review their knowledge more effectively.'
+            },
+            project6: {
+                title: '🌸 Flowers',
+                description: 'An interactive front-end experience with animated flowers and glowing effects. Built with React, TypeScript, and Framer Motion for smooth motion and visual emphasis.'
+            },
+            project7: {
+                title: '🎓 Not Takip',
+                description: 'Automated grade tracking and Telegram notifications for the EMU student portal. Logs in with Playwright, polls grades on a schedule, and alerts you when grades are posted or changed. Uses SQLite for state.'
             },
             code: 'Code',
             visit: 'Visit'
