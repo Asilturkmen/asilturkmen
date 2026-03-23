@@ -297,18 +297,10 @@ const Projects = ({ language }: ProjectsProps) => {
                                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">
                                         <div className="flex justify-between items-end gap-4">
                                             <div>
-                                            <motion.h3
-                                                initial={{ y: 20, opacity: 0 }}
-                                                animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: 0.1 }}
-                                                className="text-3xl md:text-4xl font-bold text-slate-50 mb-3"
-                                            >
-                                                {selectedProject.title}
-                                            </motion.h3>
                                             <motion.div
                                                 initial={{ y: 20, opacity: 0 }}
                                                 animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: 0.15 }}
+                                                transition={{ delay: 0.1 }}
                                                 className="flex flex-wrap gap-2"
                                             >
                                                 {selectedProject.tags.map((tag) => (
