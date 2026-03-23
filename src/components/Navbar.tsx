@@ -17,6 +17,7 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
             setIsScrolled(window.scrollY > 50);
         };
 
+        handleScroll();
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -40,8 +41,8 @@ const Navbar = ({ language, toggleLanguage }: NavbarProps) => {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg py-4 translate-y-0' : 'bg-transparent py-6 md:translate-y-0 -translate-y-full'
-                }`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg py-4' : 'bg-transparent py-6'
+                } translate-y-0`}
         >
             <div className="container-custom relative flex items-center justify-end md:justify-center">
                 {/* Desktop Menu */}

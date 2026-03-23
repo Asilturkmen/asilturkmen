@@ -134,8 +134,8 @@ const Projects = ({ language }: ProjectsProps) => {
 
     return (
         <section id="projects" className="min-h-screen bg-slate-950 text-slate-50 selection:bg-blue-500/30 selection:text-blue-200 py-16 md:py-20 px-4 md:px-8 lg:px-16 max-w-[1600px] mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-24">
-                <div>
+            <div className="flex flex-col items-center md:items-end md:flex-row justify-between gap-8 mb-12 md:mb-24">
+                <div className="text-center md:text-left w-full md:w-auto">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -149,7 +149,7 @@ const Projects = ({ language }: ProjectsProps) => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-slate-300 mt-4 text-base md:text-xl max-w-md"
+                        className="text-slate-300 mt-4 text-base md:text-xl max-w-md mx-auto md:mx-0"
                     >
                         {t.subtitle}
                     </motion.p>
@@ -247,15 +247,15 @@ const Projects = ({ language }: ProjectsProps) => {
                                                         ))}
                                                     </div>
 
-                                                    <div className="lg:hidden flex flex-row gap-3">
+                                                    <div className="lg:hidden flex flex-row gap-2">
                                                         <a
                                                             href={project.demo}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             onClick={(e) => e.stopPropagation()}
-                                                            className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-900/20 hover:bg-blue-500"
+                                                            className="flex-1 bg-blue-600 text-white py-2.5 px-2 rounded-lg text-sm font-medium flex justify-center items-center gap-1.5 active:scale-95 transition-all shadow-md shadow-blue-900/20 hover:bg-blue-500"
                                                         >
-                                                            <ExternalLink className="w-4 h-4" /> {t.visit}
+                                                            <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {t.visit}
                                                         </a>
                                                         {project.github && (
                                                             <a
@@ -263,9 +263,9 @@ const Projects = ({ language }: ProjectsProps) => {
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 onClick={(e) => e.stopPropagation()}
-                                                                className="flex-1 bg-slate-900 text-slate-50 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-800 hover:border-blue-500/60"
+                                                                className="flex-1 bg-slate-900 text-slate-50 py-2.5 px-2 rounded-lg text-sm font-medium flex justify-center items-center gap-1.5 active:scale-95 transition-all border border-slate-700 shadow-md hover:bg-slate-800 hover:border-blue-500/60"
                                                             >
-                                                                <Github className="w-4 h-4" /> {t.code}
+                                                                <Github className="w-3.5 h-3.5 shrink-0" /> {t.code}
                                                             </a>
                                                         )}
                                                     </div>
