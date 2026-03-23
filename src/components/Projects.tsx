@@ -185,48 +185,45 @@ const Projects = ({ language }: ProjectsProps) => {
                                             animate={{ height: 'auto', opacity: 1 }}
                                             exit={{ height: 0, opacity: 0 }}
                                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                            className="overflow-hidden lg:hidden"
+                                            className="overflow-hidden"
                                         >
                                             <div className="pt-6 pb-2">
-                                                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] mb-4 bg-slate-900 border border-slate-800 shadow-2xl shadow-blue-900/20">
-                                                    <img
-                                                        src={project.image}
-                                                        alt={project.title}
-                                                        className="w-full h-full object-cover opacity-80 mix-blend-overlay"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                                                <div className="rounded-2xl border border-slate-800/90 bg-slate-900/40 p-5 md:p-6">
+                                                    <p className="text-sm md:text-base text-slate-200 leading-7 mb-5">
+                                                        {project.description}
+                                                    </p>
 
-                                                    <div className="absolute bottom-4 left-4 right-4">
-                                                        <p className="text-xs md:text-sm text-slate-200 line-clamp-3">{project.description}</p>
-                                                        <div className="flex flex-wrap gap-2 mt-3">
-                                                            {project.tags.map((tag) => (
-                                                                <span key={tag} className="px-2.5 py-1 bg-blue-500/10 backdrop-blur-md rounded-lg text-[11px] font-medium text-blue-200 border border-blue-500/20 shadow-sm">
-                                                                    {tag}
-                                                                </span>
-                                                            ))}
-                                                        </div>
+                                                    <div className="flex flex-wrap gap-2 mb-5">
+                                                        {project.tags.map((tag) => (
+                                                            <span
+                                                                key={tag}
+                                                                className="px-3 py-1.5 bg-blue-500/10 rounded-full text-xs font-medium text-blue-200 border border-blue-500/20"
+                                                            >
+                                                                {tag}
+                                                            </span>
+                                                        ))}
                                                     </div>
-                                                </div>
 
-                                                <div className="flex gap-3">
-                                                    <a
-                                                        href={project.demo}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-900/20 hover:bg-blue-500"
-                                                    >
-                                                        <ExternalLink className="w-4 h-4" /> {t.visit}
-                                                    </a>
-                                                    <a
-                                                        href={project.github}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className="flex-1 bg-slate-800 text-slate-100 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-700 hover:border-slate-600"
-                                                    >
-                                                        <Github className="w-4 h-4" /> {t.code}
-                                                    </a>
+                                                    <div className="flex flex-col sm:flex-row gap-3">
+                                                        <a
+                                                            href={project.demo}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex-1 bg-blue-600 text-white py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-900/20 hover:bg-blue-500"
+                                                        >
+                                                            <ExternalLink className="w-4 h-4" /> {t.visit}
+                                                        </a>
+                                                        <a
+                                                            href={project.github}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex-1 bg-slate-800 text-slate-100 py-3.5 rounded-xl font-semibold flex justify-center items-center gap-2 active:scale-95 transition-all border border-slate-700 shadow-lg hover:bg-slate-700 hover:border-slate-600"
+                                                        >
+                                                            <Github className="w-4 h-4" /> {t.code}
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -273,10 +270,8 @@ const Projects = ({ language }: ProjectsProps) => {
                                     <img
                                         src={selectedProject.image}
                                         alt={selectedProject.title}
-                                        className="w-full h-full object-cover opacity-70 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700"
+                                        className="w-full h-full object-cover"
                                     />
-
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
 
                                     <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end gap-4">
                                         <div>
@@ -288,18 +283,10 @@ const Projects = ({ language }: ProjectsProps) => {
                                             >
                                                 {selectedProject.title}
                                             </motion.h3>
-                                            <motion.p
-                                                initial={{ y: 20, opacity: 0 }}
-                                                animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: 0.15 }}
-                                                className="text-slate-200 mb-4 max-w-xl"
-                                            >
-                                                {selectedProject.description}
-                                            </motion.p>
                                             <motion.div
                                                 initial={{ y: 20, opacity: 0 }}
                                                 animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: 0.2 }}
+                                                transition={{ delay: 0.15 }}
                                                 className="flex flex-wrap gap-2"
                                             >
                                                 {selectedProject.tags.map((tag) => (
