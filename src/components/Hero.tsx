@@ -13,6 +13,9 @@ const Hero = ({ language }: HeroProps) => {
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
     const [isCVOpen, setIsCVOpen] = useState(false);
     const t = translations[language].hero;
+    const cvPdfPath = language === 'en' ? '/Englishcv.pdf' : '/turkishcv.pdf';
+    const cvDownloadFilename =
+        language === 'en' ? 'Asil_Turkmen_CV_EN.pdf' : 'Asil_Turkmen_CV_TR.pdf';
 
     return (
         <section
@@ -43,7 +46,7 @@ const Hero = ({ language }: HeroProps) => {
                         </motion.p>
 
                         <motion.h1
-                            className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6"
+                            className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.3 }}
@@ -51,49 +54,50 @@ const Hero = ({ language }: HeroProps) => {
                             <span className="gradient-text">Asil Türkmen</span>
                         </motion.h1>
 
-                        {/* Terminal Styled Role */}
+                        {/* Terminal Styled Role — centered on small screens, left from lg to match desktop column */}
                         <motion.div
-                            className="text-lg md:text-xl lg:text-2xl mb-8 font-mono"
+                            className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 font-mono w-full flex justify-center lg:justify-start"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.4 }}
                         >
-                            <div className="flex items-center gap-2 mb-1 text-slate-400">
-                                <span className="text-green-400">$</span>
-                                <span className="text-slate-300">whoami</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <span className="text-blue-400">&gt;</span>
-                                <div className="text-slate-300">
-                                    {t.role}
-                                    <br />
-                                    <div className="flex items-center gap-2 flex-wrap mt-1">
-                                        <span className="text-blue-200 break-words">{t.university}</span>
-                                        
+                            <div className="inline-block w-fit max-w-full text-left">
+                                <div className="flex items-center gap-2 mb-1 text-slate-400">
+                                    <span className="text-green-400">$</span>
+                                    <span className="text-slate-300">whoami</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-blue-400 shrink-0">&gt;</span>
+                                    <div className="text-slate-300 min-w-0">
+                                        {t.role}
+                                        <br />
+                                        <div className="flex items-center gap-2 flex-wrap mt-1">
+                                            <span className="text-blue-200 break-words">{t.university}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </motion.div>
 
                         <motion.div
-                            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start mb-12"
+                            className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4 justify-center lg:justify-start mb-8 sm:mb-12"
                             initial={{ opacity: 0 }}
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.5 }}
                         >
                             <button
                                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="btn-primary w-full sm:w-auto"
+                                className="btn-primary w-full sm:w-auto max-sm:max-w-[220px] max-sm:mx-auto max-sm:py-2.5 max-sm:px-5 max-sm:text-sm max-sm:min-h-10 max-sm:font-semibold"
                             >
-                                <Mail className="w-5 h-5" />
+                                <Mail className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                                 {t.cta1}
                             </button>
 
                             <button
                                 onClick={() => setIsCVOpen(true)}
-                                className="btn-secondary w-full sm:w-auto"
+                                className="btn-secondary w-full sm:w-auto max-sm:max-w-[220px] max-sm:mx-auto max-sm:py-2.5 max-sm:px-5 max-sm:text-sm max-sm:min-h-10 max-sm:font-semibold max-sm:border-[1.5px]"
                             >
-                                <Eye className="w-5 h-5" />
+                                <Eye className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                                 {t.cta2}
                             </button>
                         </motion.div>
@@ -163,8 +167,8 @@ const Hero = ({ language }: HeroProps) => {
                                 </h3>
                                 <div className="flex items-center gap-3">
                                     <a
-                                        href="/Englishcv.pdf"
-                                        download="Asil_Turkmen_CV.pdf"
+                                        href={cvPdfPath}
+                                        download={cvDownloadFilename}
                                         className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-200 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/30"
                                     >
                                         <Download className="w-4 h-4" />
@@ -182,7 +186,8 @@ const Hero = ({ language }: HeroProps) => {
                             {/* PDF Viewer */}
                             <div className="flex-1 bg-slate-800 overflow-hidden relative">
                                 <iframe
-                                    src="/Englishcv.pdf"
+                                    key={cvPdfPath}
+                                    src={cvPdfPath}
                                     className="w-full h-full"
                                     title="CV Preview"
                                 />
@@ -190,8 +195,9 @@ const Hero = ({ language }: HeroProps) => {
                                 {/* Fallback for mobile or if nice PDF viewing fails */}
                                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:hidden">
                                     <a
-                                        href="/Englishcv.pdf"
+                                        href={cvPdfPath}
                                         target="_blank"
+                                        rel="noopener noreferrer"
                                         className="px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg font-bold"
                                     >
                                         {language === 'en' ? 'Open PDF' : 'PDF\'i Aç'}
