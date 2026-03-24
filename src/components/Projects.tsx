@@ -115,13 +115,26 @@ const Projects = ({ language }: ProjectsProps) => {
     }, [projects, searchQuery]);
 
     const [selectedProject, setSelectedProject] = useState(projects[0]);
-    const [expandedProjectId, setExpandedProjectId] = useState<number | null>(projects[0].id);
+    /** Mobilde kapalı başlar; masaüstünde (lg+) ilk satır açık kalır */
+    const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
 
     useEffect(() => {
         setSelectedProject((prev) => {
             const match = projects.find((p) => p.id === prev.id);
             return match ?? projects[0];
         });
+    }, [projects]);
+
+    useEffect(() => {
+        const mq = window.matchMedia('(min-width: 1024px)');
+        const syncDesktopDefaultExpand = () => {
+            if (mq.matches) {
+                setExpandedProjectId((prev) => prev ?? projects[0]?.id ?? null);
+            }
+        };
+        syncDesktopDefaultExpand();
+        mq.addEventListener('change', syncDesktopDefaultExpand);
+        return () => mq.removeEventListener('change', syncDesktopDefaultExpand);
     }, [projects]);
 
     useEffect(() => {
@@ -134,8 +147,10 @@ const Projects = ({ language }: ProjectsProps) => {
         );
 
         if (!isSelectedVisible) {
-            setSelectedProject(filteredAndSortedProjects[0]);
-            setExpandedProjectId(filteredAndSortedProjects[0].id);
+            const first = filteredAndSortedProjects[0];
+            setSelectedProject(first);
+            const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+            setExpandedProjectId(isDesktop ? first.id : null);
         }
     }, [filteredAndSortedProjects, selectedProject.id]);
 
