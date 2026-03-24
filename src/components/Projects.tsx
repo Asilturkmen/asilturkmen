@@ -223,8 +223,6 @@ const Projects = ({ language }: ProjectsProps) => {
                                             {project.title}
                                         </h3>
                                         <div className={`flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-base transition-colors duration-300 ${isExpanded || isSelected ? 'text-slate-200' : 'text-slate-400 group-hover:text-slate-300'}`}>
-                                            <span className="font-mono text-blue-500">{project.year}</span>
-                                            <span className="w-1 h-1 rounded-full bg-slate-500"></span>
                                             <span>{project.domain}</span>
                                             <span className="w-1 h-1 rounded-full bg-slate-500 hidden sm:block"></span>
                                             <span className="hidden sm:block">{project.tags.join(' • ')}</span>
