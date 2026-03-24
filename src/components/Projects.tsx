@@ -18,7 +18,7 @@ const Projects = ({ language }: ProjectsProps) => {
     const t = translations[language].projects;
     const [searchQuery, setSearchQuery] = useState('');
 
-    const projects = [
+    const projects = useMemo(() => [
         {
             id: 1,
             title: t.project4.title,
@@ -96,7 +96,7 @@ const Projects = ({ language }: ProjectsProps) => {
             github: 'https://github.com/Sonasil/TRAF101',
             demo: 'https://traf-101.vercel.app/'
         }
-    ];
+    ], [t]);
 
     const filteredAndSortedProjects = useMemo(() => {
         let result = [...projects];
@@ -116,6 +116,13 @@ const Projects = ({ language }: ProjectsProps) => {
 
     const [selectedProject, setSelectedProject] = useState(projects[0]);
     const [expandedProjectId, setExpandedProjectId] = useState<number | null>(projects[0].id);
+
+    useEffect(() => {
+        setSelectedProject((prev) => {
+            const match = projects.find((p) => p.id === prev.id);
+            return match ?? projects[0];
+        });
+    }, [projects]);
 
     useEffect(() => {
         if (filteredAndSortedProjects.length === 0) {
