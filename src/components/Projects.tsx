@@ -248,7 +248,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                                     <img
                                                         src={project.image}
                                                         alt={project.title}
-                                                        className="w-full h-56 sm:h-72 object-fill"
+                                                        className="w-full h-56 sm:h-72 object-cover"
                                                     />
                                                 </div>
                                                 <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5 md:p-6">
@@ -321,7 +321,7 @@ const Projects = ({ language }: ProjectsProps) => {
                 </div>
 
                 <div className="hidden lg:block w-1/2 relative">
-                    <div className="sticky top-24 h-[600px] w-full rounded-3xl overflow-hidden bg-slate-950 border border-slate-700 shadow-2xl shadow-blue-900/20">
+                    <div className="sticky top-24 h-[500px] xl:h-[600px] w-full rounded-3xl overflow-hidden bg-slate-950 border border-slate-700 shadow-2xl shadow-blue-900/20">
                         <AnimatePresence mode="wait">
                             {filteredAndSortedProjects.length > 0 ? (
                                 <motion.div
@@ -335,7 +335,7 @@ const Projects = ({ language }: ProjectsProps) => {
                                     <img
                                         src={selectedProject.image}
                                         alt={selectedProject.title}
-                                        className="w-full h-full object-fill"
+                                        className="w-full h-full object-cover"
                                     />
 
                                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">

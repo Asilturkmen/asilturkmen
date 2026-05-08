@@ -108,13 +108,13 @@ const Hero = ({ language }: HeroProps) => {
                             animate={inView ? { opacity: 1 } : {}}
                             transition={{ delay: 0.6 }}
                         >
-                            <a href="https://github.com/Sonasil" target="_blank" rel="noopener noreferrer" className="social-icon">
+                            <a href="https://github.com/Sonasil" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="GitHub profili">
                                 <Github className="w-5 h-5" />
                             </a>
-                            <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/" target="_blank" rel="noopener noreferrer" className="social-icon">
+                            <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="LinkedIn profili">
                                 <Linkedin className="w-5 h-5" />
                             </a>
-                            <a href="https://www.instagram.com/asil_turkmen28/" target="_blank" rel="noopener noreferrer" className="social-icon">
+                            <a href="https://www.instagram.com/asil_turkmen28/" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Instagram profili">
                                 <Instagram className="w-5 h-5" />
                             </a>
                         </motion.div>
@@ -157,7 +157,7 @@ const Hero = ({ language }: HeroProps) => {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-5xl h-[85vh] flex flex-col shadow-2xl overflow-hidden"
+                            className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-5xl h-[85dvh] flex flex-col shadow-2xl overflow-hidden"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Modal Header */}
@@ -186,7 +186,6 @@ const Hero = ({ language }: HeroProps) => {
                             {/* PDF Viewer */}
                             <div className="flex-1 bg-slate-800 overflow-hidden relative">
                                 <iframe
-                                    key={cvPdfPath}
                                     src={cvPdfPath}
                                     className="w-full h-full"
                                     title="CV Preview"

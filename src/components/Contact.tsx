@@ -26,7 +26,7 @@ const Contact = ({ language }: ContactProps) => {
         setIsSubmitting(true);
 
         const formDataToSend = {
-            access_key: "856f7b76-916d-4768-ae34-020e0f6052fc",
+            access_key: import.meta.env.VITE_WEB3FORMS_KEY,
             name: formData.name,
             email: formData.email,
             message: formData.message
@@ -49,8 +49,7 @@ const Contact = ({ language }: ContactProps) => {
             } else {
                 toast.error(t.error);
             }
-        } catch (error) {
-            console.error("Error:", error);
+        } catch {
             toast.error(t.generalError);
         } finally {
             setIsSubmitting(false);
@@ -127,7 +126,7 @@ const Contact = ({ language }: ContactProps) => {
                             />
                         </div>
 
-                        <button type="submit" className="btn-primary w-full justify-center" disabled={isSubmitting}>
+                        <button type="submit" className="btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
                             <Send className="w-5 h-5" />
                             {isSubmitting ? t.sending : t.send}
                         </button>
