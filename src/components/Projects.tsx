@@ -1,14 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, ExternalLink, Search, ArrowUpRight } from 'lucide-react';
-import yaylaHero from '../img/yayla-hero.jpg';
-import test2DriveHero from '../img/test2drive-hero.png';
-import hesappcimHero from '../img/hesappcim-hero.png';
-import nedirBeoHero from '../img/NedirBeo.png';
-import tokenStudiesHero from '../img/TokenStudies.png';
-import flowersHero from '../img/flowers-hero.png';
-import nottakipHero from '../img/nottakip-hero.svg';
 import { translations, Language } from '../data/translations';
+
+const imageModules = import.meta.glob<string>('../img/*.{png,jpg,jpeg,svg,webp}', {
+    eager: true,
+    import: 'default',
+});
+
+const getImage = (baseName: string): string => {
+    const entry = Object.entries(imageModules).find(([path]) => {
+        const fileName = path.split('/').pop() ?? '';
+        return fileName.replace(/\.[^.]+$/, '') === baseName;
+    });
+    if (!entry) {
+        throw new Error(`[Projects] Image not found in src/img for base name: "${baseName}". Add a file like "${baseName}.png" or "${baseName}.jpg".`);
+    }
+    return entry[1];
+};
 
 interface ProjectsProps {
     language: Language;
@@ -26,7 +35,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2026',
             description: t.project4.description,
             tags: ['React', 'TypeScript', 'Vite', 'Node.js', 'Express'],
-            image: nedirBeoHero,
+            imageMobile: getImage('NedirBeo-mobile'),
+            imageDesktop: getImage('NedirBeo-desktop'),
             github: 'https://github.com/Sonasil/NedirBeo.git',
             demo: 'https://nedirbeo.com'
         },
@@ -37,7 +47,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2025',
             description: t.project1.description,
             tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vercel'],
-            image: hesappcimHero,
+            imageMobile: getImage('hesappcim-hero-mobile'),
+            imageDesktop: getImage('hesappcim-hero-desktop'),
             github: 'https://github.com/Sonasil/HesAppcim',
             demo: 'https://hes-appcim.vercel.app'
         },
@@ -48,7 +59,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2025',
             description: t.project5.description,
             tags: ['Flask', 'Python', 'PostgreSQL', 'SQLAlchemy'],
-            image: tokenStudiesHero,
+            imageMobile: getImage('TokenStudies-mobile'),
+            imageDesktop: getImage('TokenStudies-desktop'),
             github: null,
             demo: 'https://tokenstudies.com'
         },
@@ -59,7 +71,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2023',
             description: t.project3.description,
             tags: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
-            image: yaylaHero,
+            imageMobile: getImage('yayla-hero-mobile'),
+            imageDesktop: getImage('yayla-hero-desktop'),
             github: 'https://github.com/Sonasil/Yaylayemekevi',
             demo: 'https://yaylayemekevi.com'
         },
@@ -70,7 +83,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2025',
             description: t.project6.description,
             tags: ['React', 'TypeScript', 'Vite', 'Framer Motion', 'Tailwind CSS'],
-            image: flowersHero,
+            imageMobile: getImage('flowers-hero-mobile'),
+            imageDesktop: getImage('flowers-hero-desktop'),
             github: 'https://github.com/Sonasil/Flowers',
             demo: 'https://flowwersasil.netlify.app/'
         },
@@ -81,7 +95,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2026',
             description: t.project7.description,
             tags: ['TypeScript', 'Node.js', 'Playwright', 'SQLite', 'Telegraf'],
-            image: nottakipHero,
+            imageMobile: getImage('not-mobil'),
+            imageDesktop: getImage('not-desktop'),
             github: 'https://github.com/Sonasil/NotTakip',
             demo: 'https://github.com/Sonasil/NotTakip'
         },
@@ -92,7 +107,8 @@ const Projects = ({ language }: ProjectsProps) => {
             year: '2024',
             description: t.project2.description,
             tags: ['Vue 3', 'Pinia', 'Vite', 'TypeScript'],
-            image: test2DriveHero,
+            imageMobile: getImage('test2drive-hero-mobile'),
+            imageDesktop: getImage('test2drive-hero-desktop'),
             github: 'https://github.com/Sonasil/TRAF101',
             demo: 'https://traf-101.vercel.app/'
         }
@@ -245,11 +261,16 @@ const Projects = ({ language }: ProjectsProps) => {
                                         >
                                             <div className="pt-6 pb-2">
                                                 <div className="lg:hidden rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 mb-4">
-                                                    <img
-                                                        src={project.image}
-                                                        alt={project.title}
-                                                        className="w-full h-56 sm:h-72 object-cover"
-                                                    />
+                                                    <picture>
+                                                        <source media="(min-width: 1024px)" srcSet={project.imageDesktop} />
+                                                        <img
+                                                            src={project.imageMobile}
+                                                            alt={project.title}
+                                                            loading="lazy"
+                                                            decoding="async"
+                                                            className="w-full h-56 sm:h-72 object-cover"
+                                                        />
+                                                    </picture>
                                                 </div>
                                                 <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5 md:p-6">
                                                     <p className="text-sm md:text-base text-slate-50 leading-7">
@@ -332,11 +353,17 @@ const Projects = ({ language }: ProjectsProps) => {
                                     transition={{ duration: 0.4, ease: 'easeInOut' }}
                                     className="absolute inset-0"
                                 >
-                                    <img
-                                        src={selectedProject.image}
-                                        alt={selectedProject.title}
-                                        className="w-full h-full object-cover"
-                                    />
+                                    <picture>
+                                        <source media="(max-width: 1023px)" srcSet={selectedProject.imageMobile} />
+                                        <img
+                                            src={selectedProject.imageDesktop}
+                                            alt={selectedProject.title}
+                                            loading={selectedProject.id === projects[0].id ? 'eager' : 'lazy'}
+                                            fetchPriority={selectedProject.id === projects[0].id ? 'high' : 'auto'}
+                                            decoding="async"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </picture>
 
                                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">
                                         <div className="flex justify-between items-end gap-4">
