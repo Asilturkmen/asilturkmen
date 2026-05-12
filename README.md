@@ -1,7 +1,5 @@
 # 👨‍💻 Asil Türkmen | Portfolio
 
-![Project Hero](public/hero-preview-v2.png)
-
 <div align="center">
 
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
