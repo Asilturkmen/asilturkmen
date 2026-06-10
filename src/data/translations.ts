@@ -7,7 +7,7 @@ export const translations = {
             role: 'Yazılım Mühendisliği Öğrencisi',
             university: 'Doğu Akdeniz Üniversitesi',
             cta1: 'İletişime Geç',
-            cta2: 'CV İncele'
+            cta2: 'Projeleri İncele'
         },
         about: {
             title: 'Hakkımda',
@@ -86,7 +86,7 @@ export const translations = {
             role: 'Software Engineering Student',
             university: 'Eastern Mediterranean University',
             cta1: 'Get In Touch',
-            cta2: 'View CV'
+            cta2: 'View Projects'
         },
         about: {
             title: 'About Me',

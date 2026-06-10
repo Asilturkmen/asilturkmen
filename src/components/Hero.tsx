@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Mail, Eye, Github, Linkedin, Instagram, X, Download } from 'lucide-react';
+import { Mail, FolderOpen, Github, Linkedin, Instagram } from 'lucide-react';
 import profilePic from '../img/profile.png';
 import { translations, Language } from '../data/translations';
 
@@ -11,11 +10,7 @@ interface HeroProps {
 
 const Hero = ({ language }: HeroProps) => {
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-    const [isCVOpen, setIsCVOpen] = useState(false);
     const t = translations[language].hero;
-    const cvPdfPath = language === 'en' ? '/Englishcv.pdf' : '/turkishcv.pdf';
-    const cvDownloadFilename =
-        language === 'en' ? 'Asil_Turkmen_CV_EN.pdf' : 'Asil_Turkmen_CV_TR.pdf';
 
     return (
         <section
@@ -94,10 +89,10 @@ const Hero = ({ language }: HeroProps) => {
                             </button>
 
                             <button
-                                onClick={() => setIsCVOpen(true)}
+                                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
                                 className="btn-secondary w-full sm:w-auto max-sm:max-w-[220px] max-sm:mx-auto max-sm:py-2.5 max-sm:px-5 max-sm:text-sm max-sm:min-h-10 max-sm:font-semibold max-sm:border-[1.5px]"
                             >
-                                <Eye className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                                <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                                 {t.cta2}
                             </button>
                         </motion.div>
@@ -142,71 +137,6 @@ const Hero = ({ language }: HeroProps) => {
 
                 </div>
             </div>
-
-            {/* CV Modal */}
-            <AnimatePresence>
-                {isCVOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4"
-                        onClick={() => setIsCVOpen(false)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-5xl h-[85dvh] flex flex-col shadow-2xl overflow-hidden"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Modal Header */}
-                            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-800/50">
-                                <h3 className="text-xl font-bold text-slate-200">
-                                    {language === 'en' ? 'CV Preview' : 'CV Önizleme'}
-                                </h3>
-                                <div className="flex items-center gap-3">
-                                    <a
-                                        href={cvPdfPath}
-                                        download={cvDownloadFilename}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-200 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/30"
-                                    >
-                                        <Download className="w-4 h-4" />
-                                        {language === 'en' ? 'Download' : 'İndir'}
-                                    </a>
-                                    <button
-                                        onClick={() => setIsCVOpen(false)}
-                                        className="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* PDF Viewer */}
-                            <div className="flex-1 bg-slate-800 overflow-hidden relative">
-                                <iframe
-                                    src={cvPdfPath}
-                                    className="w-full h-full"
-                                    title="CV Preview"
-                                />
-
-                                {/* Fallback for mobile or if nice PDF viewing fails */}
-                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:hidden">
-                                    <a
-                                        href={cvPdfPath}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg font-bold"
-                                    >
-                                        {language === 'en' ? 'Open PDF' : 'PDF\'i Aç'}
-                                    </a>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </section>
     );
 };
