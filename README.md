@@ -161,8 +161,21 @@ A professional restaurant website with modern design and smooth user experience.
   [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/)
   [![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contact.asilturkmen@gmail.com)
   [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/asil_turkmen28)
+  [![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/turkmenasil)
 
   🌐 **[asilturkmen.com](https://asilturkmen.com)** — portfolio · projects · contact
+
+</div>
+
+---
+
+## ☕ Support My Work
+
+<div align="center">
+
+  If you like my projects and want to support what I build, you can buy me a coffee! ☕
+
+  <a href="https://buymeacoffee.com/turkmenasil"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee — support Asil Türkmen" height="50"></a>
 
 </div>
 
