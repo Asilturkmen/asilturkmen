@@ -1,19 +1,29 @@
 <div align="center">
-  
-  ![Header](https://capsule-render.vercel.app/api?type=waving&color=0:003049,50:126782,100:219EBC&height=300&section=header&text=Asil%20Turkmen&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Full-Stack%20Developer%20%7C%20Mobile%20Developer%20%7C%20Software%20Engineer&descAlignY=55&descAlign=50&fontColor=FFFFFF)
-  
-  [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=8ECAE6&center=true&vCenter=true&random=false&width=600&lines=TypeScript+%2B+React+Enthusiast+%F0%9F%9A%80;Building+Modern+Web+%26+Mobile+Apps+%F0%9F%92%BB;Software+Engineering+Student+%F0%9F%8E%93;Based+in+Cyprus+%F0%9F%8C%8D)](https://git.io/typing-svg)
-  
-  ![Profile Views](https://komarev.com/ghpvc/?username=sonasil&color=219EBC&style=for-the-badge&label=PROFILE+VIEWS)
-  
+
+  ![Asil Türkmen — Full-Stack Developer | asilturkmen.com](https://capsule-render.vercel.app/api?type=waving&color=0:003049,50:126782,100:219EBC&height=300&section=header&text=Asil%20Turkmen&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Full-Stack%20Developer%20%7C%20Mobile%20Developer%20%7C%20Software%20Engineer&descAlignY=55&descAlign=50&fontColor=FFFFFF)
+
+# Asil Türkmen
+
+### Full-Stack Developer · Mobile Developer · Software Engineer
+
+🌐 **Portfolio: [asilturkmen.com](https://asilturkmen.com)**
+
+  [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=24&pause=1000&color=8ECAE6&center=true&vCenter=true&random=false&width=600&lines=TypeScript+%2B+React+Enthusiast+%F0%9F%9A%80;Building+Modern+Web+%26+Mobile+Apps+%F0%9F%92%BB;Software+Engineering+Student+%F0%9F%8E%93;Visit+asilturkmen.com+%F0%9F%8C%90)](https://asilturkmen.com)
+
+  ![Profile Views](https://komarev.com/ghpvc/?username=asilturkmen&color=219EBC&style=for-the-badge&label=PROFILE+VIEWS)
+
 </div>
 
 ---
 
 ## 👨‍💻 About Me
 
+I'm **Asil Türkmen**, a full-stack developer and software engineering student based in Cyprus. I build modern web and mobile applications with TypeScript, React, and Node.js. You can explore my full portfolio, projects, and contact details at **[asilturkmen.com](https://asilturkmen.com)**.
+
 ```typescript
 const asil = {
+    name: "Asil Türkmen",
+    website: "https://asilturkmen.com",
     location: "Cyprus 🇨🇾",
     education: "Software Engineering @ Eastern Mediterranean University",
     role: "Full-Stack Developer",
@@ -29,6 +39,7 @@ const asil = {
 🌱 Currently expanding my skills in **advanced software architecture**  
 💡 Passionate about creating **elegant, user-friendly solutions** to real-world problems  
 📍 Based in **Cyprus**, open to remote opportunities  
+🌐 Explore my work at **[asilturkmen.com](https://asilturkmen.com)**  
 
 ---
 
@@ -71,16 +82,15 @@ const asil = {
 <table>
 <tr>
 <td width="50%" align="center">
-  
-### 🌐 Personal Portfolio
-**Modern Portfolio Website**  
-A responsive, beautifully designed personal portfolio website.
+
+### 🌐 asilturkmen.com
+**Personal Portfolio Website**  
+My personal portfolio — live at [asilturkmen.com](https://asilturkmen.com). A responsive, modern showcase of my work and skills.
 
 **Tech Stack:**  
 `TypeScript` `React` `Vite` `Tailwind CSS`
 
-[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sonasil/asilturkmen)
-[![Live](https://img.shields.io/badge/Live-4A8FE7?style=for-the-badge&logo=vercel&logoColor=white)](https://asilturkmen.com)
+[![Live](https://img.shields.io/badge/asilturkmen.com-219EBC?style=for-the-badge&logo=google-chrome&logoColor=white)](https://asilturkmen.com)
 
 </td>
 <td width="50%" align="center">
@@ -92,8 +102,7 @@ A mobile dictionary app for learning local terminology with an intuitive interfa
 **Tech Stack:**  
 `React` `TypeScript` `Laravel` `PostgreSQL`
 
-[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sonasil/NedirBeo)
-[![Live](https://img.shields.io/badge/Live-4A8FE7?style=for-the-badge&logo=google-chrome&logoColor=white)](https://nedirbeo.com)
+[![Live](https://img.shields.io/badge/nedirbeo.com-4A8FE7?style=for-the-badge&logo=google-chrome&logoColor=white)](https://nedirbeo.com)
 
 </td>
 </tr>
@@ -107,7 +116,8 @@ A comprehensive invoice and financial management application with real-time data
 **Tech Stack:**  
 `TypeScript` `Next.js` `Firebase` `Vercel`
 
-[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sonasil/HesAppcim)
+[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Asilturkmen/HesAppcim)
+[![Live](https://img.shields.io/badge/Live-4A8FE7?style=for-the-badge&logo=vercel&logoColor=white)](https://hes-appcim.vercel.app)
 
 </td>
 <td width="50%" align="center">
@@ -119,12 +129,13 @@ A professional restaurant website with modern design and smooth user experience.
 **Tech Stack:**  
 `TypeScript` `Vite` `Tailwind CSS`
 
-[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sonasil/Yaylayemekevi)
-[![Live](https://img.shields.io/badge/Live-4A8FE7?style=for-the-badge&logo=google-chrome&logoColor=white)](https://yaylayemekevi.com)
+[![Repo](https://img.shields.io/badge/Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Asilturkmen/Yaylayemekevi)
 
 </td>
 </tr>
 </table>
+
+**➡️ See all projects with case studies at [asilturkmen.com](https://asilturkmen.com)**
 
 </div>
 
@@ -133,11 +144,11 @@ A professional restaurant website with modern design and smooth user experience.
 ## 📊 GitHub Statistics
 
 <div align="center">
-  
-  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api?username=Sonasil&show_icons=true&theme=vue&hide_border=true&bg_color=001220&title_color=8ECAE6&icon_color=219EBC&text_color=C1E3F0&ring_color=126782&cache_seconds=1800" alt="GitHub Stats" />
-  
-  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Sonasil&layout=compact&theme=vue&hide_border=true&bg_color=001220&title_color=8ECAE6&text_color=C1E3F0&langs_count=8&cache_seconds=1800" alt="Top Languages" />
-  
+
+  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api?username=Asilturkmen&show_icons=true&theme=vue&hide_border=true&bg_color=001220&title_color=8ECAE6&icon_color=219EBC&text_color=C1E3F0&ring_color=126782&cache_seconds=1800" alt="Asil Türkmen's GitHub Stats" />
+
+  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Asilturkmen&layout=compact&theme=vue&hide_border=true&bg_color=001220&title_color=8ECAE6&text_color=C1E3F0&langs_count=8&cache_seconds=1800" alt="Asil Türkmen's Top Languages" />
+
 </div>
 
 ---
@@ -145,21 +156,25 @@ A professional restaurant website with modern design and smooth user experience.
 ## 📫 Connect With Me
 
 <div align="center">
-  
+
+  [![Portfolio](https://img.shields.io/badge/asilturkmen.com-219EBC?style=for-the-badge&logo=google-chrome&logoColor=white)](https://asilturkmen.com)
   [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/)
+  [![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contact.asilturkmen@gmail.com)
   [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/asil_turkmen28)
-  [![Email](https://img.shields.io/badge/Email-126782?style=for-the-badge&logo=microsoft-outlook&logoColor=white)](mailto:Turkmenasil@hotmail.com)
-  [![Portfolio](https://img.shields.io/badge/Portfolio-219EBC?style=for-the-badge&logo=google-chrome&logoColor=white)](https://asilturkmen.com)
-  
+
+  🌐 **[asilturkmen.com](https://asilturkmen.com)** — portfolio · projects · contact
+
 </div>
 
 ---
 
 <div align="center">
-  
+
   **Thanks for visiting! 🚀**  
-  *Feel free to explore my repositories and reach out if you'd like to collaborate!*
-  
-  ![Footer](https://capsule-render.vercel.app/api?type=waving&color=0:219EBC,50:126782,100:003049&height=120&section=footer)
-  
+  *Explore more of my work at [asilturkmen.com](https://asilturkmen.com) — and feel free to reach out if you'd like to collaborate!*
+
+  © Asil Turkmen · [asilturkmen.com](https://asilturkmen.com)
+
+  ![Asil Türkmen — asilturkmen.com](https://capsule-render.vercel.app/api?type=waving&color=0:219EBC,50:126782,100:003049&height=120&section=footer)
+
 </div>
