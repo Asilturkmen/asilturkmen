@@ -55,9 +55,9 @@ ICONS = {  # site skill slug -> icon source
 
 # One line per card, written for this page; the long story is on the site.
 PROJECTS = [
-    ("nedirbeo", "A community dictionary that keeps Cypriot Turkish alive online."),
-    ("wipeout", "A LAN multiplayer parkour game, played by 50+ people at a live event."),
-    ("hesappcim", "Shared expenses and debt balancing for trips, roommates and nights out."),
+    ("nedirbeo", "A community dictionary for Cypriot Turkish."),
+    ("wipeout", "A multiplayer parkour game played over LAN by 50+ people at an event."),
+    ("hesappcim", "An app for tracking shared expenses and calculating who owes whom."),
     ("yayla-yemek-evi", "The website of a village restaurant in Pamuklu, North Cyprus."),
 ]
 # Where to keep the cover when cropping it to the card's 16:9 screen (0 = top, 0.5 = centre).
@@ -65,7 +65,7 @@ COVER_FOCUS = {"wipeout": 0.0}
 TOOLS = [
     ("FRONTEND", ["typescript", "react", "next-js", "vue-3", "vite", "tailwind-css"]),
     ("BACKEND & DATA", ["node-js", "laravel", "python", "flask", "postgresql", "sqlite"]),
-    ("GAMES & SHIPPING", ["unity", "c-sharp", "docker", "git", "vercel"]),
+    ("GAMES & DEVELOPMENT TOOLS", ["unity", "c-sharp", "docker", "git", "vercel"]),
 ]
 LINKS = [
     ("LinkedIn", "https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/"),
@@ -335,7 +335,7 @@ def label(faces, text):
     """Transparent section label in lamp amber, readable on GitHub's light and dark pages alike
     (a themed <picture> follows the OS scheme, which can disagree with the GitHub theme)."""
     W, H = 420, 40
-    tracking = 3.4
+    tracking = 0.5
     tw = faces[700].width(text, 12.5, tracking)
     defs = '<radialGradient id="g"><stop offset="0" stop-color="#e8b464" stop-opacity="0.55"/><stop offset="1" stop-color="#e8b464" stop-opacity="0"/></radialGradient>'
     body = (
@@ -370,7 +370,7 @@ def card(project, line, skills, faces, index, mobile, still):
     accent = project.get("accent") or "201, 162, 110"
     tint, glow = lighten(accent, 0.45), lighten(accent, 0.1)
     kicker = project["category"].replace(" / ", " · ")
-    tech = " · ".join(skills[t]["name"] for t in project["tech"] if t in skills).upper()
+    tech = " · ".join(skills[t]["name"] for t in project["tech"] if t in skills)
     cta = f"asilturkmen.com/projects/{slug}"
 
     if mobile:
@@ -388,7 +388,7 @@ def card(project, line, skills, faces, index, mobile, still):
         title_size, desc_size = 38, 15.5
 
     desc = faces[500].wrap(line, desc_size, tw)
-    tech_lines = faces[500].wrap(tech, 10.5, tw, 1.8)
+    tech_lines = faces[500].wrap(tech, 10.5, tw, 0.3)
     # Baselines relative to the kicker's baseline; cap heights are ~0.72em in Satoshi.
     title_y = 16 + 0.74 * title_size
     desc_ys = [title_y + 14 + desc_size * 1.15 + i * desc_size * 1.5 for i in range(len(desc))]
@@ -407,7 +407,7 @@ def card(project, line, skills, faces, index, mobile, still):
         f'<path d="{faces[700].path(project["title"], tx - 1, k + title_y, title_size, -0.6)}" fill="{WARM}"/>',
     ]
     texts += [f'<path d="{faces[500].path(t, tx, k + y, desc_size)}" fill="#a6b3c3"/>' for t, y in zip(desc, desc_ys)]
-    texts += [f'<path d="{faces[500].path(t, tx, k + y, 10.5, 1.8)}" fill="#6f8199"/>' for t, y in zip(tech_lines, tech_ys)]
+    texts += [f'<path d="{faces[500].path(t, tx, k + y, 10.5, 0.3)}" fill="#6f8199"/>' for t, y in zip(tech_lines, tech_ys)]
     cy = k + cta_y
     ax = tx + faces[500].width(cta, 12.5) + 10
     texts.append(
@@ -505,9 +505,13 @@ def tools(faces, skills, mobile, still):
             out.append(f'<use href="#n-{slug}" fill="{"#6b7c93" if dim else "#f3e7cd"}"/>')
         return "".join(out)
 
-    labels = "".join(
-        f'<path d="{faces[700].path(t, gx, gy, 10.5, 2.6)}" fill="#7489a3"/>' for t, gx, gy in groups
-    )
+    labels = []
+    for text, gx, gy in groups:
+        lines = faces[700].wrap(text, 10.5, W - 44 if mobile else x0 - gx - 16, 2.6)
+        for i, line in enumerate(lines):
+            baseline = gy + (i - (len(lines) - 1) / 2) * 17
+            labels.append(f'<path d="{faces[700].path(line, gx, baseline, 10.5, 2.6)}" fill="#7489a3"/>')
+    labels = "".join(labels)
     band, period, travel = 260, 6.5, 3.4
     x_from, x_to = W + 40, -band - 40
     move = "" if still else (
@@ -538,7 +542,7 @@ def tools(faces, skills, mobile, still):
 {lit}
 <rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="12" fill="none" stroke="#1a2740"/>'''
     names = ", ".join(skills[s]["name"] for _, slugs in TOOLS for s in slugs)
-    return svg_doc(W, H, f"Tools I build with: {names}.", defs, body)
+    return svg_doc(W, H, f"Tools I use: {names}.", defs, body)
 
 
 # ------------------------------------------------------------------ dawn
@@ -557,14 +561,14 @@ def dawn(L, faces, still):
     cx = W / 2
     sun_r = 30 if W > 500 else 24
 
-    kicker, sub = "EVERYTHING ELSE LIVES AT", "PROJECTS · CASE STUDIES · CV"
+    kicker, sub = "MORE ABOUT MY WORK", "PROJECTS · CASE STUDIES · CV"
     domain = "asilturkmen.com"
     ds = L["domain_size"]
-    dw = faces[900].width(domain, ds, -0.8)
+    dw = faces[700].width(domain, ds, -0.8)
     arrow_w = ds * 0.42
     dx = cx - (dw + 14 + arrow_w) / 2
     ay = L["domain"] - ds * 0.34
-    domain_d = faces[900].path(domain, dx, L["domain"], ds, -0.8)
+    domain_d = faces[700].path(domain, dx, L["domain"], ds, -0.8)
     ax = dx + dw + 14
     arrow = (
         f'<path d="M{f(ax)},{f(ay)} h{f(arrow_w)} m-{f(arrow_w * 0.4)},-{f(arrow_w * 0.4)} '
@@ -636,7 +640,7 @@ def dawn(L, faces, still):
 <path d="{domain_d}" fill="#fff4e6"/>
 {arrow}
 <path d="{faces[500].path(sub, cx, L["sub"], 10.5, 3.4, "middle")}" fill="#ecc9a8" opacity="0.8"/>'''
-    return svg_doc(W, H, "Dawn over the sea. Everything else lives at asilturkmen.com: projects, case studies and CV.", defs, body)
+    return svg_doc(W, H, "Dawn over the sea. More about my work at asilturkmen.com: projects, case studies and CV.", defs, body)
 
 
 # ------------------------------------------------------------------ README
@@ -658,8 +662,8 @@ def readme(projects):
         picture("hero", "Asil Türkmen. Software engineering, North Cyprus. A lighthouse beam sweeps over the night sea and lights up the name.", SITE),
         "",
         "I'm **Asil Türkmen**, a Software Engineering student at Eastern Mediterranean University in North Cyprus. "
-        "From web interfaces and APIs to automation and games, I turn ideas into working products, and I care about "
-        "making them readable, maintainable and good to use. Case studies, my CV and everything else live at "
+        "I work on web apps, APIs, automation and games. "
+        "You can find more about my projects and my CV at "
         f"**[asilturkmen.com]({SITE})**.",
         "",
         section_label("label-work", "Selected work"),
@@ -680,11 +684,11 @@ def readme(projects):
             "",
         ]
     parts += [
-        section_label("label-tools", "Tools I build with"),
+        section_label("label-tools", "Tools I use"),
         "",
-        picture("tools", "Tools I build with: " + ", ".join(n for n in TOOL_NAMES), SITE),
+        picture("tools", "Tools I use: " + ", ".join(n for n in TOOL_NAMES), SITE),
         "",
-        picture("dawn", "Dawn over the sea. Everything else lives at asilturkmen.com: projects, case studies and CV.", SITE),
+        picture("dawn", "Dawn over the sea. More about my work at asilturkmen.com: projects, case studies and CV.", SITE),
         "",
         '<p align="center">' + " · ".join(f'<a href="{u}">{n}</a>' for n, u in LINKS) + "</p>",
         "",
@@ -721,7 +725,7 @@ def main():
             save(f"tools{'-mobile' if mobile else ''}{tag}.svg", tools(faces, skills, mobile, still))
         for name, layout in DAWN.items():
             save(f"{name}{tag}.svg", dawn(layout, faces, still))
-    for base, text in (("label-work", "SELECTED WORK"), ("label-tools", "TOOLS I BUILD WITH")):
+    for base, text in (("label-work", "Selected work"), ("label-tools", "Tools I use")):
         save(f"{base}.svg", label(faces, text))
     readme(projects)
 
