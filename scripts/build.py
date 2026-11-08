@@ -37,6 +37,7 @@ try:
     from movement import movement, movement_defs  # skeleton watch, scripts/movement.py
 except ImportError:  # pragma: no cover
     movement = movement_defs = None
+from tools import tools_strip  # "Tools I use" strip, scripts/tools.py
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -60,12 +61,16 @@ FOOT_KICKER = "MORE ABOUT MY WORK"
 FOOT_DOMAIN = "asilturkmen.com"
 FOOT_SUB = "projects · case studies · CV"
 
-# (slug, kicker, name, sentence) — sentences are Asil's own.
+# (slug, kicker, name, sentence, link, call to action) — sentences are Asil's own (used in alt text).
 PROJECTS = [
-    ("nedirbeo", "COMMUNITY · DICTIONARY", "NedirBeo", "A community dictionary for Cypriot Turkish."),
-    ("wipeout", "GAME · LAN MULTIPLAYER", "Wipeout", "A multiplayer parkour game played over LAN by 50+ people at an event."),
-    ("hesappcim", "FINANCE · WEB APP", "HesAppcım", "An app for tracking shared expenses and calculating who owes whom."),
-    ("yayla-yemek-evi", "RESTAURANT · SHOWCASE", "Yayla Yemek Evi", "The website of a village restaurant in Pamuklu, North Cyprus."),
+    ("nedirbeo", "COMMUNITY · DICTIONARY", "NedirBeo", "A community dictionary for Cypriot Turkish.",
+     "https://nedirbeo.com", "VISIT SITE"),
+    ("wipeout", "GAME · LAN MULTIPLAYER", "Wipeout", "A multiplayer parkour game played over LAN by 50+ people at an event.",
+     f"{SITE}/projects/wipeout", "CASE STUDY"),
+    ("hesappcim", "FINANCE · WEB APP", "HesAppcım", "An app for tracking shared expenses and calculating who owes whom.",
+     f"{SITE}/projects/hesappcim", "CASE STUDY"),
+    ("yayla-yemek-evi", "RESTAURANT · SHOWCASE", "Yayla Yemek Evi", "The website of a village restaurant in Pamuklu, North Cyprus.",
+     "https://www.yaylayemekevi.com", "VISIT SITE"),
 ]
 MEDIA = ROOT / "media" / "thumbs"
 
@@ -322,10 +327,10 @@ def wrap(face: Face, text: str, size: float, width: float) -> list:
     return lines
 
 
-def card(slug: str, kicker: str, name: str, sentence: str, theme: str, mobile: bool, faces: dict) -> str:
+def card(slug: str, kicker: str, name: str, sentence: str, cta_text: str, theme: str, mobile: bool, faces: dict) -> str:
     t = THEMES[theme]
     W = 204
-    H = 150 if mobile else 240
+    H = 150 if mobile else 200
     data = base64.b64encode((MEDIA / f"{slug}.webp").read_bytes()).decode("ascii")
     defs, body, border = frame(W, H, t)
     defs += f'<clipPath id="shot"><rect x="10" y="10" width="184" height="104" rx="7"/></clipPath>'
@@ -343,11 +348,7 @@ def card(slug: str, kicker: str, name: str, sentence: str, theme: str, mobile: b
         parts.append(kk.path(14, 137, t["accent"], nd=2))
         nm = faces[700].layout(name, 18, tracking=-0.01)
         parts.append(nm.path(14, 160, t["ink"]))
-        y = 180
-        for line in wrap(faces[500], sentence, 10.5, 176)[:3]:
-            parts.append(faces[500].layout(line, 10.5).path(14, y, t["muted"], nd=2))
-            y += 14
-        cta = faces[700].layout("CASE STUDY", 8.5, tracking=0.18)
+        cta = faces[700].layout(cta_text, 8.5, tracking=0.18)
         arrow = faces[500].layout("→", 11)
         parts.append(f'<rect x="14" y="{H - 25.5}" width="176" height="1" fill="{t["border"]}"/>')
         parts.append(cta.path(14, H - 10, t["accent"], nd=2))
@@ -427,9 +428,12 @@ def main() -> None:
             p = ASSETS / f"footer-{theme}{m}.svg"
             p.write_text(footer(theme, mobile, faces), encoding="utf-8", newline="\n")
             written.append(p)
-            for slug, kicker, name, sentence in PROJECTS:
+            p = ASSETS / f"tools-{theme}{m}.svg"
+            p.write_text(tools_strip(theme, mobile, faces), encoding="utf-8", newline="\n")
+            written.append(p)
+            for slug, kicker, name, sentence, _link, cta_text in PROJECTS:
                 p = ASSETS / f"card-{slug}-{theme}{m}.svg"
-                p.write_text(card(slug, kicker, name, sentence, theme, mobile, faces), encoding="utf-8", newline="\n")
+                p.write_text(card(slug, kicker, name, sentence, cta_text, theme, mobile, faces), encoding="utf-8", newline="\n")
                 written.append(p)
     for p in written:
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size:>7,} bytes")

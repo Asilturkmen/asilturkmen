@@ -22,13 +22,13 @@ I work on web apps, APIs, automation and games. You can find more about my proje
 ### Selected work
 
 <p align="center">
-<a href="https://asilturkmen.com/projects/nedirbeo#gh-dark-mode-only"><picture>
+<a href="https://nedirbeo.com/#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-nedirbeo-dark-mobile.svg">
-<img src="assets/card-nedirbeo-dark.svg" width="24%" alt="NedirBeo case study">
+<img src="assets/card-nedirbeo-dark.svg" width="24%" alt="NedirBeo — nedirbeo.com">
 </picture></a>
-<a href="https://asilturkmen.com/projects/nedirbeo#gh-light-mode-only"><picture>
+<a href="https://nedirbeo.com/#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-nedirbeo-light-mobile.svg">
-<img src="assets/card-nedirbeo-light.svg" width="24%" alt="NedirBeo case study">
+<img src="assets/card-nedirbeo-light.svg" width="24%" alt="NedirBeo — nedirbeo.com">
 </picture></a>
 <a href="https://asilturkmen.com/projects/wipeout#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-wipeout-dark-mobile.svg">
@@ -46,19 +46,27 @@ I work on web apps, APIs, automation and games. You can find more about my proje
 <source media="(max-width: 600px)" srcset="assets/card-hesappcim-light-mobile.svg">
 <img src="assets/card-hesappcim-light.svg" width="24%" alt="HesAppcım case study">
 </picture></a>
-<a href="https://asilturkmen.com/projects/yayla-yemek-evi#gh-dark-mode-only"><picture>
+<a href="https://www.yaylayemekevi.com/#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-yayla-yemek-evi-dark-mobile.svg">
-<img src="assets/card-yayla-yemek-evi-dark.svg" width="24%" alt="Yayla Yemek Evi case study">
+<img src="assets/card-yayla-yemek-evi-dark.svg" width="24%" alt="Yayla Yemek Evi — yaylayemekevi.com">
 </picture></a>
-<a href="https://asilturkmen.com/projects/yayla-yemek-evi#gh-light-mode-only"><picture>
+<a href="https://www.yaylayemekevi.com/#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-yayla-yemek-evi-light-mobile.svg">
-<img src="assets/card-yayla-yemek-evi-light.svg" width="24%" alt="Yayla Yemek Evi case study">
+<img src="assets/card-yayla-yemek-evi-light.svg" width="24%" alt="Yayla Yemek Evi — yaylayemekevi.com">
 </picture></a>
 </p>
 
 ### Tools I use
 
-TypeScript · React · Next.js · Vue · Vite · Tailwind&nbsp;CSS · Node.js · Laravel · Python · Flask · PostgreSQL · SQLite · Unity · C# · Docker · Git · Vercel
+<p>
+<a href="https://asilturkmen.com/#gh-dark-mode-only"><picture>
+<source media="(max-width: 600px)" srcset="assets/tools-dark-mobile.svg">
+<img src="assets/tools-dark.svg" width="100%" alt="Tools I use: TypeScript, React, Next.js, Vue, Vite, Tailwind CSS, Node.js, Laravel, Python, Flask, PostgreSQL, SQLite, Unity, C#, Docker, Git, Vercel.">
+</picture></a><a href="https://asilturkmen.com/#gh-light-mode-only"><picture>
+<source media="(max-width: 600px)" srcset="assets/tools-light-mobile.svg">
+<img src="assets/tools-light.svg" width="100%" alt="Tools I use: TypeScript, React, Next.js, Vue, Vite, Tailwind CSS, Node.js, Laravel, Python, Flask, PostgreSQL, SQLite, Unity, C#, Docker, Git, Vercel.">
+</picture></a>
+</p>
 
 <p>
 <a href="https://asilturkmen.com/#gh-dark-mode-only"><picture>
@@ -70,6 +78,10 @@ TypeScript · React · Next.js · Vue · Vite · Tailwind&nbsp;CSS · Node.js ·
 </picture></a>
 </p>
 
-<p align="center"><samp><a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/">LinkedIn</a> · <a href="mailto:contact.asilturkmen@gmail.com">Email</a> · <a href="https://instagram.com/asil_turkmen28">Instagram</a> · <a href="https://asilturkmen.com/cv/cveng.pdf">CV</a> · <a href="https://buymeacoffee.com/turkmenasil">Buy&nbsp;me&nbsp;a&nbsp;coffee</a></samp></p>
+<p align="center">
+<a href="https://asilturkmen.com"><img src="assets/link-website.svg" width="42" height="42" alt="asilturkmen.com"></a>&nbsp;&nbsp;
+<a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/"><img src="assets/link-linkedin.svg" width="42" height="42" alt="LinkedIn"></a>&nbsp;&nbsp;
+<a href="mailto:contact.asilturkmen@gmail.com"><img src="assets/link-email.svg" width="42" height="42" alt="Email"></a>&nbsp;&nbsp;
+<a href="https://buymeacoffee.com/turkmenasil"><img src="assets/link-coffee.svg" width="42" height="42" alt="Buy me a coffee"></a>
+</p>
 
-<sub>Every image on this page is drawn by <a href="scripts/build.py">scripts/build.py</a>.</sub>
