@@ -1,3 +1,4 @@
+<p>
 <a href="https://asilturkmen.com/#gh-dark-mode-only">
 <picture>
 <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="assets/hero-dark-mobile-still.svg">
@@ -14,49 +15,55 @@
 <img src="assets/hero-light.svg" width="100%" alt="Asil Türkmen — Full-stack developer, Software Engineering student at EMU, North Cyprus. The watch shows how long you have been on this page.">
 </picture>
 </a>
-
-<sub>The watch started when you opened this page.</sub>
-
-I work on web apps, APIs, automation and games. You can find more about my projects and my CV at **[asilturkmen.com](https://asilturkmen.com)**.
-
-### Selected work
+</p>
 
 <p align="center">
 <a href="https://nedirbeo.com/#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-nedirbeo-dark-mobile.svg">
-<img src="assets/card-nedirbeo-dark.svg" width="24%" alt="NedirBeo — nedirbeo.com">
+<img src="assets/card-nedirbeo-dark.svg" width="24%" alt="NedirBeo — A community dictionary for Cypriot Turkish.">
 </picture></a>
 <a href="https://nedirbeo.com/#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-nedirbeo-light-mobile.svg">
-<img src="assets/card-nedirbeo-light.svg" width="24%" alt="NedirBeo — nedirbeo.com">
+<img src="assets/card-nedirbeo-light.svg" width="24%" alt="NedirBeo — A community dictionary for Cypriot Turkish.">
 </picture></a>
-<a href="https://asilturkmen.com/projects/wipeout#gh-dark-mode-only"><picture>
+<a href="https://eyll.itch.io/wipeout#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-wipeout-dark-mobile.svg">
-<img src="assets/card-wipeout-dark.svg" width="24%" alt="Wipeout case study">
+<img src="assets/card-wipeout-dark.svg" width="24%" alt="Wipeout — A multiplayer parkour game played over LAN by 50+ people at an event.">
 </picture></a>
-<a href="https://asilturkmen.com/projects/wipeout#gh-light-mode-only"><picture>
+<a href="https://eyll.itch.io/wipeout#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-wipeout-light-mobile.svg">
-<img src="assets/card-wipeout-light.svg" width="24%" alt="Wipeout case study">
+<img src="assets/card-wipeout-light.svg" width="24%" alt="Wipeout — A multiplayer parkour game played over LAN by 50+ people at an event.">
 </picture></a>
-<a href="https://asilturkmen.com/projects/hesappcim#gh-dark-mode-only"><picture>
+<a href="https://hes-appcim.vercel.app/login#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-hesappcim-dark-mobile.svg">
-<img src="assets/card-hesappcim-dark.svg" width="24%" alt="HesAppcım case study">
+<img src="assets/card-hesappcim-dark.svg" width="24%" alt="HesAppcım — An app for tracking shared expenses and calculating who owes whom.">
 </picture></a>
-<a href="https://asilturkmen.com/projects/hesappcim#gh-light-mode-only"><picture>
+<a href="https://hes-appcim.vercel.app/login#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-hesappcim-light-mobile.svg">
-<img src="assets/card-hesappcim-light.svg" width="24%" alt="HesAppcım case study">
+<img src="assets/card-hesappcim-light.svg" width="24%" alt="HesAppcım — An app for tracking shared expenses and calculating who owes whom.">
 </picture></a>
 <a href="https://www.yaylayemekevi.com/#gh-dark-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-yayla-yemek-evi-dark-mobile.svg">
-<img src="assets/card-yayla-yemek-evi-dark.svg" width="24%" alt="Yayla Yemek Evi — yaylayemekevi.com">
+<img src="assets/card-yayla-yemek-evi-dark.svg" width="24%" alt="Yayla Yemek Evi — The website of a village restaurant in Pamuklu, North Cyprus.">
 </picture></a>
 <a href="https://www.yaylayemekevi.com/#gh-light-mode-only"><picture>
 <source media="(max-width: 600px)" srcset="assets/card-yayla-yemek-evi-light-mobile.svg">
-<img src="assets/card-yayla-yemek-evi-light.svg" width="24%" alt="Yayla Yemek Evi — yaylayemekevi.com">
+<img src="assets/card-yayla-yemek-evi-light.svg" width="24%" alt="Yayla Yemek Evi — The website of a village restaurant in Pamuklu, North Cyprus.">
 </picture></a>
+<br>
+<a href="https://nedirbeo.com/#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-nedirbeo-live-dark-mobile.svg"><img src="assets/btn-nedirbeo-live-dark.svg" width="24%" alt="NedirBeo — live site"></picture></a><a
+href="https://nedirbeo.com/#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-nedirbeo-live-light-mobile.svg"><img src="assets/btn-nedirbeo-live-light.svg" width="24%" alt="NedirBeo — live site"></picture></a>
+<a href="https://eyll.itch.io/wipeout#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-wipeout-live-dark-mobile.svg"><img src="assets/btn-wipeout-live-dark.svg" width="24%" alt="Wipeout — live site"></picture></a><a
+href="https://eyll.itch.io/wipeout#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-wipeout-live-light-mobile.svg"><img src="assets/btn-wipeout-live-light.svg" width="24%" alt="Wipeout — live site"></picture></a>
+<a href="https://github.com/Asilturkmen/HesAppcim#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-hesappcim-code-dark-mobile.svg"><img src="assets/btn-hesappcim-code-dark.svg" width="12%" alt="HesAppcım — source code on GitHub"></picture></a><a
+href="https://github.com/Asilturkmen/HesAppcim#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-hesappcim-code-light-mobile.svg"><img src="assets/btn-hesappcim-code-light.svg" width="12%" alt="HesAppcım — source code on GitHub"></picture></a><a
+href="https://hes-appcim.vercel.app/login#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-hesappcim-live-dark-mobile.svg"><img src="assets/btn-hesappcim-live-dark.svg" width="12%" alt="HesAppcım — live site"></picture></a><a
+href="https://hes-appcim.vercel.app/login#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-hesappcim-live-light-mobile.svg"><img src="assets/btn-hesappcim-live-light.svg" width="12%" alt="HesAppcım — live site"></picture></a>
+<a href="https://github.com/Asilturkmen/Yaylayemekevi#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-yayla-yemek-evi-code-dark-mobile.svg"><img src="assets/btn-yayla-yemek-evi-code-dark.svg" width="12%" alt="Yayla Yemek Evi — source code on GitHub"></picture></a><a
+href="https://github.com/Asilturkmen/Yaylayemekevi#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-yayla-yemek-evi-code-light-mobile.svg"><img src="assets/btn-yayla-yemek-evi-code-light.svg" width="12%" alt="Yayla Yemek Evi — source code on GitHub"></picture></a><a
+href="https://www.yaylayemekevi.com/#gh-dark-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-yayla-yemek-evi-live-dark-mobile.svg"><img src="assets/btn-yayla-yemek-evi-live-dark.svg" width="12%" alt="Yayla Yemek Evi — live site"></picture></a><a
+href="https://www.yaylayemekevi.com/#gh-light-mode-only"><picture><source media="(max-width: 600px)" srcset="assets/btn-yayla-yemek-evi-live-light-mobile.svg"><img src="assets/btn-yayla-yemek-evi-live-light.svg" width="12%" alt="Yayla Yemek Evi — live site"></picture></a>
 </p>
-
-### Tools I use
 
 <p>
 <a href="https://asilturkmen.com/#gh-dark-mode-only"><picture>

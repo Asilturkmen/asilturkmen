@@ -2,7 +2,8 @@
 
 Everything on github.com/Asilturkmen that is not plain text comes out of this
 file: the hero (name, role, and a watch that counts the time you spend on the
-page) and the footer that points to asilturkmen.com.
+page), the project cards with their Code / Live buttons, and the footer that
+points to asilturkmen.com.
 
 Each image is written in four variants: dark/light (chosen on GitHub with the
 #gh-dark-mode-only / #gh-light-mode-only link fragments), desktop/mobile
@@ -37,7 +38,7 @@ try:
     from movement import movement, movement_defs  # skeleton watch, scripts/movement.py
 except ImportError:  # pragma: no cover
     movement = movement_defs = None
-from tools import tools_strip  # "Tools I use" strip, scripts/tools.py
+from tools import tools_strip, _icon as brand_icon  # "Tools I use" strip, scripts/tools.py
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -49,8 +50,6 @@ FONT_FILES = {
     500: "Satoshi_Complete/Fonts/OTF/Satoshi-Medium.otf",
 }
 
-SITE = "https://asilturkmen.com"
-
 # ----------------------------------------------------------------- content
 NAME = "Asil Türkmen"
 ROLE_1 = "Full-stack developer"
@@ -61,16 +60,15 @@ FOOT_KICKER = "MORE ABOUT MY WORK"
 FOOT_DOMAIN = "asilturkmen.com"
 FOOT_SUB = "projects · case studies · CV"
 
-# (slug, kicker, name, sentence, link, call to action) — sentences are Asil's own (used in alt text).
+# (slug, name, live site, public repo or None when the code is private).
+# The card links to the live site; under it sit a "Code" and a "Live" button
+# side by side, or a single full-width "Live" button when there is no repo.
+# Asil's one-line descriptions of the projects are in the README alt text.
 PROJECTS = [
-    ("nedirbeo", "COMMUNITY · DICTIONARY", "NedirBeo", "A community dictionary for Cypriot Turkish.",
-     "https://nedirbeo.com", "VISIT SITE"),
-    ("wipeout", "GAME · LAN MULTIPLAYER", "Wipeout", "A multiplayer parkour game played over LAN by 50+ people at an event.",
-     f"{SITE}/projects/wipeout", "CASE STUDY"),
-    ("hesappcim", "FINANCE · WEB APP", "HesAppcım", "An app for tracking shared expenses and calculating who owes whom.",
-     f"{SITE}/projects/hesappcim", "CASE STUDY"),
-    ("yayla-yemek-evi", "RESTAURANT · SHOWCASE", "Yayla Yemek Evi", "The website of a village restaurant in Pamuklu, North Cyprus.",
-     "https://www.yaylayemekevi.com", "VISIT SITE"),
+    ("nedirbeo", "NedirBeo", "https://nedirbeo.com", None),
+    ("wipeout", "Wipeout", "https://eyll.itch.io/wipeout", None),
+    ("hesappcim", "HesAppcım", "https://hes-appcim.vercel.app/login", "https://github.com/Asilturkmen/HesAppcim"),
+    ("yayla-yemek-evi", "Yayla Yemek Evi", "https://www.yaylayemekevi.com", "https://github.com/Asilturkmen/Yaylayemekevi"),
 ]
 MEDIA = ROOT / "media" / "thumbs"
 
@@ -312,49 +310,30 @@ def hero(theme: str, mobile: bool, still: bool, faces: dict) -> str:
 
 
 # ----------------------------------------------------------------- cards
-def wrap(face: Face, text: str, size: float, width: float) -> list:
-    """Greedy word wrap using real advance widths."""
-    words, lines, cur = text.split(), [], ""
-    for w in words:
-        trial = (cur + " " + w).strip()
-        if cur and face.layout(trial, size).width > width:
-            lines.append(cur)
-            cur = w
-        else:
-            cur = trial
-    if cur:
-        lines.append(cur)
-    return lines
+def pretty_url(url: str) -> str:
+    return url.split("://", 1)[-1].removeprefix("www.").rstrip("/")
 
 
-def card(slug: str, kicker: str, name: str, sentence: str, cta_text: str, theme: str, mobile: bool, faces: dict) -> str:
+def card(slug: str, name: str, live: str, theme: str, mobile: bool, faces: dict) -> str:
+    """Cover shot and the project's name, nothing else: the whole card links to
+    the live site and the buttons under it carry the calls to action."""
     t = THEMES[theme]
     W = 204
-    H = 150 if mobile else 200
+    # desktop renders at ~203 px, mobile at ~74 px (24% of a 308 px column)
+    size, x, gap, H = (24, 12, 14, 160) if mobile else (22, 13, 16, 164)
     data = base64.b64encode((MEDIA / f"{slug}.webp").read_bytes()).decode("ascii")
     defs, body, border = frame(W, H, t)
     defs += f'<clipPath id="shot"><rect x="10" y="10" width="184" height="104" rx="7"/></clipPath>'
+    nm = faces[700].layout(name, size, tracking=-0.01)
     parts = [
         f'<rect x="10" y="10" width="184" height="104" rx="7" fill="{t["dial"]}"/>',
         f'<image href="data:image/webp;base64,{data}" x="10" y="10" width="184" height="104" '
         f'preserveAspectRatio="xMidYMid slice" clip-path="url(#shot)"/>',
         f'<rect x="10.5" y="10.5" width="183" height="103" rx="6.5" fill="none" stroke="{t["sheen"]}" stroke-opacity="0.08"/>',
+        nm.path(x, 114 + gap + faces[700].cap_height(size), t["ink"]),
     ]
-    if mobile:
-        nm = faces[700].layout(name, 19, tracking=-0.01)
-        parts.append(nm.path(14, 140, t["ink"]))
-    else:
-        kk = faces[700].layout(kicker, 8.8, tracking=0.2)
-        parts.append(kk.path(14, 137, t["accent"], nd=2))
-        nm = faces[700].layout(name, 18, tracking=-0.01)
-        parts.append(nm.path(14, 160, t["ink"]))
-        cta = faces[700].layout(cta_text, 8.5, tracking=0.18)
-        arrow = faces[500].layout("→", 11)
-        parts.append(f'<rect x="14" y="{H - 25.5}" width="176" height="1" fill="{t["border"]}"/>')
-        parts.append(cta.path(14, H - 10, t["accent"], nd=2))
-        parts.append(arrow.path(W - 14 - arrow.width, H - 9.5, t["accent"], nd=2))
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
-<title id="t">{name} — {sentence}</title>
+<title id="t">{name} — {pretty_url(live)}</title>
 <defs>
 {defs}
 </defs>
@@ -365,6 +344,105 @@ def card(slug: str, kicker: str, name: str, sentence: str, cta_text: str, theme:
 </g>
 </svg>
 '''
+
+
+# ----------------------------------------------------------------- buttons
+# Two links need two images on GitHub, so the buttons are images of their own,
+# drawn to sit in the card's column: a "Code" + "Live" pair at 12% + 12% of the
+# README width (glued together in the markup, no whitespace between them) or
+# one "Live" button at 24%. A pair is drawn edge to edge with BTN_GAP of
+# transparent space between the two pills, so pair and card share both edges.
+# Live is the primary action and is filled with the accent gold; Code is
+# outlined on the card surface. Mobile buttons (~37 px wide) are icon only.
+BTN_H = 40
+BTN_W = {(False, False): 204, (False, True): 102, (True, False): 84, (True, True): 42}  # (mobile, half)
+BTN_GAP = {False: 4.0, True: 4.4}   # ~3.9 px on screen, the width of the space between the cards
+BTN_LABEL = 14
+BTN_STYLE = "ink"   # one of: metal, ink, goldline, ghost
+
+
+def mix(a: str, b: str, k: float) -> str:
+    """a moved towards b by k (0..1), sRGB hex."""
+    pa = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
+    pb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(x + (y - x) * k):02x}" for x, y in zip(pa, pb))
+
+
+def arrow_ne(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
+    """A north-east arrow drawn with strokes in an s x s box centred on (cx, cy)."""
+    a = s / 2 - sw / 2
+    head = a * 1.3
+    return (f'<path d="M{num(cx - a, 2)} {num(cy + a, 2)}L{num(cx + a, 2)} {num(cy - a, 2)}'
+            f'M{num(cx + a - head, 2)} {num(cy - a, 2)}H{num(cx + a, 2)}V{num(cy - a + head, 2)}" '
+            f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round" stroke-linejoin="round"/>')
+
+
+def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict) -> str:
+    """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site)."""
+    t = THEMES[theme]
+    W, H = BTN_W[(mobile, half)], BTN_H
+    x0, x1 = 0.0, float(W)
+    if half:
+        if kind == "code":
+            x1 -= BTN_GAP[mobile] / 2
+        else:
+            x0 += BTN_GAP[mobile] / 2
+    w, cy, r = x1 - x0, H / 2, 10
+    style = BTN_STYLE
+    # colours per style: (fill kind, icon colour, label colour, border colour)
+    if style == "metal" and kind == "live":
+        fill, fg, lab, border = "metal", t["bg0"], t["bg0"], None
+    elif style == "ink" and kind == "live":
+        fill, fg, lab, border = "ink", t["bg0"], t["bg0"], None
+    elif style == "goldline" and kind == "live":
+        fill, fg, lab, border = "surface", t["accent"], t["accent"], t["accent"]
+    elif style == "ghost":
+        fill, fg, lab, border = "surface", (t["accent"] if kind == "live" else t["muted"]), t["ink"], t["border"]
+    else:  # secondary button in every style
+        fill, fg, lab, border = "surface", (t["accent"] if style == "goldline" else t["ink2"]), t["ink2"], t["border"]
+
+    defs, shapes = [], []
+    if fill == "metal":
+        top, mid, bottom = mix(t["accent"], "#ffffff", 0.38), t["accent"], mix(t["accent"], "#000000", 0.16)
+        defs.append(f'<linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{top}"/>'
+                    f'<stop offset="0.55" stop-color="{mid}"/><stop offset="1" stop-color="{bottom}"/></linearGradient>')
+        shapes.append(f'<rect x="{num(x0)}" y="0" width="{num(w)}" height="{H}" rx="{r}" fill="url(#fill)"/>')
+        shapes.append(f'<rect x="{num(x0 + 0.5)}" y="0.5" width="{num(w - 1)}" height="{H - 1}" rx="{r - 0.5}" fill="none" stroke="#ffffff" stroke-opacity="0.35"/>')
+    elif fill == "ink":
+        shapes.append(f'<rect x="{num(x0)}" y="0" width="{num(w)}" height="{H}" rx="{r}" fill="{t["ink"]}"/>')
+    else:
+        defs.append(f'<linearGradient id="surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{t["bg0"]}"/>'
+                    f'<stop offset="1" stop-color="{t["bg1"]}"/></linearGradient>')
+        defs.append(f'<linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{t["sheen"]}" stop-opacity="0"/>'
+                    f'<stop offset="0.5" stop-color="{t["accent"]}" stop-opacity="0.35"/>'
+                    f'<stop offset="1" stop-color="{t["sheen"]}" stop-opacity="0"/></linearGradient>')
+        shapes.append(f'<rect x="{num(x0 + 0.5)}" y="0.5" width="{num(w - 1)}" height="{H - 1}" rx="{r - 0.5}" '
+                      f'fill="url(#surface)" stroke="{border}"{" stroke-opacity=\"0.7\"" if border == t["accent"] else ""}/>')
+        if border != t["accent"]:
+            shapes.append(f'<rect x="{num(x0 + 14)}" y="0.5" width="{num(w - 28)}" height="1" fill="url(#sheen)"/>')
+
+    icon_size = 18 if mobile else 15
+    label = None if mobile else faces[700].layout(kind.title(), BTN_LABEL, tracking=0.01)
+    gap = 8
+    group = icon_size + (gap + label.width if label else 0)
+    gx = x0 + (w - group) / 2
+    icx = gx + icon_size / 2
+    if kind == "code":
+        shapes.append(brand_icon("github", icx, cy, icon_size, fg))
+    else:
+        shapes.append(arrow_ne(icx, cy, icon_size * 0.82, fg, 2.0 if mobile else 1.8))
+    if label:
+        shapes.append(label.path(gx + icon_size + gap, cy + faces[700].cap_height(BTN_LABEL) / 2, lab, nd=2))
+    title = f"{name} — source code on GitHub" if kind == "code" else f"{name} — live site"
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
+<title id="t">{title}</title>
+<defs>
+{chr(10).join(defs)}
+</defs>
+{chr(10).join(shapes)}
+</svg>
+'''
+
 
 # ----------------------------------------------------------------- footer
 def footer(theme: str, mobile: bool, faces: dict) -> str:
@@ -431,10 +509,14 @@ def main() -> None:
             p = ASSETS / f"tools-{theme}{m}.svg"
             p.write_text(tools_strip(theme, mobile, faces), encoding="utf-8", newline="\n")
             written.append(p)
-            for slug, kicker, name, sentence, _link, cta_text in PROJECTS:
+            for slug, name, live, repo in PROJECTS:
                 p = ASSETS / f"card-{slug}-{theme}{m}.svg"
-                p.write_text(card(slug, kicker, name, sentence, cta_text, theme, mobile, faces), encoding="utf-8", newline="\n")
+                p.write_text(card(slug, name, live, theme, mobile, faces), encoding="utf-8", newline="\n")
                 written.append(p)
+                for kind in (("code", "live") if repo else ("live",)):
+                    p = ASSETS / f"btn-{slug}-{kind}-{theme}{m}.svg"
+                    p.write_text(button(kind, name, theme, mobile, bool(repo), faces), encoding="utf-8", newline="\n")
+                    written.append(p)
     for p in written:
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size:>7,} bytes")
 
