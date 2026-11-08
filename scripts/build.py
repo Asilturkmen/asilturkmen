@@ -444,6 +444,45 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
 '''
 
 
+# One grey that reads as "dimmed" on both GitHub page colours (#0d1117 and #fff),
+# so the non-link half needs no dark/light pair (#gh-*-mode-only keys off a link).
+NEUTRAL = "#8b929c"
+
+
+def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
+    """A padlock drawn with strokes in an s x s box centred on (cx, cy)."""
+    k = s / 24
+
+    def p(x: float, y: float) -> str:
+        return f"{num(cx + (x - 12) * k, 2)} {num(cy + (y - 12) * k, 2)}"
+
+    body = (f'<rect x="{num(cx - 7.5 * k, 2)}" y="{num(cy - 1.5 * k, 2)}" width="{num(15 * k, 2)}" height="{num(11 * k, 2)}" '
+            f'rx="{num(2.6 * k, 2)}" fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}"/>')
+    shackle = (f'<path d="M{p(8.2, 10.5)}L{p(8.2, 7.4)}A{num(3.8 * k, 2)} {num(3.8 * k, 2)} 0 0 1 {p(15.8, 7.4)}L{p(15.8, 10.5)}" '
+               f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round"/>')
+    hole = f'<circle cx="{num(cx, 2)}" cy="{num(cy + 4 * k, 2)}" r="{num(1.4 * k, 2)}" fill="{colour}"/>'
+    return body + shackle + hole
+
+
+def private_button(mobile: bool, faces: dict) -> str:
+    """Left half for a project whose code is private: not a link, no theme pair."""
+    W, H = BTN_W[(mobile, True)], BTN_H
+    x0, x1 = 0.0, W - BTN_GAP[mobile] / 2
+    w, cy, r = x1 - x0, H / 2, 10
+    shapes = [f'<rect x="{num(x0 + 0.5)}" y="0.5" width="{num(w - 1)}" height="{H - 1}" rx="{r - 0.5}" '
+              f'fill="{NEUTRAL}" fill-opacity="0.06" stroke="{NEUTRAL}" stroke-opacity="0.32"/>']
+    icon_size = 18 if mobile else 15
+    label = None if mobile else faces[700].layout("Private", BTN_LABEL, tracking=0.01)
+    group = icon_size + (8 + label.width if label else 0)
+    gx = x0 + (w - group) / 2
+    shapes.append(lock(gx + icon_size / 2, cy, icon_size, NEUTRAL, 1.8 if mobile else 1.6))
+    if label:
+        shapes.append(label.path(gx + icon_size + 8, cy + faces[700].cap_height(BTN_LABEL) / 2, NEUTRAL, nd=2))
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">\n'
+            f'<title id="t">The source code is private</title>\n' + "\n".join(shapes) + "\n</svg>\n")
+
+
+
 # ----------------------------------------------------------------- footer
 def footer(theme: str, mobile: bool, faces: dict) -> str:
     t = THEMES[theme]
@@ -515,8 +554,12 @@ def main() -> None:
                 written.append(p)
                 for kind in (("code", "live") if repo else ("live",)):
                     p = ASSETS / f"btn-{slug}-{kind}-{theme}{m}.svg"
-                    p.write_text(button(kind, name, theme, mobile, bool(repo), faces), encoding="utf-8", newline="\n")
+                    p.write_text(button(kind, name, theme, mobile, True, faces), encoding="utf-8", newline="\n")
                     written.append(p)
+    for mobile in (False, True):   # theme-neutral, one image for both themes
+        p = ASSETS / f"btn-private{'-mobile' if mobile else ''}.svg"
+        p.write_text(private_button(mobile, faces), encoding="utf-8", newline="\n")
+        written.append(p)
     for p in written:
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size:>7,} bytes")
 

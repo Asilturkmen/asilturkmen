@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 40" width="84" height="40" role="img" aria-labelledby="t">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 40" width="42" height="40" role="img" aria-labelledby="t">
 <title id="t">Wipeout — live site</title>
 <defs>
 
 </defs>
-<rect x="0" y="0" width="84" height="40" rx="10" fill="#f4f5f7"/>
-<path d="M35.62 26.38L48.38 13.62M40.09 13.62H48.38V21.91" fill="none" stroke="#101216" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="2.2" y="0" width="39.8" height="40" rx="10" fill="#f4f5f7"/>
+<path d="M15.72 26.38L28.48 13.62M20.19 13.62H28.48V21.91" fill="none" stroke="#101216" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
