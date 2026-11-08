@@ -1,0 +1,5 @@
+# Pinned so thumbnails (libwebp in Pillow) and font outlines stay byte-identical.
+pillow==12.2.0
+fonttools==4.66.1
+uharfbuzz==0.57.0
+playwright==1.60.0
