@@ -4,14 +4,6 @@
   </a>
 </p>
 
-<p><img src="assets/label-about.svg" width="420" alt="About me" /></p>
-
-<p align="center">
-  <a href="https://asilturkmen.com">
-    <img src="assets/about.svg" width="100%" alt="About Asil Türkmen — Full-Stack Developer and Software Engineering student at Eastern Mediterranean University in Cyprus." />
-  </a>
-</p>
-
 <p><img src="assets/label-work.svg" width="420" alt="Selected work" /></p>
 
 <p align="center">
