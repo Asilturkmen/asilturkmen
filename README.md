@@ -7,7 +7,7 @@
 <p><img src="assets/label-work.svg" width="420" alt="Selected work" /></p>
 
 <p align="center">
-  <a href="https://asilturkmen.com/projects/nedirbeo">
+  <a href="https://nedirbeo.com">
     <img src="assets/work-nedirbeo.svg" width="49%" alt="NedirBeo — A community dictionary for Cypriot Turkish." />
   </a>
   <a href="https://asilturkmen.com/projects/wipeout">
@@ -19,7 +19,7 @@
   <a href="https://asilturkmen.com/projects/hesappcim">
     <img src="assets/work-hesappcim.svg" width="49%" alt="HesAppcım — An app for tracking shared expenses and calculating who owes whom." />
   </a>
-  <a href="https://asilturkmen.com/projects/yayla-yemek-evi">
+  <a href="https://yaylayemekevi.com">
     <img src="assets/work-yayla-yemek-evi.svg" width="49%" alt="Yayla Yemek Evi — The website of a village restaurant in Pamuklu, North Cyprus." />
   </a>
 </p>
@@ -39,10 +39,8 @@
 </p>
 
 <p align="center">
-  <a href="https://asilturkmen.com">asilturkmen.com</a> ·
-  <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/">LinkedIn</a> ·
-  <a href="mailto:contact.asilturkmen@gmail.com">Email</a> ·
-  <a href="https://instagram.com/asil_turkmen28">Instagram</a> ·
-  <a href="https://asilturkmen.com/cv/cveng.pdf">CV</a> ·
-  <a href="https://buymeacoffee.com/turkmenasil">Buy me a coffee</a>
+  <a href="https://asilturkmen.com"><img src="assets/link-website.svg" width="42" height="42" alt="asilturkmen.com" /></a>&nbsp;&nbsp;
+  <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/"><img src="assets/link-linkedin.svg" width="42" height="42" alt="LinkedIn" /></a>&nbsp;&nbsp;
+  <a href="mailto:contact.asilturkmen@gmail.com"><img src="assets/link-email.svg" width="42" height="42" alt="Email" /></a>&nbsp;&nbsp;
+  <a href="https://buymeacoffee.com/turkmenasil"><img src="assets/link-coffee.svg" width="42" height="42" alt="Buy me a coffee" /></a>
 </p>
