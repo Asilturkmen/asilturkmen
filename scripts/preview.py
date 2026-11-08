@@ -176,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, help="output directory (default: <repo>/.preview)")
     ap.add_argument("--views", default=",".join(VIEWS), help="comma-separated subset of " + ", ".join(VIEWS))
     ap.add_argument("--reduced-motion", action="store_true", help="emulate prefers-reduced-motion: reduce (*-rm.png)")
-    ap.add_argument("--wait", type=int, default=1500, help="ms to wait after images load (SMIL start)")
+    ap.add_argument("--wait", type=int, default=2500, help="ms to wait after images load (the hero entrance takes ~2.1 s)")
     args = ap.parse_args(argv)
 
     views = [v.strip() for v in args.views.split(",") if v.strip()]

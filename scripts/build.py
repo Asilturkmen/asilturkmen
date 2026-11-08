@@ -53,8 +53,12 @@ FONT_FILES = {
 # ----------------------------------------------------------------- content
 NAME = "Asil Türkmen"
 ROLE_1 = "Full-stack developer"
-ROLE_1_TAIL = "North Cyprus"
+ROLE_1_TAIL = "Cyprus"
 ROLE_2 = "Software Engineering student at EMU"
+BUILDS = ("web apps", "APIs", "automation", "games")   # "I build ___", the word keeps turning
+BUILD_LEAD = "I build"
+BUILD_HOLD = 2.4      # seconds each word stays
+BUILD_RISE = 0.5      # seconds a word takes to turn in / out
 DIAL_LABEL = ("TIME ON", "THIS PAGE")
 FOOT_KICKER = "MORE ABOUT MY WORK"
 FOOT_DOMAIN = "asilturkmen.com"
@@ -349,37 +353,240 @@ def watch(cx: float, cy: float, r: float, t: dict, faces: dict, still: bool, lab
     return "\n".join(out)
 
 
+# ----------------------------------------------------------------- hero lockup
+# The text block left of the watch, in three registers: the name; the
+# statement "I build ___" whose last word keeps turning like a slot drum (web
+# apps, APIs, automation, games); and a meta strip (role, place, school) under
+# a gold rule. The moving hero plays the block in once (name, statement, rule,
+# strip items, staggered over ~2 s) and then only the turning word and the
+# watch keep moving. Every animation starts at t=0,
+# holds its first value until its cue and ends on the drawing's own attributes,
+# so a renderer without SMIL shows the finished lockup, which is exactly what
+# the still (reduced-motion) variant draws.
+EASE = "0.2 0.8 0.2 1"     # keySplines: quick start, long soft landing
+SWEEP = "0.45 0 0.2 1"     # the light across the name: eases in, so it is seen travelling
+
+
+def intro(tag: str, attr: str, a: str, b: str, at: float, dur: float, extra: str = "", ease: str = EASE) -> str:
+    """One-shot SMIL entrance: hold a until `at` s, ease to b over `dur` s, freeze."""
+    total = at + dur
+    if at <= 0:
+        vals, keys, splines = f"{a};{b}", "0;1", ease
+    else:
+        vals, keys, splines = f"{a};{a};{b}", f"0;{num(at / total, 4)};1", f"0 0 1 1;{ease}"
+    return (f'<{tag} attributeName="{attr}"{extra} values="{vals}" keyTimes="{keys}" dur="{num(total, 3)}s" '
+            f'calcMode="spline" keySplines="{splines}" fill="freeze"/>')
+
+
+def glyph(kind: str, cx: float, cy: float, s: float, colour: str, sw: float) -> str:
+    """Small stroke icons drawn in a 24-unit box centred on (cx, cy), s units wide:
+    "code" (</>), "pin" (map pin), "spark" (four-point star) and "cap" (mortarboard)."""
+    k = s / 24
+
+    def p(x: float, y: float) -> str:
+        return f"{num(cx + (x - 12) * k, 2)} {num(cy + (y - 12) * k, 2)}"
+
+    def arc(rad: float) -> str:
+        return f"{num(rad * k, 2)} {num(rad * k, 2)}"
+
+    if kind == "code":
+        d = (f"M{p(7.5, 6.5)}L{p(2, 12)}L{p(7.5, 17.5)}M{p(16.5, 6.5)}L{p(22, 12)}L{p(16.5, 17.5)}"
+             f"M{p(13.8, 4)}L{p(10.2, 20)}")
+    elif kind == "pin":
+        d = (f"M{p(12, 22)}C{p(12, 22)} {p(5, 15.2)} {p(5, 9.8)}A{arc(7)} 0 0 1 {p(19, 9.8)}"
+             f"C{p(19, 15.2)} {p(12, 22)} {p(12, 22)}Z"
+             f"M{p(9.6, 9.8)}A{arc(2.4)} 0 1 0 {p(14.4, 9.8)}A{arc(2.4)} 0 1 0 {p(9.6, 9.8)}Z")
+    elif kind == "spark":
+        d = (f"M{p(12, 2.5)}C{p(12.6, 8.4)} {p(15.6, 11.4)} {p(21.5, 12)}C{p(15.6, 12.6)} {p(12.6, 15.6)} {p(12, 21.5)}"
+             f"C{p(11.4, 15.6)} {p(8.4, 12.6)} {p(2.5, 12)}C{p(8.4, 11.4)} {p(11.4, 8.4)} {p(12, 2.5)}Z")
+    elif kind == "cap":
+        d = (f"M{p(1, 9.5)}L{p(12, 4.5)}L{p(23, 9.5)}L{p(12, 14.5)}Z"
+             f"M{p(5.5, 12)}L{p(5.5, 16.5)}C{p(7.5, 18.6)} {p(9.6, 19.5)} {p(12, 19.5)}"
+             f"C{p(14.4, 19.5)} {p(16.5, 18.6)} {p(18.5, 16.5)}L{p(18.5, 12)}"
+             f"M{p(23, 9.5)}L{p(23, 15)}")
+    else:
+        raise ValueError(kind)
+    return (f'<path d="{d}" fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" '
+            f'stroke-linecap="round" stroke-linejoin="round"/>')
+
+
+META_SCHOOL = "EMU Software Engineering"   # ROLE_2 in the one-line desktop strip (the phone strip has room for ROLE_2)
+
+
+def lockup(t: dict, faces: dict, mobile: bool, still: bool) -> tuple[str, str]:
+    """The hero's text block in hero coordinates; returns (defs, drawing).
+
+    Three registers instead of three equal lines: the name (Black, large); the
+    statement "I build ___" at half its size, a quiet Medium lead and a gold
+    Black word that keeps turning like a slot drum; and the facts collapsed
+    into one small meta strip under a gold hairline, split by gold hairlines
+    (two short rows on phones)."""
+    if mobile:
+        x0, yn, ns, band, floor = 28, 54, 44, 72, 5
+        sy, ss = 37, 22                    # statement: baseline below the name's, size
+        ry, my, ms, mlh = 19, 21, 12, 20   # rule below the statement, strip below the rule, strip size, row pitch
+        ics, isw, igap, sgap = 12, 1.35, 6, 10
+        right, fit = 332, 324              # the text column ends here; the still statement a little sooner
+        rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL)], [("cap", ROLE_2)]]
+    else:
+        x0, yn, ns, band, floor = 56, 122, 60, 96, 7
+        sy, ss = 50, 30
+        ry, my, ms, mlh = 24, 24, 13, 0
+        ics, isw, igap, sgap = 13.5, 1.4, 7, 13
+        right, fit = 528, 488              # clear of the watch's dotted track; still statement <= strip
+        rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL), ("cap", META_SCHOOL)]]
+    ink, ink2, gold = t["ink"], t["ink2"], t["accent"]
+    translate = ' type="translate"'
+    defs, out = [], []
+
+    # name: revealed left to right behind a warm edge while it rises a few units
+    name = faces[900].layout(NAME, ns, tracking=-0.012)
+    if still:
+        out.append(name.path(x0, yn, ink))
+    else:
+        xe = x0 + name.width + 4                     # at rest the band sits right of the name
+        travel = name.width + band + 8
+        sweep = intro("animateTransform", "gradientTransform", f"-{num(travel)} 0", "0 0", 0.0, 1.1, translate, SWEEP)
+        defs.append(f'<linearGradient id="hx-name" gradientUnits="userSpaceOnUse" x1="{num(xe)}" y1="0" x2="{num(xe + band)}" y2="0">'
+                    f'<stop offset="0" stop-color="{ink}"/><stop offset="0.3" stop-color="{mix(ink, gold, 0.5)}"/>'
+                    f'<stop offset="0.62" stop-color="{mix(gold, ink, 0.3)}" stop-opacity="0.5"/>'
+                    f'<stop offset="1" stop-color="{gold}" stop-opacity="0"/>{sweep}</linearGradient>')
+        rise = intro("animateTransform", "transform", "0 10", "0 0", 0.0, 0.9, translate)
+        out.append(f'<g>{rise}{name.path(x0, yn, "url(#hx-name)")}</g>')
+
+    def slot(body: str, box, at: float, dur: float, key: str) -> str:
+        """Rise into place out of an invisible slot (a clipPath). Its floor sits `floor`
+        units below the box, so descenders are already clear of it during the slow
+        landing: only the quick first part of the rise is cut by the floor."""
+        if still:
+            return body
+        bx0, by0, bx1, by1 = box
+        by1 += floor
+        defs.append(f'<clipPath id="hx-{key}"><rect x="{num(bx0)}" y="{num(by0)}" '
+                    f'width="{num(bx1 - bx0)}" height="{num(by1 - by0)}"/></clipPath>')
+        a = intro("animateTransform", "transform", f"0 {num(by1 - by0 + 1)}", "0 0", at, dur, translate)
+        return f'<g clip-path="url(#hx-{key})"><g>{a}{body}</g></g>'
+
+    # statement: I build ___ ; the lead stays, the last word keeps turning
+    ys = yn + sy
+
+    def still_line(size: float):
+        """lead, then the words in gold Black split by quiet Medium middots: [(run, x, colour)]."""
+        lead = faces[500].layout(BUILD_LEAD, size)
+        dot = faces[500].layout("·", size)
+        parts, x = [(lead, x0, ink2)], x0 + lead.width + size * 0.26
+        for i, w in enumerate(BUILDS):
+            if i:
+                x += size * 0.2
+                parts.append((dot, x, t["muted"]))
+                x += dot.width + size * 0.2
+            run = faces[900].layout(w, size)
+            parts.append((run, x, gold))
+            x += run.width
+        return parts, x
+
+    if still:                       # every word on one line, no wider than the strip under it
+        parts, x_end = still_line(ss)
+        if x_end > fit:
+            parts, x_end = still_line(round(ss * (fit - x0) / (x_end - x0), 1))
+        out.append("".join(run.path(x, ys, c) for run, x, c in parts))
+    else:
+        lead = faces[500].layout(BUILD_LEAD, ss)
+        capS = faces[900].cap_height(ss)
+        xw = x0 + lead.width + ss * 0.26
+        out.append(slot(lead.path(x0, ys, ink2), (x0 - 4, ys - capS - 8, xw, ys + ss * 0.3), 0.45, 0.75, "lead"))
+        # the drum: one slot, four words; word i turns in while word i-1 turns out
+        words = [faces[900].layout(w, ss) for w in BUILDS]
+        # its window is the word's own height plus a soft edge above and below, where
+        # a turning word fades like the curve of a cylinder; one turn moves a word by
+        # the whole window, so two words never share it
+        F = ss * 0.3
+        top, bottom = ys - capS - 4 - F, ys + ss * 0.27 + F
+        h = bottom - top + 1
+        wmax = max(w.width for w in words)
+        e = F / (bottom - top)
+        box = f'x="{num(xw - 2)}" y="{num(top)}" width="{num(wmax + 6)}" height="{num(bottom - top)}"'
+        defs.append(f'<linearGradient id="hx-drum-edge" x1="0" y1="0" x2="0" y2="1">'
+                    f'<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="{num(e, 3)}" stop-color="#fff"/>'
+                    f'<stop offset="{num(1 - e, 3)}" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+                    f'<mask id="hx-drum" maskUnits="userSpaceOnUse" {box}><rect {box} fill="url(#hx-drum-edge)"/></mask>')
+        P = BUILD_HOLD * len(BUILDS)
+        r = BUILD_RISE / P
+        k_out = BUILD_HOLD / P
+        vals = f"0 {num(h)};0 0;0 0;0 -{num(h)};0 -{num(h)}"
+        keys = f"0;{num(r, 4)};{num(k_out, 4)};{num(k_out + r, 4)};1"
+        splines = f"{EASE};0 0 1 1;{EASE};0 0 1 1"      # same curve in and out: one drum
+        drum = []
+        for i, run in enumerate(words):
+            begin = 0.85 + i * BUILD_HOLD
+            turn = (f'<animateTransform attributeName="transform" type="translate" values="{vals}" keyTimes="{keys}" '
+                    f'calcMode="spline" keySplines="{splines}" begin="{num(begin, 2)}s" dur="{num(P, 2)}s" repeatCount="indefinite"/>')
+            drum.append(f'<g transform="translate(0 {num(h)})">{turn}{run.path(xw, ys, gold)}</g>')
+        out.append(f'<g mask="url(#hx-drum)">{"".join(drum)}</g>')
+
+    # meta strip: </> role | (pin) place | (cap) school, gold glyphs, gold hairlines between
+    yr = ys + ry
+    capM = faces[500].cap_height(ms)
+    items, seps, widths = [], [], []
+    for ri, row in enumerate(rows):
+        yb = yr + my + ri * mlh
+        x = x0
+        for j, (kind, text) in enumerate(row):
+            run = faces[500].layout(text, ms)
+            body = glyph(kind, x + ics / 2, yb - capM / 2, ics, gold, isw) + run.path(x + ics + igap, yb, ink2)
+            x1 = x + ics + igap + run.width
+            items.append((body, (x - 3, yb - capM - 7, x1 + 3, yb + ms * 0.3)))
+            if j < len(row) - 1:
+                seps.append((x1 + sgap, yb - capM - 2.5, yb + 2.5))
+                x = x1 + 2 * sgap
+        widths.append(x1 - x0)
+    assert x0 + max(widths) <= right, "meta strip runs into the watch"
+
+    # gold hairline between statement and strip, as long as the strip, fading out
+    L = round(max(max(widths), name.width * 0.9), 1)
+    defs.append(f'<linearGradient id="hx-rule" gradientUnits="userSpaceOnUse" x1="{x0}" y1="0" x2="{num(x0 + L)}" y2="0">'
+                f'<stop offset="0" stop-color="{gold}" stop-opacity="0.9"/><stop offset="0.5" stop-color="{gold}" stop-opacity="0.4"/>'
+                f'<stop offset="1" stop-color="{gold}" stop-opacity="0"/></linearGradient>')
+    if still:
+        out.append(f'<path d="M{x0} {num(yr)}H{num(x0 + L)}" stroke="url(#hx-rule)"/>')
+    else:
+        draw = intro("animate", "stroke-dashoffset", num(L), "0", 0.8, 0.9)
+        out.append(f'<path d="M{x0} {num(yr)}H{num(x0 + L)}" stroke="url(#hx-rule)" '
+                   f'stroke-dasharray="{num(L)} {num(L)}">{draw}</path>')
+
+    # a short solid gold lead-in on the rule: the block's one strong accent
+    A = 26 if not mobile else 20
+    if still:
+        out.append(f'<rect x="{x0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}"/>')
+    else:
+        grow = intro("animate", "width", "0", str(A), 0.7, 0.5)
+        out.append(f'<rect x="{x0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}">{grow}</rect>')
+
+    # the strip plays in item by item once the rule is drawing
+    for k, (body, box) in enumerate(items):
+        out.append(slot(body, box, 1.0 + k * 0.13, 0.7, f"m{k}"))
+    for k, (xs, sy0, sy1) in enumerate(seps):
+        fade = "" if still else intro("animate", "opacity", "0", "1", 1.12 + k * 0.13, 0.5)
+        out.append(f'<path d="M{num(xs)} {num(sy0)}V{num(sy1)}" stroke="{gold}" stroke-opacity="0.45">{fade}</path>')
+    return "".join(defs), "\n".join(out)
+
+
 # ----------------------------------------------------------------- hero
 def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | None" = None) -> str:
     t = THEMES[theme]
     if mobile:
         W, H = 360, 380
-        name = faces[900].layout(NAME, 44, tracking=-0.012)
-        r1 = faces[500].layout(ROLE_1, 16)
-        sep = faces[500].layout(" · ", 16)
-        r1t = faces[500].layout(ROLE_1_TAIL, 16)
-        r2 = faces[500].layout(ROLE_2, 15)
-        x0, y_name, y1, y2 = 28, 74, 104, 128
         cx, cy, r, label = 180, 258, 92, 10
     else:
         W, H = 846, 300
-        name = faces[900].layout(NAME, 60, tracking=-0.012)
-        r1 = faces[500].layout(ROLE_1, 16)
-        sep = faces[500].layout(" · ", 16)
-        r1t = faces[500].layout(ROLE_1_TAIL, 16)
-        r2 = faces[500].layout(ROLE_2, 15)
-        x0, y_name, y1, y2 = 56, 140, 178, 203
         cx, cy, r, label = 690, 150, 118, 9
 
     defs, body, border = frame(W, H, t)
-    text = [
-        name.path(x0, y_name, t["ink"]),
-        r1.path(x0, y1, t["ink2"]),
-        sep.path(x0 + r1.width, y1, t["accent"]),
-        r1t.path(x0 + r1.width + sep.width, y1, t["muted"]),
-        r2.path(x0, y2, t["muted"]),
-    ]
-    title = f"{NAME} — {ROLE_1}, {ROLE_2}, {ROLE_1_TAIL}. The watch shows how long you have been on this page."
+    ldefs, lockup_svg = lockup(t, faces, mobile, still)
+    defs += ldefs
+    text = [lockup_svg]
+    title = (f"{NAME} — {ROLE_1}, {ROLE_2}, {ROLE_1_TAIL}. I build {', '.join(BUILDS[:-1])} and {BUILDS[-1]}. "
+             f"The watch shows how long you have been on this page.")
     # faint engineering grid behind the watch, fading out towards the text
     gx0 = cx - r - 60
     gdefs = (f'<radialGradient id="grid-fade" gradientUnits="userSpaceOnUse" cx="{cx}" cy="{cy}" r="{r + 70}">'
@@ -404,7 +611,7 @@ def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | Non
     else:
         dial = watch(cx, cy, r, t, faces, still, label)
     if plate is not None:
-        extra = gdefs + (movement_defs(t) if movement is not None else "")
+        extra = ldefs + gdefs + (movement_defs(t) if movement is not None else "")
         return plate_svg(plate, t, 0, W, "hero", chr(10).join(text) + chr(10) + grid + chr(10) + dial, title, extra)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">{title}</title>
