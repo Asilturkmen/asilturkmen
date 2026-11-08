@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="219.96 516 101.52 84" width="101.52" height="84" role="img" aria-labelledby="t">
+<title id="t">The source code is private</title>
+<defs>
+<clipPath id="pl-frame"><rect width="846" height="904" rx="12"/></clipPath>
+<linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101216"/><stop offset="1" stop-color="#161920"/></linearGradient>
+<linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#d4b483" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+<linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#272b34" stop-opacity="0"/><stop offset="0.06" stop-color="#272b34"/><stop offset="0.94" stop-color="#272b34"/><stop offset="1" stop-color="#272b34" stop-opacity="0"/></linearGradient>
+
+</defs>
+<g clip-path="url(#pl-frame)">
+<rect width="846" height="904" fill="url(#pl-surface)"/>
+<svg x="227.96" y="516" width="91.52" height="40" viewBox="0 0 91.52 40"><rect x="0.5" y="0.5" width="90.5" height="39" rx="9.5" fill="#8b929c" fill-opacity="0.06" stroke="#8b929c" stroke-opacity="0.32"/>
+<rect x="14.08" y="19.06" width="9.38" height="6.88" rx="1.62" fill="none" stroke="#8b929c" stroke-width="1.6"/><path d="M16.39 19.06L16.39 17.12A2.38 2.38 0 0 1 21.14 17.12L21.14 19.06" fill="none" stroke="#8b929c" stroke-width="1.6" stroke-linecap="round"/><circle cx="18.76" cy="22.5" r="0.88" fill="#8b929c"/>
+<path d="M39.44 21.59C41.49 21.59 42.83 20.2 42.83 18.23C42.83 16.23 41.5 14.88 39.44 14.88H35.4V25.12H37.19V21.59H39.44ZM39.09 16.48C40.28 16.48 40.96 17.09 40.96 18.21C40.96 19.34 40.3 19.99 39.07 19.99H37.19V16.48H39.09ZM48.57 18.17C48.29 18.1 48.05 18.08 47.82 18.08C46.89 18.08 46.23 18.54 45.94 19.22L45.84 18.21H44.23V25.12H45.94V21.76C45.94 20.41 46.71 19.76 47.94 19.76H48.57V18.17ZM50.73 16.82C51.29 16.82 51.75 16.35 51.75 15.78C51.75 15.21 51.29 14.76 50.73 14.76C50.14 14.76 49.68 15.21 49.68 15.78C49.68 16.35 50.14 16.82 50.73 16.82ZM49.87 25.12H51.58V18.2H49.87V25.12ZM55.45 25.12H57.13L60.01 18.2H58.25L56.99 21.38C56.69 22.14 56.44 22.86 56.34 23.3C56.26 22.92 56.02 22.21 55.73 21.38L54.52 18.2H52.7L55.45 25.12ZM62.85 25.3C63.93 25.3 64.87 24.81 65.16 24.1L65.29 25.12H66.79V20.92C66.79 19 65.64 17.99 63.78 17.99C61.9 17.99 60.67 18.97 60.67 20.47H62.12C62.12 19.74 62.68 19.32 63.69 19.32C64.56 19.32 65.12 19.7 65.12 20.64V20.79L63.05 20.95C61.41 21.07 60.49 21.87 60.49 23.14C60.49 24.45 61.38 25.3 62.85 25.3ZM63.41 24.01C62.64 24.01 62.22 23.7 62.22 23.07C62.22 22.51 62.63 22.16 63.69 22.07L65.13 21.95V22.32C65.13 23.38 64.46 24.01 63.41 24.01ZM70.86 25.12V19.63H72.2V18.2H70.86V16.05H69.15V18.2H67.82V19.63H69.15V25.12H70.86ZM76.43 25.3C78.24 25.3 79.5 24.39 79.79 22.88H78.21C78.01 23.54 77.4 23.9 76.46 23.9C75.33 23.9 74.68 23.28 74.56 22.07L79.76 22.05V21.53C79.76 19.38 78.45 17.99 76.38 17.99C74.35 17.99 72.93 19.49 72.93 21.66C72.93 23.8 74.38 25.3 76.43 25.3ZM76.39 19.39C77.41 19.39 78.07 20.02 78.07 20.97H74.6C74.77 19.94 75.38 19.39 76.39 19.39Z" fill="#8b929c"/>
+</svg>
+<rect x="24" y="324" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="600" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="752" width="798" height="1" fill="url(#pl-rule)"/>
+<rect x="0.5" y="0.5" width="845" height="903" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="798" height="1" fill="url(#pl-sheen)"/>
+</g>
+</svg>

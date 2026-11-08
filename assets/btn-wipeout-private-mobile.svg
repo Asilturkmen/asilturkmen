@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="93.6 486 43.2 70" width="43.2" height="70" role="img" aria-labelledby="t">
+<title id="t">The source code is private</title>
+<defs>
+<clipPath id="pl-frame"><rect width="360" height="858" rx="12"/></clipPath>
+<linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101216"/><stop offset="1" stop-color="#161920"/></linearGradient>
+<linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#d4b483" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+<linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#272b34" stop-opacity="0"/><stop offset="0.06" stop-color="#272b34"/><stop offset="0.94" stop-color="#272b34"/><stop offset="1" stop-color="#272b34" stop-opacity="0"/></linearGradient>
+
+</defs>
+<g clip-path="url(#pl-frame)">
+<rect width="360" height="858" fill="url(#pl-surface)"/>
+<svg x="97.6" y="486" width="37" height="40" viewBox="0 0 37 40"><rect x="0.5" y="0.5" width="36" height="39" rx="9.5" fill="#8b929c" fill-opacity="0.06" stroke="#8b929c" stroke-opacity="0.32"/>
+<rect x="12.88" y="18.88" width="11.25" height="8.25" rx="1.95" fill="none" stroke="#8b929c" stroke-width="1.8"/><path d="M15.65 18.88L15.65 16.55A2.85 2.85 0 0 1 21.35 16.55L21.35 18.88" fill="none" stroke="#8b929c" stroke-width="1.8" stroke-linecap="round"/><circle cx="18.5" cy="23" r="1.05" fill="#8b929c"/>
+</svg>
+<rect x="24" y="396" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="556" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="734" width="312" height="1" fill="url(#pl-rule)"/>
+<rect x="0.5" y="0.5" width="359" height="857" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="312" height="1" fill="url(#pl-sheen)"/>
+</g>
+</svg>

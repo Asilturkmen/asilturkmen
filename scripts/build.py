@@ -80,13 +80,11 @@ THEMES = {
         accent_dim="#8c7a5c", dial="#0c0e12", tick="#6b6f78", tick_major="#d4b483",
         hand="#e9eaee", hand_sec="#d4b483", cap="#101216",
     ),
-    "light": dict(
-        bg0="#f8f5ef", bg1="#efe9df", border="#d6cebf", sheen="#ffffff",
-        ink="#17181c", ink2="#3a3d45", muted="#5f626a", accent="#7d6234",
-        accent_dim="#bcae95", dial="#fdfbf7", tick="#a89f8f", tick_major="#7d6234",
-        hand="#1f2127", hand_sec="#7d6234", cap="#f8f5ef",
-    ),
 }
+# Light mode shows the same obsidian artwork, fused into one plate (see Plate).
+# Only the plate's outer 1px edge differs, so it has a defined rim on white.
+THEMES["dark"]["edge"] = "#363b45"   # plate outline: visible on white, quiet on #0d1117
+THEME = "dark"                      # one asset set for both GitHub themes
 
 # Still images (reduced motion) park the hands in the classic 10:10 pose.
 STILL_POSE = dict(minute=60.0, second=300.0)
@@ -178,6 +176,119 @@ def frame(W: int, H: int, t: dict) -> tuple[str, str]:
     return defs, body, border
 
 
+
+# ----------------------------------------------------------------- plate (light mode)
+# On GitHub's white page the light set is ONE obsidian plate. Hero, project row,
+# button row, tools and footer are laid out in one coordinate system (846 units
+# wide on desktop, 360 on phones) and every image is a window (its viewBox) onto
+# that plate. Each window draws the whole plate's surface, outline and dividers,
+# so neighbouring images continue each other exactly. The README glues the
+# images with no whitespace and align="top" (vertical-align: top), which removes
+# the gap GitHub would otherwise leave under every line of inline images.
+PLATE_COLS = (26, 24, 24, 26)                    # card images, % of the README width
+PLATE_BTNS = (14, 12, 12, 12, 12, 12, 12, 14)    # button images: the two halves under each card
+
+
+class Plate:
+    def __init__(self, mobile: bool, faces: dict):
+        self.mobile = mobile
+        W = self.W = 360 if mobile else 846
+        G = 8 if mobile else 16                                  # gutter between covers
+        self.xs, self.bxs = [0.0], [0.0]
+        for p in PLATE_COLS:
+            self.xs.append(self.xs[-1] + p * W / 100)
+        for p in PLATE_BTNS:
+            self.bxs.append(self.bxs[-1] + p * W / 100)
+        self.cw = PLATE_COLS[1] * W / 100 - G                    # cover width
+        self.cx = [self.xs[1] - G / 2 - self.cw] + [self.xs[i] + G / 2 for i in (1, 2, 3)]
+        self.ch = self.cw * 104 / 184                            # cover height (card ratio)
+        self.name_size = 9.6 if mobile else 20
+        self.pad_top, self.name_gap, pad_bot = (22, 6, 10) if mobile else (40, 13, 18)
+        # vertical breathing room inside each row (content is pushed down by pad[row])
+        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, tools=14 if mobile else 22, footer=10 if mobile else 14)
+        cap = faces[700].cap_height(self.name_size)
+        self.h = dict(
+            hero=(380 + 16) if mobile else (300 + 24),
+            cards=math.ceil(self.pad_top + self.ch + self.name_gap + cap + pad_bot),
+            buttons=BTN_H + (30 if mobile else 44),
+            tools=(150 + 28) if mobile else (108 + 44),
+            footer=(104 + 20) if mobile else (124 + 28),
+        )
+        self.y, y = {}, 0
+        for k, h in self.h.items():
+            self.y[k] = y
+            y += h
+        self.H = y
+
+
+def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str, title: str,
+              defs: str = "", shift: bool = True) -> str:
+    """One window of the plate: x0..x1 across, the given row down. content is in
+    the row's own coordinates (shift) or already in plate coordinates."""
+    W, H, y0, h = pl.W, pl.H, pl.y[row], pl.h[row]
+    edge = t.get("edge", t["border"])
+    dy = y0 + pl.pad[row]
+    if shift and dy:
+        content = f'<g transform="translate(0 {dy})">{content}</g>'
+    rules = "".join(f'<rect x="24" y="{pl.y[k]}" width="{W - 48}" height="1" fill="url(#pl-rule)"/>'
+                    for k in ("cards", "tools", "footer"))
+    w = num(x1 - x0, 2)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{num(x0, 2)} {y0} {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="t">\n'
+            f'<title id="t">{title}</title>\n<defs>\n'
+            f'<clipPath id="pl-frame"><rect width="{W}" height="{H}" rx="12"/></clipPath>\n'
+            f'<linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{t["bg0"]}"/><stop offset="1" stop-color="{t["bg1"]}"/></linearGradient>\n'
+            f'<linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{t["sheen"]}" stop-opacity="0"/><stop offset="0.5" stop-color="{t["accent"]}" stop-opacity="0.35"/><stop offset="1" stop-color="{t["sheen"]}" stop-opacity="0"/></linearGradient>\n'
+            f'<linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{t["border"]}" stop-opacity="0"/><stop offset="0.06" stop-color="{t["border"]}"/><stop offset="0.94" stop-color="{t["border"]}"/><stop offset="1" stop-color="{t["border"]}" stop-opacity="0"/></linearGradient>\n'
+            f'{defs}\n</defs>\n<g clip-path="url(#pl-frame)">\n'
+            f'<rect width="{W}" height="{H}" fill="url(#pl-surface)"/>\n{content}\n{rules}\n'
+            f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="11.5" fill="none" stroke="{edge}"/>'
+            f'<rect x="24" y="0.5" width="{W - 48}" height="1" fill="url(#pl-sheen)"/>\n</g>\n</svg>\n')
+
+
+def _inner(svg: str) -> str:
+    """The drawing inside a standalone button SVG, without its <svg> and <title>."""
+    body = svg.split("\n", 1)[1]
+    body = body.split("</title>\n", 1)[1]
+    return body.rsplit("</svg>", 1)[0]
+
+
+def plate_card(pl: "Plate", i: int, slug: str, name: str, live: str, t: dict, faces: dict) -> str:
+    """Cover and name straight on the plate (no card frame): the plate is the card."""
+    x, y, w, h = pl.cx[i], pl.y["cards"] + pl.pad_top, pl.cw, pl.ch
+    r = 4 if pl.mobile else 7
+    data = base64.b64encode((MEDIA / f"{slug}.webp").read_bytes()).decode("ascii")
+    nm = faces[700].layout(name, pl.name_size, tracking=-0.01)
+    X, Y, Wd, Hd = num(x, 2), num(y, 2), num(w, 2), num(h, 2)
+    defs = f'<clipPath id="shot"><rect x="{X}" y="{Y}" width="{Wd}" height="{Hd}" rx="{r}"/></clipPath>'
+    parts = (f'<rect x="{X}" y="{Y}" width="{Wd}" height="{Hd}" rx="{r}" fill="{t["dial"]}"/>'
+             f'<image href="data:image/webp;base64,{data}" x="{X}" y="{Y}" width="{Wd}" height="{Hd}" '
+             f'preserveAspectRatio="xMidYMid slice" clip-path="url(#shot)"/>'
+             f'<rect x="{num(x + .5, 2)}" y="{num(y + .5, 2)}" width="{num(w - 1, 2)}" height="{num(h - 1, 2)}" rx="{r - .5}" '
+             f'fill="none" stroke="{t["sheen"]}" stroke-opacity="0.08"/>'
+             + nm.path(x, y + h + pl.name_gap + faces[700].cap_height(pl.name_size), t["ink"],
+                       nd=2 if pl.mobile else 1))
+    return plate_svg(pl, t, pl.xs[i], pl.xs[i + 1], "cards", parts, f"{name} — {pretty_url(live)}", defs, shift=False)
+
+
+def plate_button(pl: "Plate", i: int, right: bool, kind: str, name: str, theme: str, faces: dict) -> str:
+    """Left (Code / Private) or right (Live) half under card i: the dark pill, on the plate."""
+    g = BTN_GAP[pl.mobile]
+    if right:
+        x0, x1 = pl.cx[i] + pl.cw / 2 + g / 2, pl.cx[i] + pl.cw
+    else:
+        x0, x1 = pl.cx[i], pl.cx[i] + pl.cw / 2 - g / 2
+    w = round(x1 - x0, 2)
+    if kind == "private":
+        svg = private_button(pl.mobile, faces, width=w)
+    else:
+        svg = button(kind, name, theme, pl.mobile, False, faces, width=w)
+    title = svg.split('<title id="t">', 1)[1].split("</title>", 1)[0]
+    pill = (f'<svg x="{num(x0, 2)}" y="{pl.y["buttons"]}" width="{num(w, 2)}" height="{BTN_H}" '
+            f'viewBox="0 0 {num(w, 2)} {BTN_H}">{_inner(svg)}</svg>')
+    j = 2 * i + int(right)
+    return plate_svg(pl, THEMES[theme], pl.bxs[j], pl.bxs[j + 1], "buttons", pill, title, shift=False)
+
+
 # ----------------------------------------------------------------- the watch
 def watch(cx: float, cy: float, r: float, t: dict, faces: dict, still: bool, label_size: float) -> str:
     """A dial whose hands start at 12:00 when the image loads and then run at
@@ -239,7 +350,7 @@ def watch(cx: float, cy: float, r: float, t: dict, faces: dict, still: bool, lab
 
 
 # ----------------------------------------------------------------- hero
-def hero(theme: str, mobile: bool, still: bool, faces: dict) -> str:
+def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | None" = None) -> str:
     t = THEMES[theme]
     if mobile:
         W, H = 360, 380
@@ -292,6 +403,9 @@ def hero(theme: str, mobile: bool, still: bool, faces: dict) -> str:
         dial = movement(cx, cy, r, t, still, label_svg="".join(lab))
     else:
         dial = watch(cx, cy, r, t, faces, still, label)
+    if plate is not None:
+        extra = gdefs + (movement_defs(t) if movement is not None else "")
+        return plate_svg(plate, t, 0, W, "hero", chr(10).join(text) + chr(10) + grid + chr(10) + dial, title, extra)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">{title}</title>
 <defs>
@@ -377,10 +491,10 @@ def arrow_ne(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
             f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round" stroke-linejoin="round"/>')
 
 
-def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict) -> str:
+def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict, width: float | None = None) -> str:
     """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site)."""
     t = THEMES[theme]
-    W, H = BTN_W[(mobile, half)], BTN_H
+    W, H = (width or BTN_W[(mobile, half)]), BTN_H
     x0, x1 = 0.0, float(W)
     if half:
         if kind == "code":
@@ -464,10 +578,10 @@ def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
     return body + shackle + hole
 
 
-def private_button(mobile: bool, faces: dict) -> str:
+def private_button(mobile: bool, faces: dict, width: float | None = None) -> str:
     """Left half for a project whose code is private: not a link, no theme pair."""
-    W, H = BTN_W[(mobile, True)], BTN_H
-    x0, x1 = 0.0, W - BTN_GAP[mobile] / 2
+    W, H = (width or BTN_W[(mobile, True)]), BTN_H
+    x0, x1 = 0.0, (W if width else W - BTN_GAP[mobile] / 2)
     w, cy, r = x1 - x0, H / 2, 10
     shapes = [f'<rect x="{num(x0 + 0.5)}" y="0.5" width="{num(w - 1)}" height="{H - 1}" rx="{r - 0.5}" '
               f'fill="{NEUTRAL}" fill-opacity="0.06" stroke="{NEUTRAL}" stroke-opacity="0.32"/>']
@@ -484,7 +598,7 @@ def private_button(mobile: bool, faces: dict) -> str:
 
 
 # ----------------------------------------------------------------- footer
-def footer(theme: str, mobile: bool, faces: dict) -> str:
+def footer(theme: str, mobile: bool, faces: dict, plate: "Plate | None" = None) -> str:
     t = THEMES[theme]
     if mobile:
         W, H = 360, 104
@@ -514,6 +628,9 @@ def footer(theme: str, mobile: bool, faces: dict) -> str:
         hx, ly = 64, yd - dom.size * 0.33
         parts.append(f'<rect x="{hx}" y="{num(ly)}" width="{num(xd - hx - 24)}" height="1" fill="{t["border"]}"/>')
         parts.append(f'<rect x="{num(xd + total + 24)}" y="{num(ly)}" width="{num(W - hx - (xd + total + 24))}" height="1" fill="{t["border"]}"/>')
+    if plate is not None:
+        return plate_svg(plate, t, 0, W, "footer", chr(10).join(parts),
+                         "More about my work at asilturkmen.com: projects, case studies and CV.")
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">More about my work at asilturkmen.com: projects, case studies and CV.</title>
 <defs>
@@ -533,33 +650,32 @@ def main() -> None:
     fonts_ready()
     faces = {w: Face(FONT_DIR / Path(p).name) for w, p in FONT_FILES.items()}
     ASSETS.mkdir(exist_ok=True)
-    written = []
-    for theme in THEMES:
-        for mobile in (False, True):
-            m = "-mobile" if mobile else ""
-            for still in (False, True):
-                s = "-still" if still else ""
-                p = ASSETS / f"hero-{theme}{m}{s}.svg"
-                p.write_text(hero(theme, mobile, still, faces), encoding="utf-8", newline="\n")
-                written.append(p)
-            p = ASSETS / f"footer-{theme}{m}.svg"
-            p.write_text(footer(theme, mobile, faces), encoding="utf-8", newline="\n")
+    for old in ASSETS.glob("*.svg"):
+        if not old.name.startswith("link-"):
+            old.unlink()
+    written, theme = [], THEME
+    for mobile in (False, True):
+        m = "-mobile" if mobile else ""
+        pl = Plate(mobile, faces)          # every image is a window onto one plate
+        for still in (False, True):
+            s = "-still" if still else ""
+            p = ASSETS / f"hero{m}{s}.svg"
+            p.write_text(hero(theme, mobile, still, faces, pl), encoding="utf-8", newline="\n")
             written.append(p)
-            p = ASSETS / f"tools-{theme}{m}.svg"
-            p.write_text(tools_strip(theme, mobile, faces), encoding="utf-8", newline="\n")
-            written.append(p)
-            for slug, name, live, repo in PROJECTS:
-                p = ASSETS / f"card-{slug}-{theme}{m}.svg"
-                p.write_text(card(slug, name, live, theme, mobile, faces), encoding="utf-8", newline="\n")
-                written.append(p)
-                for kind in (("code", "live") if repo else ("live",)):
-                    p = ASSETS / f"btn-{slug}-{kind}-{theme}{m}.svg"
-                    p.write_text(button(kind, name, theme, mobile, True, faces), encoding="utf-8", newline="\n")
-                    written.append(p)
-    for mobile in (False, True):   # theme-neutral, one image for both themes
-        p = ASSETS / f"btn-private{'-mobile' if mobile else ''}.svg"
-        p.write_text(private_button(mobile, faces), encoding="utf-8", newline="\n")
+        p = ASSETS / f"footer{m}.svg"
+        p.write_text(footer(theme, mobile, faces, pl), encoding="utf-8", newline="\n")
         written.append(p)
+        p = ASSETS / f"tools{m}.svg"
+        p.write_text(tools_strip(theme, mobile, faces, pl), encoding="utf-8", newline="\n")
+        written.append(p)
+        for i, (slug, name, live, repo) in enumerate(PROJECTS):
+            p = ASSETS / f"card-{slug}{m}.svg"
+            p.write_text(plate_card(pl, i, slug, name, live, THEMES[theme], faces), encoding="utf-8", newline="\n")
+            written.append(p)
+            for right, kind in enumerate(("code" if repo else "private", "live")):
+                p = ASSETS / f"btn-{slug}-{kind}{m}.svg"
+                p.write_text(plate_button(pl, i, bool(right), kind, name, theme, faces), encoding="utf-8", newline="\n")
+                written.append(p)
     for p in written:
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size:>7,} bytes")
 

@@ -132,7 +132,7 @@ def surface_of(t: dict):
 def icon_fill(brand: str, theme: str, t: dict) -> str:
     surf = surface_of(t)
     rgb = _hex(brand)
-    target = MIN_CONTRAST[theme]
+    target = MIN_CONTRAST["dark" if _lum(surf) < 0.18 else "light"]
     if contrast(rgb, surf) >= target:
         return brand
     L, C, H = _oklch(rgb)
@@ -165,9 +165,9 @@ def _icon(slug: str, cx: float, cy: float, size: float, fill: str) -> str:
             f'fill="{fill}" d="{ICONS[slug]["d"]}"/>')
 
 
-def tools_strip(theme: str, mobile: bool, faces: dict) -> str:
+def tools_strip(theme: str, mobile: bool, faces: dict, plate=None) -> str:
     # build.py imports this module, so its helpers are imported at call time
-    from build import THEMES, frame
+    from build import THEMES, frame, plate_svg
 
     t = THEMES[theme]
     fills = {slug: icon_fill(hex_, theme, t) for slug, _, _, hex_ in TOOLS}
@@ -209,6 +209,12 @@ def tools_strip(theme: str, mobile: bool, faces: dict) -> str:
         # hairline between the rows, fading out at both ends
         parts.append(f'<rect x="{margin - 24}" y="54" width="{W - 2 * margin + 48}" height="1" fill="url(#rule)"/>')
 
+    if plate is not None:   # light mode: one window of the obsidian plate (build.Plate)
+        rule = "" if mobile else ('<linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">'
+                                  f'<stop offset="0" stop-color="{t["border"]}" stop-opacity="0"/>'
+                                  f'<stop offset="0.05" stop-color="{t["border"]}"/><stop offset="0.95" stop-color="{t["border"]}"/>'
+                                  f'<stop offset="1" stop-color="{t["border"]}" stop-opacity="0"/></linearGradient>')
+        return plate_svg(plate, t, 0, W, "tools", chr(10).join(parts), title, rule)
     defs, body, border = frame(W, H, t)
     if not mobile:
         defs += ('\n<linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">'
