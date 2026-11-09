@@ -4,19 +4,22 @@ The hero on the profile README carries a live view count, served by this functio
 an Upstash Redis counter behind it:
 
 - `GET /api/hero?v=desktop|mobile|desktop-still|mobile-still` — the hero with an
-  "(eye) N views" badge above the name: a small rounded box in the obsidian/gold style of
-  the link tiles under the plate (dark gradient, 1px border, gold eye, the count in Satoshi
-  Bold, "views" in Satoshi Medium), left-aligned with the name. The README's `<picture>`
-  fetches one variant per page view, and that fetch **counts the view** (GitHub's image
-  proxy honours the no-cache headers). Templates in `hero/` are written by
-  `scripts/build.py`; the badge is composed into their `<!--VIEWS {...}-->` slot from
-  `glyphs.json` (`render.js` → `renderBadge`).
+  "(eye) N views" counter at its top centre, drawn as plain text on the hero surface (no
+  box): a gold eye, the count in Satoshi Bold (desktop 20 / mobile 15) and "views" in Satoshi
+  Medium (15 / 12) on one baseline, the whole group centred on the hero's midline. In the
+  moving variants the eye blinks: first at 2.6 s, right after the hero's entrance, then every
+  4.5 s, each blink a 0.18 s SMIL scale about the eye's own centre down to a closed-lid line;
+  the `-still` variants draw a static eye. The README's `<picture>` fetches one
+  variant per page view, and that fetch **counts the view** (GitHub's image proxy honours
+  the no-cache headers). Templates in `hero/` are written by `scripts/build.py`; the counter
+  is composed into their `<!--VIEWS {"cx","y","num","label","eye"}-->` slot from
+  `glyphs.json` (`render.js` → `renderCounter`): width first, then placed at `cx − width/2`.
 - `GET /api/views` — the standalone "N views" tile (42px high). **No longer on the README**
-  (the badge in the hero replaced it); the route and `renderTile` stay as a plain counter
+  (the counter in the hero replaced it); the route and `renderTile` stay as a plain counter
   image for anyone who wants one. Load it with `?peek=1` to show the number without counting.
 
 `?peek=1` works on both routes. If Redis is unreachable the hero is drawn without the
-badge and the tile shows a dash.
+counter and the tile shows a dash.
 
 ## Deploy
 
@@ -27,9 +30,9 @@ older counter's number.
 
 ## Local
 
-- `python scripts/build.py` writes `hero/*.svg` (and `assets/hero*.svg` without the badge).
+- `python scripts/build.py` writes `hero/*.svg` (and `assets/hero*.svg` without the counter).
 - `python scripts/counter_glyphs.py` regenerates `glyphs.json` (Satoshi outlines for the
-  digits and "views", for the tile and for the badge).
+  digits and "views", for the tile and, in its `badge` block, for the hero counter).
 - `node sample.js 1248` prints the tile; `node sample.js hero desktop 1248` prints a hero
-  (`-` as the count draws the hero without the badge). `scripts/preview.py` uses the hero
+  (`-` as the count draws the hero without the counter). `scripts/preview.py` uses the hero
   samples in place of the live URLs.

@@ -4,9 +4,12 @@
 //   renderTile(text)          the standalone "N views" tile (/api/views): the same obsidian/gold
 //                             box as the link tiles (assets/link-*.svg), an eye, the count
 //                             in Satoshi Bold and "views" in Satoshi Medium
-//   renderBadge(text, slot)   the same box at the size the hero asks for, above the name
+//   renderCounter(text, slot, still)
+//                             the hero's counter: "(eye) N views" as plain text, no box, the
+//                             whole group centred on slot.cx; the eye blinks (first at 2.6 s,
+//                             then every 4.5 s) unless still
 //   renderHero(variant, text) the hero (scripts/build.py writes the templates to hero/)
-//                             with the badge composed into its <!--VIEWS {...}--> slot
+//                             with the counter composed into its <!--VIEWS {...}--> slot
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -69,23 +72,39 @@ function template(variant) {
   return templates.get(variant);
 }
 
+// The blink: the first at BLINK_FIRST s (right after the hero's entrance), then every
+// BLINK_PERIOD s; each closes and reopens in 0.18 s at the start of its cycle. A vertical
+// scale about the eye's own centre (the group is translated there and the eye drawn
+// around the origin); the iris sits inside the same group, so it shuts with the lids.
+// The trough stays at 0.14, not 0, so the squashed stroke still reads as a closed lid line.
+const BLINK_PERIOD = 4.5, BLINK_FIRST = 2.6;
+const blink = () =>
+  `<animateTransform attributeName="transform" type="scale" values="1 1;1 0.14;1 1;1 1" ` +
+  `keyTimes="0;0.02;0.04;1" calcMode="spline" keySplines="0.4 0 1 1;0 0 0.6 1;0 0 1 1" ` +
+  `dur="${BLINK_PERIOD}s" begin="${BLINK_FIRST}s" repeatCount="indefinite"/>`;
+
 /**
- * "(eye) 1,248 views" in a rounded box drawn like the tile, its top-left corner at
- * (slot.x, slot.y), slot.h high, the number at slot.num and "views" at slot.label.
- * Its gradients live in the group's own <defs> (vb-*), clear of the hero's ids.
+ * "(eye) 1,248 views" as plain text on the hero: a gold eye slot.eye high, the number in
+ * Bold at slot.num (INK) and "views" in Medium at slot.label (MUTED) on the same baseline
+ * slot.y, with gaps of 0.45 and 0.4 of the number size. The width is composed first and
+ * the whole group is centred on slot.cx. The eye blinks (SMIL) unless still.
  */
-export function renderBadge(text, slot) {
-  const B = G.badge, h = slot.h, kn = slot.num / B.units, kl = slot.label / B.units;
-  const pad = 0.43 * h, eyeSize = 0.48 * h, gap = 0.2 * h, rx = h / 3;
-  const dash = text === "—", dashW = h * 0.3;
+export function renderCounter(text, slot, still = false) {
+  const B = G.badge, kn = slot.num / B.units, kl = slot.label / B.units;
+  const eyeSize = slot.eye, gapEye = 0.45 * slot.num, gapLabel = 0.4 * slot.num;
+  const dash = text === "—", dashW = slot.num * 0.6;
   const chars = [...text];
   const numW = dash ? dashW : chars.reduce((w, ch) => w + (B.digits[ch]?.adv ?? 0) * kn, 0);
-  const W = pad + eyeSize + gap + numW + gap + B.label.w * kl + pad;
-  const x0 = slot.x, y0 = slot.y, yb = y0 + h / 2 + (B.cap * kn) / 2;   // number baseline
+  const W = eyeSize + gapEye + numW + gapLabel + B.label.w * kl;
+  const yb = slot.y, cap = B.cap * kn;                 // baseline, number cap height
+  const x0 = slot.cx - W / 2;
   const f = (v) => v.toFixed(2);
-  let x = x0 + pad + eyeSize + gap;
+  const ex = x0 + eyeSize / 2, ey = yb - cap / 2;      // the eye's centre, level with the number
+  const eyeSvg = eye(-eyeSize / 2, -eyeSize / 2, eyeSize, GOLD, Math.max(1.2, 0.08 * eyeSize));
+  const eyeGroup = `<g transform="translate(${f(ex)} ${f(ey)})"><g>${still ? "" : blink()}${eyeSvg}</g></g>`;
+  let x = x0 + eyeSize + gapEye;
   const num = dash
-    ? `<path d="M${f(x)} ${f(y0 + h / 2)}h${f(dashW)}" stroke="${MUTED}" stroke-width="1.6" stroke-linecap="round"/>`
+    ? `<path d="M${f(x)} ${f(yb - cap / 2)}h${f(dashW)}" stroke="${MUTED}" stroke-width="${f(Math.max(1.5, slot.num * 0.09))}" stroke-linecap="round"/>`
     : chars.map((ch) => {
         const g = B.digits[ch];
         if (!g) return "";
@@ -93,20 +112,13 @@ export function renderBadge(text, slot) {
         x += g.adv * kn;
         return s;
       }).join("");
-  x += numW * (dash ? 1 : 0) + gap;
+  x += (dash ? dashW : 0) + gapLabel;
   const label = `<path transform="translate(${f(x)} ${f(yb)}) scale(${kl.toFixed(4)})" d="${B.label.d}" fill="${MUTED}"/>`;
-  return `<g><defs>` +
-    `<linearGradient id="vb-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12151a"/><stop offset="1" stop-color="#161920"/></linearGradient>` +
-    `<linearGradient id="vb-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0.03"/><stop offset="0.5" stop-color="${GOLD}" stop-opacity="0.22"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.03"/></linearGradient>` +
-    `</defs>` +
-    `<rect x="${f(x0)}" y="${f(y0)}" width="${f(W)}" height="${f(h)}" rx="${f(rx)}" fill="url(#vb-bg)"/>` +
-    `<rect x="${f(x0 + 0.5)}" y="${f(y0 + 0.5)}" width="${f(W - 1)}" height="${f(h - 1)}" rx="${f(rx - 0.5)}" fill="none" stroke="${EDGE}"/>` +
-    `<rect x="${f(x0 + rx)}" y="${f(y0 + 0.5)}" width="${f(W - 2 * rx)}" height="1" fill="url(#vb-sheen)"/>` +
-    eye(x0 + pad, y0 + (h - eyeSize) / 2, eyeSize, GOLD, Math.max(1, 0.04 * h)) +
-    num + label + `</g>`;
+  return `<g>${eyeGroup}${num}${label}</g>`;
 }
 
-/** The hero template with the badge in its slot; text null leaves the badge out. */
+/** The hero template with the counter in its slot; text null leaves the counter out. */
 export function renderHero(variant, text) {
-  return template(variant).replace(SLOT_RE, (_, json) => (text == null ? "" : renderBadge(text, JSON.parse(json))));
+  const still = variant.endsWith("-still");
+  return template(variant).replace(SLOT_RE, (_, json) => (text == null ? "" : renderCounter(text, JSON.parse(json), still)));
 }

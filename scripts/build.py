@@ -214,7 +214,7 @@ class Plate:
         self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, tools=14 if mobile else 22, footer=10 if mobile else 14)
         cap = faces[700].cap_height(self.name_size)
         self.h = dict(
-            hero=(410 + 16) if mobile else (300 + 24),
+            hero=(416 + 16) if mobile else (300 + 24),
             cards=math.ceil(self.pad_top + self.ch + self.name_gap + cap + pad_bot),
             buttons=BTN_H + (30 if mobile else 44),
             tools=(150 + 28) if mobile else (108 + 44),
@@ -414,15 +414,17 @@ def glyph(kind: str, cx: float, cy: float, s: float, colour: str, sw: float) -> 
 
 META_SCHOOL = "EMU Software Engineering"   # ROLE_2 in the one-line desktop strip (the phone strip has room for ROLE_2)
 
-# The badge above the name: "(eye) 1,248 views" in a small rounded box, the same
-# obsidian/gold tile as the link tiles under the plate (counter/render.js renderTile).
-# The number is live, so the hero on GitHub is served by counter/api/hero.js from the
-# templates this file writes to counter/hero/: the badge's place and size are left in
-# a <!--VIEWS {"x","y","h","num","label"}--> comment (x/y its top-left corner, h its
-# height, num/label the font sizes) that the function fills from counter/glyphs.json.
-# assets/hero*.svg get the comment and the title's sentence about it stripped.
+# The view counter at the top centre of the hero: "(eye) 1,248 views" as plain text on
+# the hero surface (gold eye, the count in Satoshi Bold, "views" in Satoshi Medium), no
+# box. The number is live, so the hero on GitHub is served by counter/api/hero.js from
+# the templates this file writes to counter/hero/: the counter's place and size are left
+# in a <!--VIEWS {"cx","y","num","label","eye"}--> comment (cx the centre of the whole
+# eye+number+label group, y the text baseline, num/label the font sizes, eye the eye's
+# height) that the function fills from counter/glyphs.json (render.js renderCounter);
+# in the moving hero the eye blinks. assets/hero*.svg get the comment and the title's
+# sentence about it stripped.
 VIEWS_RE = re.compile(r"<!--VIEWS .*?-->")
-VIEWS_TITLE = " The number above the name is the profile view count."
+VIEWS_TITLE = " The number at the top is the profile view count."
 COUNTER = ROOT / "counter"
 
 
@@ -435,36 +437,36 @@ def lockup(t: dict, faces: dict, mobile: bool, still: bool) -> tuple[str, str]:
     into one small meta strip under a gold hairline, split by gold hairlines
     (two short rows on phones)."""
     if mobile:
-        x0, yn, ns, band, floor = 28, 82, 44, 72, 5
+        x0, yn, ns, band, floor = 28, 88, 44, 72, 5   # the name's baseline leaves room for the counter above it (hero() H and cy move with it)
         sy, ss = 37, 22                    # statement: baseline below the name's, size
         ry, my, ms, mlh = 19, 21, 12, 20   # rule below the statement, strip below the rule, strip size, row pitch
         ics, isw, igap, sgap = 12, 1.35, 6, 10
         right, fit = 332, 324              # the text column ends here; the still statement a little sooner
         rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL)], [("cap", ROLE_2)]]
-        bh, bn, bl, bgap = 26, 11.5, 10, 10   # badge height, number size, label size, gap to the name's cap line
+        ccx, cyb, cn, cl, ce = 180, 34, 15, 12, 17   # counter: group centre x, baseline, number, label, eye sizes
     else:
-        x0, yn, ns, band, floor = 56, 142, 60, 96, 7
+        x0, yn, ns, band, floor = 56, 122, 60, 96, 7
         sy, ss = 50, 30
         ry, my, ms, mlh = 24, 24, 13, 0
         ics, isw, igap, sgap = 13.5, 1.4, 7, 13
         right, fit = 528, 488              # clear of the watch's dotted track; still statement <= strip
         rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL), ("cap", META_SCHOOL)]]
-        bh, bn, bl, bgap = 30, 13, 11, 14
+        ccx, cyb, cn, cl, ce = 423, 46, 20, 15, 22
     ink, ink2, gold = t["ink"], t["ink2"], t["accent"]
     translate = ' type="translate"'
     defs, out = [], []
 
-    # badge: the live view count above the name, left-aligned with it; its place is
-    # a comment that counter/api/hero.js fills (see VIEWS_RE). It fades in and settles first.
-    yb = yn - faces[900].cap_height(ns) - bgap - bh
-    slot_json = json.dumps(dict(x=x0, y=round(yb, 1), h=bh, num=bn, label=bl), separators=(",", ":"))
-    badge = f"<!--VIEWS {slot_json}-->"
+    # counter: the live view count at the top centre of the hero (eye + number + "views",
+    # centred as one group on the hero's midline); its place is a comment that
+    # counter/api/hero.js fills (see VIEWS_RE). It fades in and settles first.
+    slot_json = json.dumps(dict(cx=ccx, y=cyb, num=cn, label=cl, eye=ce), separators=(",", ":"))
+    counter = f"<!--VIEWS {slot_json}-->"
     if still:
-        out.append(badge)
+        out.append(counter)
     else:
         settle = intro("animateTransform", "transform", "0 6", "0 0", 0.2, 0.8, translate)
         fade = intro("animate", "opacity", "0", "1", 0.2, 0.6)
-        out.append(f"<g>{settle}<g>{fade}{badge}</g></g>")
+        out.append(f"<g>{settle}<g>{fade}{counter}</g></g>")
 
     # name: revealed left to right behind a warm edge while it rises a few units
     name = faces[900].layout(NAME, ns, tracking=-0.012)
@@ -602,8 +604,8 @@ def lockup(t: dict, faces: dict, mobile: bool, still: bool) -> tuple[str, str]:
 def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | None" = None) -> str:
     t = THEMES[theme]
     if mobile:
-        W, H = 360, 410
-        cx, cy, r, label = 180, 288, 92, 10
+        W, H = 360, 416
+        cx, cy, r, label = 180, 294, 92, 10
     else:
         W, H = 846, 300
         cx, cy, r, label = 690, 150, 118, 9
@@ -894,11 +896,11 @@ def main() -> None:
         for still in (False, True):
             s = "-still" if still else ""
             svg = hero(theme, mobile, still, faces, pl)
-            p = COUNTER / "hero" / f"hero{m}{s}.svg"      # template with the badge slot, served by the function
+            p = COUNTER / "hero" / f"hero{m}{s}.svg"      # template with the counter slot, served by the function
             p.parent.mkdir(exist_ok=True)
             p.write_text(svg, encoding="utf-8", newline="\n")
             written.append(p)
-            p = ASSETS / f"hero{m}{s}.svg"                 # the same hero without the live badge
+            p = ASSETS / f"hero{m}{s}.svg"                 # the same hero without the live counter
             p.write_text(VIEWS_RE.sub("", svg).replace(VIEWS_TITLE, ""), encoding="utf-8", newline="\n")
             written.append(p)
         p = ASSETS / f"footer{m}.svg"

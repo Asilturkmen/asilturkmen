@@ -1,5 +1,5 @@
 // GET /api/hero?v=desktop|mobile|desktop-still|mobile-still -> the hero image with the
-// live view count above the name (+1 per request; the README's <picture> fetches one
+// live view count at its top centre (+1 per request; the README's <picture> fetches one
 // variant per page view). ?peek=1 draws it without counting.
 // The templates in ../hero/ are written by scripts/build.py; the count is composed
 // from counter/glyphs.json into their <!--VIEWS {...}--> slot (render.js).
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   try {
     text = formatCount(await count(isPeek(req)));
   } catch (e) {
-    console.error("hero:", e.message);          // no number: the hero is drawn without the badge
+    console.error("hero:", e.message);          // no number: the hero is drawn without the counter
   }
   svgHeaders(res);
   res.end(renderHero(variant, text));

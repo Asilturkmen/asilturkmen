@@ -3,8 +3,9 @@ request time (counter/render.js). Satoshi itself is never shipped; only these
 outlines, like every other text on the page.
 
   tile   the standalone "N views" tile (/api/views): digits and comma in Bold 16, "views" in Medium 12
-  badge  the "(eye) N views" badge above the name in the hero: Bold digits and comma, and
-         "views" in Medium, drawn at 100 units and scaled to the sizes the hero template asks for
+  badge  the "(eye) N views" counter at the top centre of the hero (render.js renderCounter):
+         Bold digits and comma, and "views" in Medium, drawn at 100 units and scaled to the
+         sizes the hero template asks for (the block keeps its old name)
 """
 import json
 import sys
