@@ -1,7 +1,7 @@
 """Turn .preview/readme.html (GitHub's rendered README) into a browsable page.
 
-    python scripts/preview.py          # renders README through GitHub's API
-    python scripts/preview_page.py     # then open .preview/index.html
+    python scripts/preview.py          # renders README through GitHub's API (.preview/readme.html)
+    python scripts/preview_page.py     # then open .preview/view.html in a browser
 """
 from pathlib import Path
 
