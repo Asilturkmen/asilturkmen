@@ -303,7 +303,7 @@ def plate_card(pl: "Plate", i: int, slug: str, name: str, live: str, t: dict, fa
 
 
 def plate_button(pl: "Plate", i: int, right: bool, kind: str, slug: str, name: str, theme: str, faces: dict) -> str:
-    """Left (Code, or the Private code status) or right (Live) half under card i, on the plate."""
+    """Left (Code, or the Private status) or right (Live) half under card i, on the plate."""
     g = BTN_GAP[pl.mobile]
     if right:
         x0, x1 = pl.cx[i] + pl.cw / 2 + g / 2, pl.cx[i] + pl.cw
@@ -843,12 +843,12 @@ def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
     return body + shackle + hole
 
 
-PRIVATE_LABEL, PRIVATE_SIZE = "Private code", 12   # Satoshi Medium: lock + label end ~9 units short of the Live pill
+PRIVATE_LABEL, PRIVATE_SIZE = "Private", 12   # Satoshi Medium, flush with the cover's left edge, well short of the Live pill
 
 
 def private_button(mobile: bool, faces: dict, name: str, width: float | None = None) -> str:
     """Left half for a project whose code is private: not a link and not a button, a quiet
-    status (lock + "Private code" in muted ink) flush with the cover's left edge, on the
+    status (lock + "Private" in muted ink) flush with the cover's left edge, on the
     Live pill's centre line. Phones get the lock alone, centred in the half."""
     W, H = (width or BTN_W[(mobile, True)]), BTN_H
     x0, x1 = 0.0, (W if width else W - BTN_GAP[mobile] / 2)
