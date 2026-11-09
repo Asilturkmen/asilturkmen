@@ -1,6 +1,11 @@
-"""Write counter/glyphs.json: the digit, comma and "views" outlines the profile-views
-tile is composed from at request time (counter/render.js). Satoshi itself is never
-shipped; only these outlines, like every other text on the page."""
+"""Write counter/glyphs.json: the outlines the Vercel functions compose text from at
+request time (counter/render.js). Satoshi itself is never shipped; only these
+outlines, like every other text on the page.
+
+  tile   the standalone "N views" tile (/api/views): digits and comma in Bold 16, "views" in Medium 12
+  badge  the "(eye) N views" badge above the name in the hero: Bold digits and comma, and
+         "views" in Medium, drawn at 100 units and scaled to the sizes the hero template asks for
+"""
 import json
 import sys
 from pathlib import Path
@@ -11,6 +16,8 @@ from build import FONT_DIR, FONT_FILES, Face, fonts_ready  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "counter" / "glyphs.json"
 NUM_SIZE, LABEL_SIZE = 16, 12
+BADGE_UNITS = 100
+LABEL = "views"
 
 
 def main() -> None:
@@ -21,13 +28,24 @@ def main() -> None:
     for ch in "0123456789,":
         run = bold.layout(ch, NUM_SIZE)
         digits[ch] = {"d": run.d(0, 0, 2), "adv": round(run.width, 2)}
-    label = medium.layout("views", LABEL_SIZE)
+    label = medium.layout(LABEL, LABEL_SIZE)
+    bdigits = {}
+    for ch in "0123456789,":
+        run = bold.layout(ch, BADGE_UNITS)
+        bdigits[ch] = {"d": run.d(0, 0, 1), "adv": round(run.width, 1)}
+    blabel = medium.layout(LABEL, BADGE_UNITS)
     data = {
         "numSize": NUM_SIZE,
         "labelSize": LABEL_SIZE,
         "cap": round(bold.cap_height(NUM_SIZE), 2),
         "digits": digits,
         "label": {"d": label.d(0, 0, 2), "w": round(label.width, 2)},
+        "badge": {
+            "units": BADGE_UNITS,
+            "cap": round(bold.cap_height(BADGE_UNITS), 1),
+            "digits": bdigits,
+            "label": {"d": blabel.d(0, 0, 1), "w": round(blabel.width, 1)},
+        },
     }
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8", newline="\n")

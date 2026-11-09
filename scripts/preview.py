@@ -172,23 +172,46 @@ body{{margin:0;padding:16px 0;background:{bg};color:{fg};
 # GitHub's renderer routes the tile through camo and keeps the real URL in data-canonical-src.
 COUNTER_RE = re.compile(r'<img[^>]*vercel\.app/api/views[^>]*>')
 SRC_RE = re.compile(r'(?<![\w-])src="[^"]*"')
+# The hero's four variants come from the same function; GitHub leaves <source srcset>
+# URLs alone and camo-wraps the <img> (its real URL stays in data-canonical-src).
+HERO_URL_RE = re.compile(r'https://[^"]*vercel\.app/api/hero\?v=([a-z-]+)')
+
+
+def _sample(out: Path, name: str, *args: str) -> Path | None:
+    """Draw one of the counter's images with node (counter/sample.js) into out/."""
+    path = out / name
+    try:
+        svg = subprocess.run(["node", str(ROOT / "counter" / "sample.js"), *args], check=True,
+                             capture_output=True, text=True, encoding="utf-8").stdout
+        path.write_text(svg, encoding="utf-8")
+    except (OSError, subprocess.CalledProcessError) as e:
+        print(f"counter sample skipped ({name}): {e}", file=sys.stderr)
+        return None
+    return path
 
 
 def local_counter(html: str, out: Path) -> str:
-    """The profile-views tile is served by a Vercel function (counter/). Offline, or
-    before it is deployed, draw a sample tile with the same renderer instead."""
-    if not COUNTER_RE.search(html):
-        return html
-    sample = out / "views-sample.svg"
-    try:
-        svg = subprocess.run(["node", str(ROOT / "counter" / "sample.js"), "1248"], check=True,
-                             capture_output=True, text=True, encoding="utf-8").stdout
-        sample.write_text(svg, encoding="utf-8")
-    except (OSError, subprocess.CalledProcessError) as e:
-        print(f"counter sample skipped: {e}", file=sys.stderr)
-        return html
-    rel = sample.relative_to(ROOT).as_posix()          # served from the virtual origin like assets/
-    return COUNTER_RE.sub(lambda m: SRC_RE.sub(f'src="{ORIGIN}/{rel}"', m.group(0)), html)
+    """The profile-views tile and the hero are served by a Vercel function (counter/).
+    Offline, or before it is deployed, draw samples with the same renderer instead."""
+    if COUNTER_RE.search(html):
+        sample = _sample(out, "views-sample.svg", "1248")
+        if sample:
+            rel = sample.relative_to(ROOT).as_posix()      # served from the virtual origin like assets/
+            html = COUNTER_RE.sub(lambda m: SRC_RE.sub(f'src="{ORIGIN}/{rel}"', m.group(0)), html)
+    heroes = {}
+    for variant in set(HERO_URL_RE.findall(html)):
+        sample = _sample(out, f"hero-{variant}-sample.svg", "hero", variant, "1248")
+        if sample:
+            heroes[variant] = f"{ORIGIN}/{sample.relative_to(ROOT).as_posix()}"
+    if heroes:
+        # plain URLs first; then the camo-wrapped <img src> / <source srcset>, whose real URL
+        # GitHub keeps in data-canonical-src (on <source> too)
+        html = HERO_URL_RE.sub(lambda m: heroes.get(m.group(1), m.group(0)), html)
+        wrapped = re.compile(r'<(?:img|source)\b[^>]*data-canonical-src="[^"]*hero-(?P<v>[a-z-]+)-sample\.svg"[^>]*>')
+        attr = re.compile(r'(?<![\w-])(src|srcset)="[^"]*"')
+        html = wrapped.sub(lambda m: attr.sub(lambda a: f'{a.group(1)}="{heroes[m.group("v")]}"', m.group(0))
+                           if m.group("v") in heroes else m.group(0), html)
+    return html
 
 
 def main(argv: list[str] | None = None) -> int:
