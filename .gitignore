@@ -2,3 +2,5 @@
 scripts/.fonts/
 .venv/
 __pycache__/
+.vercel/
+node_modules/

@@ -169,6 +169,28 @@ body{{margin:0;padding:16px 0;background:{bg};color:{fg};
 </div></div></body></html>"""
 
 
+# GitHub's renderer routes the tile through camo and keeps the real URL in data-canonical-src.
+COUNTER_RE = re.compile(r'<img[^>]*vercel\.app/api/views[^>]*>')
+SRC_RE = re.compile(r'(?<![\w-])src="[^"]*"')
+
+
+def local_counter(html: str, out: Path) -> str:
+    """The profile-views tile is served by a Vercel function (counter/). Offline, or
+    before it is deployed, draw a sample tile with the same renderer instead."""
+    if not COUNTER_RE.search(html):
+        return html
+    sample = out / "views-sample.svg"
+    try:
+        svg = subprocess.run(["node", str(ROOT / "counter" / "sample.js"), "1248"], check=True,
+                             capture_output=True, text=True, encoding="utf-8").stdout
+        sample.write_text(svg, encoding="utf-8")
+    except (OSError, subprocess.CalledProcessError) as e:
+        print(f"counter sample skipped: {e}", file=sys.stderr)
+        return html
+    rel = sample.relative_to(ROOT).as_posix()          # served from the virtual origin like assets/
+    return COUNTER_RE.sub(lambda m: SRC_RE.sub(f'src="{ORIGIN}/{rel}"', m.group(0)), html)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", type=Path, default=ROOT, help="directory relative paths resolve against")
@@ -191,6 +213,7 @@ def main(argv: list[str] | None = None) -> int:
     out = (args.out or ROOT / ".preview").resolve()
     out.mkdir(parents=True, exist_ok=True)
     body = rewrite_urls(render_markdown(readme.read_text(encoding="utf-8"), STATE / "cache"))
+    body = local_counter(body, out)
     (out / "readme.html").write_text(body, encoding="utf-8")
     suffix = "-rm" if args.reduced_motion else ""
 

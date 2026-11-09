@@ -1,0 +1,12 @@
+{
+  "name": "asilturkmen-views",
+  "private": true,
+  "type": "module",
+  "description": "Profile-views tile for github.com/Asilturkmen (Vercel function + Upstash Redis)",
+  "scripts": {
+    "sample": "node sample.js"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

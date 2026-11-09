@@ -22,5 +22,6 @@ href="https://asilturkmen.com"><picture><source media="(max-width: 600px)" srcse
 <a href="https://asilturkmen.com"><img src="assets/link-website.svg" width="42" height="42" alt="asilturkmen.com"></a>&nbsp;&nbsp;
 <a href="https://www.linkedin.com/in/asil-t%C3%BCrkmen-224ab0241/"><img src="assets/link-linkedin.svg" width="42" height="42" alt="LinkedIn"></a>&nbsp;&nbsp;
 <a href="mailto:contact.asilturkmen@gmail.com"><img src="assets/link-email.svg" width="42" height="42" alt="Email"></a>&nbsp;&nbsp;
-<a href="https://buymeacoffee.com/turkmenasil"><img src="assets/link-coffee.svg" width="42" height="42" alt="Buy me a coffee"></a>
+<a href="https://buymeacoffee.com/turkmenasil"><img src="assets/link-coffee.svg" width="42" height="42" alt="Buy me a coffee"></a>&nbsp;&nbsp;
+<a href="https://github.com/Asilturkmen"><img src="https://asilturkmen-views.vercel.app/api/views" height="42" alt="Profile views"></a>
 </p>
