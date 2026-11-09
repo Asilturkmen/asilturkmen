@@ -1,8 +1,13 @@
-"""The "Tools I use" strip: brand icons with names, drawn as one SVG.
+"""The tools I use: brand icons, their names and colours.
 
-    tools_strip(theme, mobile, faces) -> str
-        complete SVG for THEMES[theme]; desktop 846 x 108 (two justified rows
-        of icon + name), mobile 360 x 150 (icons only, six to a row).
+    TOOLS                                  (slug, display name, simple-icons slug, brand hex)
+    icon_fill(brand, theme, t) -> str      the brand colour, corrected for contrast on the surface
+    tint(grey, colour, k) -> str           grey moved k of the way to colour, in Oklab
+    icon(slug, cx, cy, size, fill) -> str  one Simple Icons glyph centred on (cx, cy)
+    icon_bounds(slug, size) -> box         what that glyph really covers, centred on the origin
+
+scripts/orbit.py draws them circling the asilturkmen.com lockup; build.py
+borrows the GitHub mark for the Code buttons.
 
 Icon outlines and brand colours come from Simple Icons and are vendored in
 scripts/icons.json, so the build needs no network and is deterministic.
@@ -18,7 +23,10 @@ import json
 import math
 from pathlib import Path
 
-__all__ = ["TOOLS", "tools_strip"]
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.svgLib.path import parse_path
+
+__all__ = ["TOOLS", "OPTICAL", "icon_fill", "tint", "icon", "icon_bounds"]
 
 ICONS = json.loads((Path(__file__).resolve().parent / "icons.json").read_text(encoding="utf-8"))
 
@@ -43,8 +51,6 @@ TOOLS = [
     ("vercel", "Vercel", "vercel", "#000000"),
 ]
 assert all(ICONS[si]["hex"] == hex_ for _, _, si, hex_ in TOOLS), "TOOLS and icons.json disagree"
-ROW_SPLIT = 8          # desktop: first row TypeScript .. Laravel, second row Python .. Vercel
-MOBILE_PER_ROW = 6
 
 # Simple Icons fill a 24-unit box edge to edge whatever the shape, so solid
 # squares, discs and triangles look bigger than open or wide marks. These scale
@@ -152,84 +158,46 @@ def icon_fill(brand: str, theme: str, t: dict) -> str:
     return _to_hex(_in_gamut(hi if up else lo, C, H))
 
 
+def tint(grey: str, colour: str, k: float) -> str:
+    """grey moved k (0..1) of the way to colour, interpolated in Oklab: lightness
+    and chroma move together along a straight line towards the colour, so the
+    midpoints are quiet versions of it, never a muddy grey-brown."""
+    if k <= 0:
+        return grey
+    if k >= 1:
+        return colour
+    (L0, C0, H0), (L1, C1, H1) = _oklch(_hex(grey)), _oklch(_hex(colour))
+    a0, b0, a1, b1 = C0 * math.cos(H0), C0 * math.sin(H0), C1 * math.cos(H1), C1 * math.sin(H1)
+    L, A, B = L0 + (L1 - L0) * k, a0 + (a1 - a0) * k, b0 + (b1 - b0) * k
+    return _to_hex(_in_gamut(L, math.hypot(A, B), math.atan2(B, A)))
+
+
 # ----------------------------------------------------------------- drawing
 def _num(v: float, nd: int = 2) -> str:
     s = f"{v:.{nd}f}".rstrip("0").rstrip(".")
     return "0" if s in ("-0", "") else s
 
 
-def _icon(slug: str, cx: float, cy: float, size: float, fill: str) -> str:
-    """A 24-unit Simple Icons glyph centred on (cx, cy) in a size x size slot."""
+def icon(slug: str, cx: float, cy: float, size: float, fill: str, inner: str = "") -> str:
+    """A 24-unit Simple Icons glyph centred on (cx, cy) in a size x size slot: one
+    <path> with one fill. `inner` (e.g. an <animate> of the fill) goes inside it."""
     k = size * OPTICAL.get(slug, 1.0) / 24
-    return (f'<path transform="translate({_num(cx - 12 * k)} {_num(cy - 12 * k)}) scale({_num(k, 4)})" '
-            f'fill="{fill}" d="{ICONS[slug]["d"]}"/>')
+    head = (f'<path transform="translate({_num(cx - 12 * k)} {_num(cy - 12 * k)}) scale({_num(k, 4)})" '
+            f'fill="{fill}" d="{ICONS[slug]["d"]}"')
+    return f"{head}>{inner}</path>" if inner else f"{head}/>"
 
 
-def tools_strip(theme: str, mobile: bool, faces: dict, plate=None) -> str:
-    # build.py imports this module, so its helpers are imported at call time
-    from build import THEMES, frame, plate_svg
+_BOUNDS: dict[str, tuple] = {}
 
-    t = THEMES[theme]
-    fills = {slug: icon_fill(hex_, theme, t) for slug, _, _, hex_ in TOOLS}
-    title = "Tools I use: " + ", ".join(name for _, name, _, _ in TOOLS) + "."
-    parts = []
 
-    if mobile:
-        W, H = 360, 150
-        size, margin = 22, 24
-        pitch_x = (W - 2 * margin) / MOBILE_PER_ROW
-        row_cy = (33, 75, 117)
-        rows = [TOOLS[i:i + MOBILE_PER_ROW] for i in range(0, len(TOOLS), MOBILE_PER_ROW)]
-        for r, row in enumerate(rows):
-            # a short last row is centred on the same pitch
-            x0 = margin + (MOBILE_PER_ROW - len(row)) * pitch_x / 2
-            for i, (slug, _, si, _) in enumerate(row):
-                cx = x0 + pitch_x * (i + 0.5)
-                parts.append(_icon(si, cx, row_cy[r], size, fills[slug]))
-    else:
-        W, H = 846, 108
-        size, gap, margin = 18, 8, 56
-        face = faces[500]
-        cap = face.cap_height(13)
-        row_cy = (33, 75)
-        rows = [TOOLS[:ROW_SPLIT], TOOLS[ROW_SPLIT:]]
-        for r, row in enumerate(rows):
-            runs = [face.layout(name, 13) for _, name, _, _ in row]
-            widths = [size + gap + run.width for run in runs]
-            space = (W - 2 * margin - sum(widths)) / (len(row) - 1)
-            cy, x = row_cy[r], float(margin)
-            for i, ((slug, _, si, _), run) in enumerate(zip(row, runs)):
-                parts.append(_icon(si, x + size / 2, cy, size, fills[slug]))
-                parts.append(run.path(x + size + gap, cy + cap / 2, t["ink2"]))
-                x += widths[i]
-                if i < len(row) - 1:
-                    parts.append(f'<circle cx="{_num(x + space / 2)}" cy="{_num(cy)}" r="1.2" '
-                                 f'fill="{t["muted"]}" fill-opacity="0.45"/>')
-                    x += space
-        # hairline between the rows, fading out at both ends
-        parts.append(f'<rect x="{margin - 24}" y="54" width="{W - 2 * margin + 48}" height="1" fill="url(#rule)"/>')
-
-    if plate is not None:   # light mode: one window of the obsidian plate (build.Plate)
-        rule = "" if mobile else ('<linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">'
-                                  f'<stop offset="0" stop-color="{t["border"]}" stop-opacity="0"/>'
-                                  f'<stop offset="0.05" stop-color="{t["border"]}"/><stop offset="0.95" stop-color="{t["border"]}"/>'
-                                  f'<stop offset="1" stop-color="{t["border"]}" stop-opacity="0"/></linearGradient>')
-        return plate_svg(plate, t, 0, W, "tools", chr(10).join(parts), title, rule)
-    defs, body, border = frame(W, H, t)
-    if not mobile:
-        defs += ('\n<linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">'
-                 f'<stop offset="0" stop-color="{t["border"]}" stop-opacity="0"/>'
-                 f'<stop offset="0.05" stop-color="{t["border"]}"/><stop offset="0.95" stop-color="{t["border"]}"/>'
-                 f'<stop offset="1" stop-color="{t["border"]}" stop-opacity="0"/></linearGradient>')
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
-<title id="t">{title}</title>
-<defs>
-{defs}
-</defs>
-<g clip-path="url(#frame)">
-{body}
-{chr(10).join(parts)}
-{border}
-</g>
-</svg>
-'''
+def icon_bounds(slug: str, size: float) -> tuple[float, float, float, float]:
+    """Bounding box (x0, y0, x1, y1) of the outline icon(slug, 0, 0, size, ...) draws:
+    what the glyph really covers, with its OPTICAL factor applied. Wide or short marks
+    (Tailwind, Docker) cover much less than their square slot."""
+    if slug not in _BOUNDS:
+        pen = BoundsPen(None)
+        parse_path(ICONS[slug]["d"], pen)
+        _BOUNDS[slug] = pen.bounds
+    k = size * OPTICAL.get(slug, 1.0) / 24
+    x0, y0, x1, y1 = _BOUNDS[slug]
+    return (x0 - 12) * k, (y0 - 12) * k, (x1 - 12) * k, (y1 - 12) * k

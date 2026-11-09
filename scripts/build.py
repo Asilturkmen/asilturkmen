@@ -2,8 +2,8 @@
 
 Everything on github.com/Asilturkmen that is not plain text comes out of this
 file: the hero (name, role, and a watch that counts the time you spend on the
-page), the project cards with their Code / Live buttons, and the footer that
-points to asilturkmen.com.
+page), the project cards with their Code / Live buttons, and the orbit, where
+the tools I use circle the pointer to asilturkmen.com (scripts/orbit.py).
 
 Each image is written in four variants: dark/light (chosen on GitHub with the
 #gh-dark-mode-only / #gh-light-mode-only link fragments), desktop/mobile
@@ -40,7 +40,8 @@ try:
     from movement import movement, movement_defs  # skeleton watch, scripts/movement.py
 except ImportError:  # pragma: no cover
     movement = movement_defs = None
-from tools import tools_strip, _icon as brand_icon  # "Tools I use" strip, scripts/tools.py
+from tools import icon as brand_icon   # brand icons (Simple Icons), scripts/tools.py
+from orbit import orbit, ORBIT          # the tools orbiting the asilturkmen.com lockup, scripts/orbit.py
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -185,9 +186,9 @@ def frame(W: int, H: int, t: dict) -> tuple[str, str]:
 
 # ----------------------------------------------------------------- plate (light mode)
 # On GitHub's white page the light set is ONE obsidian plate. Hero, project row,
-# button row, tools and footer are laid out in one coordinate system (846 units
-# wide on desktop, 360 on phones) and every image is a window (its viewBox) onto
-# that plate. Each window draws the whole plate's surface, outline and dividers,
+# button row and orbit are laid out in one coordinate system (846 units wide on
+# desktop, 360 on phones) and every image is a window (its viewBox) onto that
+# plate. Each window draws the whole plate's surface, outline and dividers,
 # so neighbouring images continue each other exactly. The README glues the
 # images with no whitespace and align="top" (vertical-align: top), which removes
 # the gap GitHub would otherwise leave under every line of inline images.
@@ -210,15 +211,16 @@ class Plate:
         self.ch = self.cw * 104 / 184                            # cover height (card ratio)
         self.name_size = 9.6 if mobile else 20
         self.pad_top, self.name_gap, pad_bot = (22, 6, 10) if mobile else (40, 13, 18)
-        # vertical breathing room inside each row (content is pushed down by pad[row])
-        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, tools=14 if mobile else 22, footer=10 if mobile else 14)
+        # vertical breathing room inside each row (content is pushed down by pad[row]);
+        # the orbit row takes its content height and padding from orbit.ORBIT
+        orbit_h, orbit_pad = ORBIT["mobile" if mobile else "desktop"]
+        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, orbit=orbit_pad)
         cap = faces[700].cap_height(self.name_size)
         self.h = dict(
             hero=(416 + 16) if mobile else (300 + 24),
             cards=math.ceil(self.pad_top + self.ch + self.name_gap + cap + pad_bot),
             buttons=BTN_H + (30 if mobile else 44),
-            tools=(150 + 28) if mobile else (108 + 44),
-            footer=(104 + 20) if mobile else (124 + 28),
+            orbit=orbit_h + 2 * orbit_pad,
         )
         self.y, y = {}, 0
         for k, h in self.h.items():
@@ -237,7 +239,7 @@ def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str
     if shift and dy:
         content = f'<g transform="translate(0 {dy})">{content}</g>'
     rules = "".join(f'<rect x="24" y="{pl.y[k]}" width="{W - 48}" height="1" fill="url(#pl-rule)"/>'
-                    for k in ("cards", "tools", "footer"))
+                    for k in ("cards", "orbit"))
     w = num(x1 - x0, 2)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{num(x0, 2)} {y0} {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="t">\n'
             f'<title id="t">{title}</title>\n<defs>\n'
@@ -833,54 +835,6 @@ def private_button(mobile: bool, faces: dict, width: float | None = None) -> str
 
 
 
-# ----------------------------------------------------------------- footer
-def footer(theme: str, mobile: bool, faces: dict, plate: "Plate | None" = None) -> str:
-    t = THEMES[theme]
-    if mobile:
-        W, H = 360, 104
-        kick = faces[700].layout(FOOT_KICKER, 10, tracking=0.22)
-        dom = faces[700].layout(FOOT_DOMAIN, 26, tracking=-0.01)
-        arrow = faces[500].layout("→", 22)
-        sub = faces[500].layout(FOOT_SUB, 13)
-        yk, yd, ys, gap = 27, 58, 81, 8
-    else:
-        W, H = 846, 124
-        kick = faces[700].layout(FOOT_KICKER, 10, tracking=0.24)
-        dom = faces[700].layout(FOOT_DOMAIN, 38, tracking=-0.01)
-        arrow = faces[500].layout("→", 30)
-        sub = faces[500].layout(FOOT_SUB, 13)
-        yk, yd, ys, gap = 32, 70, 96, 12
-    defs, body, border = frame(W, H, t)
-    total = dom.width + gap + arrow.width
-    xd = (W - total) / 2
-    parts = [
-        kick.path((W - kick.width) / 2, yk, t["accent"], nd=2),
-        dom.path(xd, yd, t["ink"]),
-        arrow.path(xd + dom.width + gap, yd - (dom.size - arrow.size) * 0.18, t["accent"]),
-        sub.path((W - sub.width) / 2, ys, t["muted"]),
-    ]
-    if not mobile:
-        # hairlines left and right of the domain
-        hx, ly = 64, yd - dom.size * 0.33
-        parts.append(f'<rect x="{hx}" y="{num(ly)}" width="{num(xd - hx - 24)}" height="1" fill="{t["border"]}"/>')
-        parts.append(f'<rect x="{num(xd + total + 24)}" y="{num(ly)}" width="{num(W - hx - (xd + total + 24))}" height="1" fill="{t["border"]}"/>')
-    if plate is not None:
-        return plate_svg(plate, t, 0, W, "footer", chr(10).join(parts),
-                         "More about my work at asilturkmen.com: projects, case studies and CV.")
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
-<title id="t">More about my work at asilturkmen.com: projects, case studies and CV.</title>
-<defs>
-{defs}
-</defs>
-<g clip-path="url(#frame)">
-{body}
-{chr(10).join(parts)}
-{border}
-</g>
-</svg>
-'''
-
-
 # ----------------------------------------------------------------- main
 def main() -> None:
     fonts_ready()
@@ -903,12 +857,9 @@ def main() -> None:
             p = ASSETS / f"hero{m}{s}.svg"                 # the same hero without the live counter
             p.write_text(VIEWS_RE.sub("", svg).replace(VIEWS_TITLE, ""), encoding="utf-8", newline="\n")
             written.append(p)
-        p = ASSETS / f"footer{m}.svg"
-        p.write_text(footer(theme, mobile, faces, pl), encoding="utf-8", newline="\n")
-        written.append(p)
-        p = ASSETS / f"tools{m}.svg"
-        p.write_text(tools_strip(theme, mobile, faces, pl), encoding="utf-8", newline="\n")
-        written.append(p)
+            p = ASSETS / f"orbit{m}{s}.svg"
+            p.write_text(orbit(theme, mobile, still, faces, pl), encoding="utf-8", newline="\n")
+            written.append(p)
         for i, (slug, name, live, repo) in enumerate(PROJECTS):
             p = ASSETS / f"card-{slug}{m}.svg"
             p.write_text(plate_card(pl, i, slug, name, live, THEMES[theme], faces), encoding="utf-8", newline="\n")
