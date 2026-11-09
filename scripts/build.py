@@ -303,7 +303,7 @@ def plate_card(pl: "Plate", i: int, slug: str, name: str, live: str, t: dict, fa
 
 
 def plate_button(pl: "Plate", i: int, right: bool, kind: str, slug: str, name: str, theme: str, faces: dict) -> str:
-    """Left (Code, or the Private status) or right (Live) half under card i, on the plate."""
+    """Left (Code, or the Private pill) or right (Live) half under card i, on the plate."""
     g = BTN_GAP[pl.mobile]
     if right:
         x0, x1 = pl.cx[i] + pl.cw / 2 + g / 2, pl.cx[i] + pl.cw
@@ -760,9 +760,10 @@ def arrow_ne(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
 
 
 def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict, width: float | None = None,
-           label: str | None = None, verb: str | None = None) -> str:
+           label: str | None = None, verb: str | None = None, badge=None) -> str:
     """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site).
-    label and verb replace the Live button's word and the verb in its title (see LIVE)."""
+    label and verb replace the button's word and the verb in its title (see LIVE, private_button);
+    badge(icx, cy, icon_size) -> svg draws something over the icon (the private padlock)."""
     t = THEMES[theme]
     W, H = (width or BTN_W[(mobile, half)]), BTN_H
     x0, x1 = 0.0, float(W)
@@ -815,9 +816,11 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
         shapes.append(brand_icon("github", icx, cy, icon_size, fg))
     else:
         shapes.append(arrow_ne(icx, cy, icon_size * 0.82, fg, 2.0 if mobile else 1.8))
+    if badge:
+        shapes.append(badge(icx, cy, icon_size))
     if label:
         shapes.append(label.path(gx + icon_size + gap, cy + faces[700].cap_height(BTN_LABEL) / 2, lab, nd=2))
-    title = f"{name} — source code on GitHub" if kind == "code" else f"{name} — {verb or 'live site'}"
+    title = f"{name} — {verb or ('source code on GitHub' if kind == 'code' else 'live site')}"
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">{title}</title>
 <defs>
@@ -828,41 +831,37 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
 '''
 
 
-def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
-    """A padlock drawn with strokes in an s x s box centred on (cx, cy)."""
+def lock_badge(cx: float, cy: float, s: float, colour: str, key: str, sw: float) -> str:
+    """A small filled padlock (body s*15/24 wide, shackle above) centred on (cx, cy), with a
+    1-unit keyline in `key` (the pill's own colour) behind it, so it stays crisp where it
+    overlaps the GitHub mark."""
     k = s / 24
-
-    def p(x: float, y: float) -> str:
-        return f"{num(cx + (x - 12) * k, 2)} {num(cy + (y - 12) * k, 2)}"
-
-    body = (f'<rect x="{num(cx - 7.5 * k, 2)}" y="{num(cy - 1.5 * k, 2)}" width="{num(15 * k, 2)}" height="{num(11 * k, 2)}" '
-            f'rx="{num(2.6 * k, 2)}" fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}"/>')
-    shackle = (f'<path d="M{p(8.2, 10.5)}L{p(8.2, 7.4)}A{num(3.8 * k, 2)} {num(3.8 * k, 2)} 0 0 1 {p(15.8, 7.4)}L{p(15.8, 10.5)}" '
-               f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round"/>')
-    hole = f'<circle cx="{num(cx, 2)}" cy="{num(cy + 4 * k, 2)}" r="{num(1.4 * k, 2)}" fill="{colour}"/>'
-    return body + shackle + hole
+    bx, by, bw, bh, br = cx - 7.5 * k, cy - 1.5 * k, 15 * k, 11 * k, 2.6 * k
+    shackle = (f'M{num(cx - 3.8 * k, 2)} {num(cy - 1.5 * k, 2)}V{num(cy - 4.6 * k, 2)}'
+               f'A{num(3.8 * k, 2)} {num(3.8 * k, 2)} 0 0 1 {num(cx + 3.8 * k, 2)} {num(cy - 4.6 * k, 2)}V{num(cy - 1.5 * k, 2)}')
+    return (f'<path d="{shackle}" fill="none" stroke="{key}" stroke-width="{num(sw + 2, 2)}" stroke-linecap="round"/>'
+            f'<rect x="{num(bx - 1, 2)}" y="{num(by - 1, 2)}" width="{num(bw + 2, 2)}" height="{num(bh + 2, 2)}" rx="{num(br + 1, 2)}" fill="{key}"/>'
+            f'<path d="{shackle}" fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round"/>'
+            f'<rect x="{num(bx, 2)}" y="{num(by, 2)}" width="{num(bw, 2)}" height="{num(bh, 2)}" rx="{num(br, 2)}" fill="{colour}"/>'
+            f'<circle cx="{num(cx, 2)}" cy="{num(cy + 4 * k, 2)}" r="{num(1.3 * k, 2)}" fill="{key}"/>')
 
 
-PRIVATE_LABEL, PRIVATE_SIZE = "Private", 12   # Satoshi Medium, flush with the cover's left edge, well short of the Live pill
+PRIVATE_LABEL = "Private"
 
 
 def private_button(mobile: bool, faces: dict, name: str, width: float | None = None) -> str:
-    """Left half for a project whose code is private: not a link and not a button, a quiet
-    status (lock + "Private" in muted ink) flush with the cover's left edge, on the
-    Live pill's centre line. Phones get the lock alone, centred in the half."""
-    W, H = (width or BTN_W[(mobile, True)]), BTN_H
-    x0, x1 = 0.0, (W if width else W - BTN_GAP[mobile] / 2)
-    w, cy = x1 - x0, H / 2
-    ink = THEMES[THEME]["muted"]
-    icon_size, gap = (18, 0) if mobile else (13, 6)
-    label = None if mobile else faces[500].layout(PRIVATE_LABEL, PRIVATE_SIZE)
-    group = icon_size + (gap + label.width if label else 0)
-    gx = x0 + (w - group) / 2 if mobile else x0
-    shapes = [lock(gx + icon_size / 2, cy, icon_size, ink, 1.8 if mobile else 1.5)]
-    if label:
-        shapes.append(label.path(gx + icon_size + gap, cy + faces[500].cap_height(PRIVATE_SIZE) / 2, ink, nd=2))
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">\n'
-            f'<title id="t">{name} — {PRIVATE_LABEL}</title>\n' + "\n".join(shapes) + "\n</svg>\n")
+    """Left half for a project whose code is private: the Code pill itself (same frame, GitHub
+    mark and type) reading "Private", with a small gold padlock badged on the mark's lower
+    right; not a link. Phones get the mark and the badge alone, like the other icon-only pills."""
+    t = THEMES[THEME]
+    key = mix(t["bg0"], t["bg1"], 0.5)          # the pill's surface, for the badge's keyline
+
+    def badge(icx: float, cy: float, size: float) -> str:
+        s, sw = (10, 1.2) if mobile else (9, 1.1)
+        return lock_badge(icx + size * 0.4, cy + size * 0.4, s, t["accent"], key, sw)
+
+    return button("code", name, THEME, mobile, width is None, faces, width=width,
+                  label=PRIVATE_LABEL, verb=PRIVATE_LABEL, badge=badge)
 
 
 # ----------------------------------------------------------------- contact links
