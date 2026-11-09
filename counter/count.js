@@ -5,6 +5,9 @@
 // VIEWS_KEY (redis key, default "profile:views").
 
 const KEY = process.env.VIEWS_KEY || "profile:views";
+// Each REST call gets this long; a timeout throws (TimeoutError) like any other failure, so the
+// callers fall back to the hero without the counter / the tile with a dash.
+const REDIS_TIMEOUT_MS = 1500;
 
 async function redis(...cmd) {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -14,6 +17,7 @@ async function redis(...cmd) {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify(cmd),
+    signal: AbortSignal.timeout(REDIS_TIMEOUT_MS),   // a stalled Upstash must not stall the hero
   });
   if (!r.ok) throw new Error(`redis ${r.status}`);
   const j = await r.json();

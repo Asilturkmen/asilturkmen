@@ -18,8 +18,20 @@ an Upstash Redis counter behind it:
   (the counter in the hero replaced it); the route and `renderTile` stay as a plain counter
   image for anyone who wants one. Load it with `?peek=1` to show the number without counting.
 
-`?peek=1` works on both routes. If Redis is unreachable the hero is drawn without the
-counter and the tile shows a dash.
+`?peek=1` works on both routes.
+
+**Accessibility.** The templates' `<title>` ends with the sentence "The number at the top is
+the profile view count." (build.py's `VIEWS_TITLE`); `renderHero` rewrites it to "N profile
+views so far." when it has the number and drops it when it has not.
+
+**Failure modes.** The README shows nothing else where the hero goes, so the function always
+answers with an SVG. Every Upstash call has a 1.5 s timeout (`AbortSignal.timeout`); if Redis
+is slow, unreachable or unconfigured the hero is drawn without the counter and the tile shows
+a dash. If composing the counter itself fails (template missing or corrupt) `/api/hero` sends
+the raw template with the slot comment and the title sentence stripped; if even that cannot be
+read it answers with an empty transparent SVG — still status 200, because GitHub's image proxy
+(camo) shows a broken-image icon for any other status whatever the body. Each fallback logs
+`hero: count|render|template: …` with `console.error`, so Vercel's logs still show it.
 
 ## Deploy
 

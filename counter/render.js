@@ -1,9 +1,10 @@
 // Draws the two images that carry the view count. Text is composed from the outlines
 // in glyphs.json (scripts/counter_glyphs.py), so no font is needed at request time.
 //
-//   renderTile(text)          the standalone "N views" tile (/api/views): the same obsidian/gold
-//                             box as the link tiles (assets/link-*.svg), an eye, the count
-//                             in Satoshi Bold and "views" in Satoshi Medium
+//   renderTile(text)          the standalone "N views" tile (/api/views): a rounded obsidian box
+//                             with a thin edge and a gold sheen, an eye, the count in Satoshi Bold
+//                             and "views" in Satoshi Medium (a plain counter image; the README
+//                             uses the hero counter instead)
 //   renderCounter(text, slot, still)
 //                             the hero's counter: "(eye) N views" as plain text, no box, the
 //                             whole group centred on slot.cx; the eye blinks (first at 2.6 s,
@@ -61,13 +62,27 @@ export function renderTile(text) {
 
 // ------------------------------------------------------------------ hero
 export const HERO_VARIANTS = ["desktop", "mobile", "desktop-still", "mobile-still"];
-const SLOT_RE = /<!--VIEWS (\{.*?\})-->/;
+export const SLOT_RE = /<!--VIEWS (\{.*?\})-->/;
 const templates = new Map();
+
+// The sentence scripts/build.py appends to the templates' <title>; renderHero rewrites it with
+// the number, or drops it when there is none. Must match VIEWS_TITLE in scripts/build.py exactly
+// (template() checks every template that carries the slot and throws if it has drifted).
+export const VIEWS_TITLE = " The number at the top is the profile view count.";
+
+/** The template file for a variant (hero/hero[-mobile][-still].svg). */
+export function heroTemplatePath(variant) {
+  const file = "hero" + (variant.startsWith("mobile") ? "-mobile" : "") + (variant.endsWith("-still") ? "-still" : "") + ".svg";
+  return join(HERE, "hero", file);
+}
 
 function template(variant) {
   if (!templates.has(variant)) {
-    const file = "hero" + (variant.startsWith("mobile") ? "-mobile" : "") + (variant.endsWith("-still") ? "-still" : "") + ".svg";
-    templates.set(variant, readFileSync(join(HERE, "hero", file), "utf8"));
+    const svg = readFileSync(heroTemplatePath(variant), "utf8");
+    if (SLOT_RE.test(svg) && !svg.includes(VIEWS_TITLE)) {
+      throw new Error(`hero template ${variant}: title sentence drifted from VIEWS_TITLE (see scripts/build.py)`);
+    }
+    templates.set(variant, svg);
   }
   return templates.get(variant);
 }
@@ -117,8 +132,13 @@ export function renderCounter(text, slot, still = false) {
   return `<g>${eyeGroup}${num}${label}</g>`;
 }
 
-/** The hero template with the counter in its slot; text null leaves the counter out. */
+/**
+ * The hero template with the counter in its slot and the <title>'s counter sentence turned
+ * into "N profile views so far."; text null leaves the counter out and drops the sentence.
+ */
 export function renderHero(variant, text) {
   const still = variant.endsWith("-still");
-  return template(variant).replace(SLOT_RE, (_, json) => (text == null ? "" : renderCounter(text, JSON.parse(json), still)));
+  return template(variant)
+    .replace(VIEWS_TITLE, () => (text == null ? "" : ` ${text} profile views so far.`))
+    .replace(SLOT_RE, (_, json) => (text == null ? "" : renderCounter(text, JSON.parse(json), still)));
 }

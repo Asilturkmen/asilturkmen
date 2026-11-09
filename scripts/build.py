@@ -2,8 +2,9 @@
 
 Everything on github.com/Asilturkmen that is not plain text comes out of this
 file: the hero (name, role, and a watch that counts the time you spend on the
-page), the project cards with their Code / Live buttons, and the orbit, where
-the tools I use circle the pointer to asilturkmen.com (scripts/orbit.py).
+page), the project cards with their Code / Live buttons, the orbit, where
+the tools I use circle the pointer to asilturkmen.com (scripts/orbit.py), and
+the contact links (LinkedIn, email, Buy me a coffee) on the plate's last row.
 
 Each image is written in four variants: dark/light (chosen on GitHub with the
 #gh-dark-mode-only / #gh-light-mode-only link fragments), desktop/mobile
@@ -41,7 +42,7 @@ try:
 except ImportError:  # pragma: no cover
     movement = movement_defs = None
 from tools import icon as brand_icon   # brand icons (Simple Icons), scripts/tools.py
-from orbit import orbit, ORBIT          # the tools orbiting the asilturkmen.com lockup, scripts/orbit.py
+from orbit import orbit, ORBIT, MARGIN_X as ORBIT_MARGIN_X   # the tools orbiting the asilturkmen.com lockup, scripts/orbit.py
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -74,10 +75,28 @@ FOOT_SUB = "projects · case studies · CV"
 PROJECTS = [
     ("nedirbeo", "NedirBeo", "https://nedirbeo.com", None),
     ("wipeout", "Wipeout", "https://eyll.itch.io/wipeout", None),
-    ("hesappcim", "HesAppcım", "https://hes-appcim.vercel.app/login", "https://github.com/Asilturkmen/HesAppcim"),
+    ("hesappcim", "HesAppcım", "https://hes-appcim.vercel.app", "https://github.com/Asilturkmen/HesAppcim"),
     ("yayla-yemek-evi", "Yayla Yemek Evi", "https://www.yaylayemekevi.com", "https://github.com/Asilturkmen/Yaylayemekevi"),
 ]
+# The Live button's label and the verb in its title, where "Live" / "live site" is not the word.
+LIVE = {"wipeout": ("Play", "play on itch.io")}
 MEDIA = ROOT / "media" / "thumbs"
+
+# Contact links: the plate's last row, three frameless windows (gold glyph + label), each
+# its own image wrapped in <a>: (slug, label, title = README alt text).
+LINKS = [
+    ("linkedin", "LinkedIn", "LinkedIn — Asil Türkmen"),
+    ("email", "Email", "Email — contact.asilturkmen@gmail.com"),
+    ("coffee", "Buy me a coffee", "Buy me a coffee — buymeacoffee.com/turkmenasil"),
+]
+PLATE_LINKS = (40, 20, 40)       # link images (the click areas), % of the README width; the groups' places are LINK_ROW's
+# Per breakpoint: h the row height; cy the groups' centre line below the row's top (the rest is the
+# gap to the plate's bottom edge, a little more than above since the rounded corners eat into the
+# slab); glyph, label (Satoshi Medium) and gap sizes; spread the distance from the plate's centre to
+# the outer groups' centres (desktop 148 / 423 / 698, phones 72 / 180 / 288: the phone windows'
+# own centres would push the long coffee label to within ~9 units of the edge).
+LINK_ROW = {"desktop": dict(h=76, cy=34, glyph=16, label=13, gap=8, spread=275),
+            "mobile": dict(h=64, cy=30, glyph=14, label=12, gap=6, spread=108)}
 
 # ----------------------------------------------------------------- palettes
 THEMES = {
@@ -186,26 +205,30 @@ def frame(W: int, H: int, t: dict) -> tuple[str, str]:
 
 # ----------------------------------------------------------------- plate (light mode)
 # On GitHub's white page the light set is ONE obsidian plate. Hero, project row,
-# button row and orbit are laid out in one coordinate system (846 units wide on
-# desktop, 360 on phones) and every image is a window (its viewBox) onto that
-# plate. Each window draws the whole plate's surface, outline and dividers,
-# so neighbouring images continue each other exactly. The README glues the
-# images with no whitespace and align="top" (vertical-align: top), which removes
-# the gap GitHub would otherwise leave under every line of inline images.
+# button row, orbit and the contact links are laid out in one coordinate system
+# (846 units wide on desktop, 360 on phones) and every image is a window (its
+# viewBox) onto that plate. Each window draws the whole plate's surface, outline
+# and dividers, so neighbouring images continue each other exactly. The README
+# glues the images with no whitespace and align="top" (vertical-align: top), which
+# removes the gap GitHub would otherwise leave under every line of inline images.
 PLATE_COLS = (26, 24, 24, 26)                    # card images, % of the README width
 PLATE_BTNS = (14, 12, 12, 12, 12, 12, 12, 14)    # button images: the two halves under each card
+PLATE_INSET = 24                                 # the dividers' and the sheen's inset from the plate's sides
+assert ORBIT_MARGIN_X == PLATE_INSET, "orbit.MARGIN_X keeps the icons off the plate's sides by PLATE_INSET; keep them equal"
 
 
 class Plate:
     def __init__(self, mobile: bool, faces: dict):
         self.mobile = mobile
         W = self.W = 360 if mobile else 846
-        G = 8 if mobile else 16                                  # gutter between covers
-        self.xs, self.bxs = [0.0], [0.0]
+        G = self.gutter = 8 if mobile else 16                    # gutter between covers
+        self.xs, self.bxs, self.lxs = [0.0], [0.0], [0.0]
         for p in PLATE_COLS:
             self.xs.append(self.xs[-1] + p * W / 100)
         for p in PLATE_BTNS:
             self.bxs.append(self.bxs[-1] + p * W / 100)
+        for p in PLATE_LINKS:
+            self.lxs.append(self.lxs[-1] + p * W / 100)
         self.cw = PLATE_COLS[1] * W / 100 - G                    # cover width
         self.cx = [self.xs[1] - G / 2 - self.cw] + [self.xs[i] + G / 2 for i in (1, 2, 3)]
         self.ch = self.cw * 104 / 184                            # cover height (card ratio)
@@ -214,13 +237,14 @@ class Plate:
         # vertical breathing room inside each row (content is pushed down by pad[row]);
         # the orbit row takes its content height and padding from orbit.ORBIT
         orbit_h, orbit_pad = ORBIT["mobile" if mobile else "desktop"]
-        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, orbit=orbit_pad)
+        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, orbit=orbit_pad, links=0)
         cap = faces[700].cap_height(self.name_size)
         self.h = dict(
             hero=(416 + 16) if mobile else (300 + 24),
             cards=math.ceil(self.pad_top + self.ch + self.name_gap + cap + pad_bot),
             buttons=BTN_H + (30 if mobile else 44),
             orbit=orbit_h + 2 * orbit_pad,
+            links=LINK_ROW["mobile" if mobile else "desktop"]["h"],
         )
         self.y, y = {}, 0
         for k, h in self.h.items():
@@ -238,8 +262,8 @@ def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str
     dy = y0 + pl.pad[row]
     if shift and dy:
         content = f'<g transform="translate(0 {dy})">{content}</g>'
-    rules = "".join(f'<rect x="24" y="{pl.y[k]}" width="{W - 48}" height="1" fill="url(#pl-rule)"/>'
-                    for k in ("cards", "orbit"))
+    rules = "".join(f'<rect x="{PLATE_INSET}" y="{pl.y[k]}" width="{W - 2 * PLATE_INSET}" height="1" fill="url(#pl-rule)"/>'
+                    for k in ("cards", "orbit", "links"))
     w = num(x1 - x0, 2)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{num(x0, 2)} {y0} {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="t">\n'
             f'<title id="t">{title}</title>\n<defs>\n'
@@ -250,7 +274,7 @@ def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str
             f'{defs}\n</defs>\n<g clip-path="url(#pl-frame)">\n'
             f'<rect width="{W}" height="{H}" fill="url(#pl-surface)"/>\n{content}\n{rules}\n'
             f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="11.5" fill="none" stroke="{edge}"/>'
-            f'<rect x="24" y="0.5" width="{W - 48}" height="1" fill="url(#pl-sheen)"/>\n</g>\n</svg>\n')
+            f'<rect x="{PLATE_INSET}" y="0.5" width="{W - 2 * PLATE_INSET}" height="1" fill="url(#pl-sheen)"/>\n</g>\n</svg>\n')
 
 
 def _inner(svg: str) -> str:
@@ -278,8 +302,8 @@ def plate_card(pl: "Plate", i: int, slug: str, name: str, live: str, t: dict, fa
     return plate_svg(pl, t, pl.xs[i], pl.xs[i + 1], "cards", parts, f"{name} — {pretty_url(live)}", defs, shift=False)
 
 
-def plate_button(pl: "Plate", i: int, right: bool, kind: str, name: str, theme: str, faces: dict) -> str:
-    """Left (Code / Private) or right (Live) half under card i: the dark pill, on the plate."""
+def plate_button(pl: "Plate", i: int, right: bool, kind: str, slug: str, name: str, theme: str, faces: dict) -> str:
+    """Left (Code, or the Private code status) or right (Live) half under card i, on the plate."""
     g = BTN_GAP[pl.mobile]
     if right:
         x0, x1 = pl.cx[i] + pl.cw / 2 + g / 2, pl.cx[i] + pl.cw
@@ -287,9 +311,10 @@ def plate_button(pl: "Plate", i: int, right: bool, kind: str, name: str, theme: 
         x0, x1 = pl.cx[i], pl.cx[i] + pl.cw / 2 - g / 2
     w = round(x1 - x0, 2)
     if kind == "private":
-        svg = private_button(pl.mobile, faces, width=w)
+        svg = private_button(pl.mobile, faces, name, width=w)
     else:
-        svg = button(kind, name, theme, pl.mobile, False, faces, width=w)
+        label, verb = LIVE.get(slug, (None, None)) if kind == "live" else (None, None)
+        svg = button(kind, name, theme, pl.mobile, False, faces, width=w, label=label, verb=verb)
     title = svg.split('<title id="t">', 1)[1].split("</title>", 1)[0]
     pill = (f'<svg x="{num(x0, 2)}" y="{pl.y["buttons"]}" width="{num(w, 2)}" height="{BTN_H}" '
             f'viewBox="0 0 {num(w, 2)} {BTN_H}">{_inner(svg)}</svg>')
@@ -430,28 +455,31 @@ VIEWS_TITLE = " The number at the top is the profile view count."
 COUNTER = ROOT / "counter"
 
 
-def lockup(t: dict, faces: dict, mobile: bool, still: bool) -> tuple[str, str]:
+def lockup(t: dict, faces: dict, mobile: bool, still: bool, x0: float) -> tuple[str, str]:
     """The hero's text block in hero coordinates; returns (defs, drawing).
 
     Three registers instead of three equal lines: the name (Black, large); the
     statement "I build ___" at half its size, a quiet Medium lead and a gold
     Black word that keeps turning like a slot drum; and the facts collapsed
     into one small meta strip under a gold hairline, split by gold hairlines
-    (two short rows on phones)."""
+    (two short rows on phones). x0 is the block's left edge: the covers' left
+    edge in the card row (Plate.cx[0]), so the hero text and the covers line up."""
     if mobile:
-        x0, yn, ns, band, floor = 28, 88, 44, 72, 5   # the name's baseline leaves room for the counter above it (hero() H and cy move with it)
+        yn, ns, band, floor = 88, 44, 72, 5   # the name's baseline leaves room for the counter above it (hero() H and cy move with it)
         sy, ss = 37, 22                    # statement: baseline below the name's, size
         ry, my, ms, mlh = 19, 21, 12, 20   # rule below the statement, strip below the rule, strip size, row pitch
         ics, isw, igap, sgap = 12, 1.35, 6, 10
-        right, fit = 332, 324              # the text column ends here; the still statement a little sooner
+        right, fit = 360 - x0, 352 - x0    # the text column ends here (the left margin mirrored); the still statement a little sooner
         rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL)], [("cap", ROLE_2)]]
         ccx, cyb, cn, cl, ce = 180, 34, 15, 12, 17   # counter: group centre x, baseline, number, label, eye sizes
     else:
-        x0, yn, ns, band, floor = 56, 122, 60, 96, 7
+        # the block (name, statement, rule, strip) sits a little below the hero's middle, so with
+        # the counter above it the whole column balances against the watch (cy 150)
+        yn, ns, band, floor = 136, 60, 96, 7
         sy, ss = 50, 30
         ry, my, ms, mlh = 24, 24, 13, 0
         ics, isw, igap, sgap = 13.5, 1.4, 7, 13
-        right, fit = 528, 488              # clear of the watch's dotted track; still statement <= strip
+        right, fit = 528, x0 + 432         # clear of the watch's dotted track; still statement <= strip
         rows = [[("code", ROLE_1), ("pin", ROLE_1_TAIL), ("cap", META_SCHOOL)]]
         ccx, cyb, cn, cl, ce = 423, 46, 20, 15, 22
     ink, ink2, gold = t["ink"], t["ink2"], t["accent"]
@@ -575,23 +603,24 @@ def lockup(t: dict, faces: dict, mobile: bool, still: bool) -> tuple[str, str]:
 
     # gold hairline between statement and strip, as long as the strip, fading out
     L = round(max(max(widths), name.width * 0.9), 1)
-    defs.append(f'<linearGradient id="hx-rule" gradientUnits="userSpaceOnUse" x1="{x0}" y1="0" x2="{num(x0 + L)}" y2="0">'
+    X0 = num(x0, 2)
+    defs.append(f'<linearGradient id="hx-rule" gradientUnits="userSpaceOnUse" x1="{X0}" y1="0" x2="{num(x0 + L, 2)}" y2="0">'
                 f'<stop offset="0" stop-color="{gold}" stop-opacity="0.9"/><stop offset="0.5" stop-color="{gold}" stop-opacity="0.4"/>'
                 f'<stop offset="1" stop-color="{gold}" stop-opacity="0"/></linearGradient>')
     if still:
-        out.append(f'<path d="M{x0} {num(yr)}H{num(x0 + L)}" stroke="url(#hx-rule)"/>')
+        out.append(f'<path d="M{X0} {num(yr)}H{num(x0 + L, 2)}" stroke="url(#hx-rule)"/>')
     else:
         draw = intro("animate", "stroke-dashoffset", num(L), "0", 0.8, 0.9)
-        out.append(f'<path d="M{x0} {num(yr)}H{num(x0 + L)}" stroke="url(#hx-rule)" '
+        out.append(f'<path d="M{X0} {num(yr)}H{num(x0 + L, 2)}" stroke="url(#hx-rule)" '
                    f'stroke-dasharray="{num(L)} {num(L)}">{draw}</path>')
 
     # a short solid gold lead-in on the rule: the block's one strong accent
     A = 26 if not mobile else 20
     if still:
-        out.append(f'<rect x="{x0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}"/>')
+        out.append(f'<rect x="{X0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}"/>')
     else:
         grow = intro("animate", "width", "0", str(A), 0.7, 0.5)
-        out.append(f'<rect x="{x0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}">{grow}</rect>')
+        out.append(f'<rect x="{X0}" y="{num(yr - 1)}" width="{A}" height="2" fill="{gold}">{grow}</rect>')
 
     # the strip plays in item by item once the rule is drawing
     for k, (body, box) in enumerate(items):
@@ -613,7 +642,8 @@ def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | Non
         cx, cy, r, label = 690, 150, 118, 9
 
     defs, body, border = frame(W, H, t)
-    ldefs, lockup_svg = lockup(t, faces, mobile, still)
+    x0 = (plate if plate is not None else Plate(mobile, faces)).cx[0]   # the text block starts where the covers do
+    ldefs, lockup_svg = lockup(t, faces, mobile, still, x0)
     defs += ldefs
     text = [lockup_svg]
     title = (f"{NAME} — {ROLE_1}, {ROLE_2}, {ROLE_1_TAIL}. I build {', '.join(BUILDS[:-1])} and {BUILDS[-1]}. "
@@ -729,8 +759,10 @@ def arrow_ne(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
             f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round" stroke-linejoin="round"/>')
 
 
-def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict, width: float | None = None) -> str:
-    """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site)."""
+def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict, width: float | None = None,
+           label: str | None = None, verb: str | None = None) -> str:
+    """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site).
+    label and verb replace the Live button's word and the verb in its title (see LIVE)."""
     t = THEMES[theme]
     W, H = (width or BTN_W[(mobile, half)]), BTN_H
     x0, x1 = 0.0, float(W)
@@ -774,7 +806,7 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
             shapes.append(f'<rect x="{num(x0 + 14)}" y="0.5" width="{num(w - 28)}" height="1" fill="url(#sheen)"/>')
 
     icon_size = 18 if mobile else 15
-    label = None if mobile else faces[700].layout(kind.title(), BTN_LABEL, tracking=0.01)
+    label = None if mobile else faces[700].layout(label or kind.title(), BTN_LABEL, tracking=0.01)
     gap = 8
     group = icon_size + (gap + label.width if label else 0)
     gx = x0 + (w - group) / 2
@@ -785,7 +817,7 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
         shapes.append(arrow_ne(icx, cy, icon_size * 0.82, fg, 2.0 if mobile else 1.8))
     if label:
         shapes.append(label.path(gx + icon_size + gap, cy + faces[700].cap_height(BTN_LABEL) / 2, lab, nd=2))
-    title = f"{name} — source code on GitHub" if kind == "code" else f"{name} — live site"
+    title = f"{name} — source code on GitHub" if kind == "code" else f"{name} — {verb or 'live site'}"
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">{title}</title>
 <defs>
@@ -794,11 +826,6 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
 {chr(10).join(shapes)}
 </svg>
 '''
-
-
-# One grey that reads as "dimmed" on both GitHub page colours (#0d1117 and #fff),
-# so the non-link half needs no dark/light pair (#gh-*-mode-only keys off a link).
-NEUTRAL = "#8b929c"
 
 
 def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
@@ -816,22 +843,73 @@ def lock(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
     return body + shackle + hole
 
 
-def private_button(mobile: bool, faces: dict, width: float | None = None) -> str:
-    """Left half for a project whose code is private: not a link, no theme pair."""
+PRIVATE_LABEL, PRIVATE_SIZE = "Private code", 12   # Satoshi Medium: lock + label end ~9 units short of the Live pill
+
+
+def private_button(mobile: bool, faces: dict, name: str, width: float | None = None) -> str:
+    """Left half for a project whose code is private: not a link and not a button, a quiet
+    status (lock + "Private code" in muted ink) flush with the cover's left edge, on the
+    Live pill's centre line. Phones get the lock alone, centred in the half."""
     W, H = (width or BTN_W[(mobile, True)]), BTN_H
     x0, x1 = 0.0, (W if width else W - BTN_GAP[mobile] / 2)
-    w, cy, r = x1 - x0, H / 2, 10
-    shapes = [f'<rect x="{num(x0 + 0.5)}" y="0.5" width="{num(w - 1)}" height="{H - 1}" rx="{r - 0.5}" '
-              f'fill="{NEUTRAL}" fill-opacity="0.06" stroke="{NEUTRAL}" stroke-opacity="0.32"/>']
-    icon_size = 18 if mobile else 15
-    label = None if mobile else faces[700].layout("Private", BTN_LABEL, tracking=0.01)
-    group = icon_size + (8 + label.width if label else 0)
-    gx = x0 + (w - group) / 2
-    shapes.append(lock(gx + icon_size / 2, cy, icon_size, NEUTRAL, 1.8 if mobile else 1.6))
+    w, cy = x1 - x0, H / 2
+    ink = THEMES[THEME]["muted"]
+    icon_size, gap = (18, 0) if mobile else (13, 6)
+    label = None if mobile else faces[500].layout(PRIVATE_LABEL, PRIVATE_SIZE)
+    group = icon_size + (gap + label.width if label else 0)
+    gx = x0 + (w - group) / 2 if mobile else x0
+    shapes = [lock(gx + icon_size / 2, cy, icon_size, ink, 1.8 if mobile else 1.5)]
     if label:
-        shapes.append(label.path(gx + icon_size + 8, cy + faces[700].cap_height(BTN_LABEL) / 2, NEUTRAL, nd=2))
+        shapes.append(label.path(gx + icon_size + gap, cy + faces[500].cap_height(PRIVATE_SIZE) / 2, ink, nd=2))
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">\n'
-            f'<title id="t">The source code is private</title>\n' + "\n".join(shapes) + "\n</svg>\n")
+            f'<title id="t">{name} — {PRIVATE_LABEL}</title>\n' + "\n".join(shapes) + "\n</svg>\n")
+
+
+# ----------------------------------------------------------------- contact links
+def link_glyph(kind: str, cx: float, cy: float, s: float, colour: str, sw: float) -> str:
+    """The contact glyphs, drawn in a 24-unit box centred on (cx, cy), s units wide, in one
+    colour: "linkedin" (the in mark, filled), "email" (envelope) and "coffee" (cup on a
+    saucer, two curls of steam), the last two stroked sw units wide."""
+    k = s / 24
+    if kind == "linkedin":
+        body = (f'<circle cx="5.6" cy="5.6" r="1.85" fill="{colour}"/>'
+                f'<rect x="4.1" y="9.2" width="3" height="10.6" rx="0.7" fill="{colour}"/>'
+                f'<path d="M9.8 9.9c0-.4.3-.7.7-.7h1.7c.4 0 .65.25.7.6l.1.85c.75-.95 1.9-1.65 3.45-1.65 2.55 0 4.05 1.65 4.05 4.55'
+                f'v5.55c0 .4-.3.7-.7.7h-1.8c-.4 0-.7-.3-.7-.7v-5c0-1.55-.7-2.45-2-2.45-1.35 0-2.2.95-2.2 2.5v4.95'
+                f'c0 .4-.3.7-.7.7h-1.9c-.4 0-.7-.3-.7-.7Z" fill="{colour}"/>')
+    elif kind == "email":
+        body = (f'<g fill="none" stroke="{colour}" stroke-width="{num(sw / k, 2)}" stroke-linecap="round" stroke-linejoin="round">'
+                f'<rect x="2.5" y="4.8" width="19" height="14.4" rx="2.4"/><path d="M3.5 6.2L12 12.6 20.5 6.2"/></g>')
+    elif kind == "coffee":
+        body = (f'<g fill="none" stroke="{colour}" stroke-width="{num(sw / k, 2)}" stroke-linecap="round" stroke-linejoin="round">'
+                f'<path d="M8.2 3.2c0 1.4-1.2 1.8-1.2 3.2M12.8 3.2c0 1.4-1.2 1.8-1.2 3.2"/>'
+                f'<path d="M4.2 9.2h11.8v5.2a4.8 4.8 0 0 1-4.8 4.8h-2.2a4.8 4.8 0 0 1-4.8-4.8Z"/>'
+                f'<path d="M16 10.4h1.8a2.4 2.4 0 0 1 0 4.8h-1.8"/>'
+                f'<path d="M3.2 21.2H17" stroke-opacity="0.75"/></g>')
+    else:
+        raise ValueError(kind)
+    return f'<g transform="translate({num(cx - 12 * k, 2)} {num(cy - 12 * k, 2)}) scale({num(k, 4)})">{body}</g>'
+
+
+def plate_link(pl: "Plate", i: int, t: dict, faces: dict) -> str:
+    """Window i of the links row: a gold glyph and its label in ink, one group centred on
+    the plate's middle or LINK_ROW's spread either side of it, inside its own window (the
+    image is the click area); the outer windows carry the plate's bottom corners."""
+    slug, text, title = LINKS[i]
+    g = LINK_ROW["mobile" if pl.mobile else "desktop"]
+    gs, ls, gap = g["glyph"], g["label"], g["gap"]
+    x0, x1 = pl.lxs[i], pl.lxs[i + 1]
+    run = faces[500].layout(text, ls)
+    cap = faces[500].cap_height(ls)
+    group = gs + gap + run.width
+    gx = pl.W / 2 + (i - 1) * g["spread"] - group / 2
+    margin = pl.gutter if pl.mobile else PLATE_INSET          # the group keeps the plate's inset (the cover gutter on phones) from its window's sides
+    assert x0 + margin <= gx and gx + group <= x1 - margin, (
+        f"links: {text!r} ({num(gx, 1)}..{num(gx + group, 1)}) leaves its window {num(x0, 1)}..{num(x1, 1)} less {margin}")
+    yb = pl.y["links"] + g["cy"] + cap / 2                    # label baseline: cap centred on the group's centre line
+    body = (link_glyph(slug, gx + gs / 2, yb - cap / 2, gs, t["accent"], 1.3 if pl.mobile else 1.4)
+            + run.path(gx + gs + gap, yb, t["ink"], nd=2))
+    return plate_svg(pl, t, x0, x1, "links", body, title, shift=False)
 
 
 
@@ -839,10 +917,14 @@ def private_button(mobile: bool, faces: dict, width: float | None = None) -> str
 def main() -> None:
     fonts_ready()
     faces = {w: Face(FONT_DIR / Path(p).name) for w, p in FONT_FILES.items()}
+    # the counter's renderer puts the title's counter sentence back into the live hero: it
+    # must carry this file's VIEWS_TITLE word for word, or the served hero and the still
+    # assets would describe the page differently
+    render_js = (COUNTER / "render.js").read_text(encoding="utf-8")
+    assert any(f"{q}{VIEWS_TITLE}{q}" in render_js for q in ('"', "'")), (
+        f"counter/render.js must contain the string literal {VIEWS_TITLE!r} (build.VIEWS_TITLE) verbatim; "
+        "the two copies have drifted apart")
     ASSETS.mkdir(exist_ok=True)
-    for old in ASSETS.glob("*.svg"):
-        if not old.name.startswith("link-"):
-            old.unlink()
     written, theme = [], THEME
     for mobile in (False, True):
         m = "-mobile" if mobile else ""
@@ -866,10 +948,18 @@ def main() -> None:
             written.append(p)
             for right, kind in enumerate(("code" if repo else "private", "live")):
                 p = ASSETS / f"btn-{slug}-{kind}{m}.svg"
-                p.write_text(plate_button(pl, i, bool(right), kind, name, theme, faces), encoding="utf-8", newline="\n")
+                p.write_text(plate_button(pl, i, bool(right), kind, slug, name, theme, faces), encoding="utf-8", newline="\n")
                 written.append(p)
+        for i, (slug, _, _) in enumerate(LINKS):
+            p = ASSETS / f"link-{slug}{m}.svg"
+            p.write_text(plate_link(pl, i, THEMES[theme], faces), encoding="utf-8", newline="\n")
+            written.append(p)
     for p in written:
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size:>7,} bytes")
+    for old in ASSETS.glob("*.svg"):       # assets/ holds this build's files only (removed last, so a failed build leaves the old set)
+        if old not in written:
+            old.unlink()
+            print(f"{old.relative_to(ROOT)}  removed")
 
 
 if __name__ == "__main__":
