@@ -4,3 +4,4 @@ scripts/.fonts/
 __pycache__/
 .vercel/
 node_modules/
+.env*
