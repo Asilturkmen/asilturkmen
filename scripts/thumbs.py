@@ -1,111 +1,93 @@
-"""Build the small project thumbnails used in the README.
+"""Build the project covers the README's cards embed.
 
 Pipeline (deterministic for a given Pillow/libwebp build):
-  media/covers/<file>  --16:10 crop + Lanczos-->  media/thumbs/<slug>.webp (288x180)
-                       --base64 inline-->         assets/thumb-<slug>.svg (144x90 viewBox)
+  media/covers/<file>  --crop + Lanczos-->  media/thumbs/<slug>.webp          desktop, 712x298
+                                            media/thumbs/<slug>-mobile.webp   phones,  384x234
+scripts/build.py inlines them (base64) into the card images, inside each project's aperture.
 
 Usage:
   python scripts/thumbs.py                         # rebuild from media/covers/
   python scripts/thumbs.py --import-from DIR       # first copy missing covers from DIR
-  python scripts/thumbs.py --sheet DIR             # also write contact sheets for review
+  python scripts/thumbs.py --sheet DIR             # also write a contact sheet per size for review
 
-Crop boxes are fractions of the source width/height. Only the width (x0..x1) and the
-vertical centre of the box are used: the height is derived so the crop is exactly 16:10.
+Each crop is given as fractions of the source: its left and right edges (x0, x1) and its
+vertical centre (cy); its height follows from the size's aspect ratio.
 """
 from __future__ import annotations
 
 import argparse
-import base64
-import io
 import shutil
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 COVERS = ROOT / "media" / "covers"
 THUMBS = ROOT / "media" / "thumbs"
-ASSETS = ROOT / "assets"
 
-THUMB_W, THUMB_H = 368, 230          # 2x of the 184x104 card slot (16:10 crop, sliced to 16:9 in the card)
-SVG_W, SVG_H, RADIUS = 144, 90, 8
+# Pixel size per breakpoint: the cover slot inside an aperture (build.GRID: the aperture less
+# case + ring on each side) at 2x on desktop (356 x 149 units, 1 px each) and at ~3x on
+# phones (146 x 89 units, ~0.86 px each). The aspect ratios must match the slots; build.py
+# checks them.
+SIZES = {"desktop": (712, 298), "mobile": (384, 234)}
+SUFFIX = {"desktop": "", "mobile": "-mobile"}
 WEBP_QUALITY, WEBP_METHOD = 82, 6
 
-# slug: (title, cover file, (x0, y0, x1, y1) as fractions of the source)
-PROJECTS: dict[str, tuple[str, str, tuple[float, float, float, float]]] = {
-    "nedirbeo":        ("NedirBeo",        "nedirbeo.webp",        (0.270, 0.324, 0.620, 0.736)),
-    "wipeout":         ("Wipeout",         "wipeout.webp",         (0.050, 0.198, 0.570, 0.671)),
-    "hesappcim":       ("HesAppc\u0131m",  "hesappcim.jpg",        (0.300, 0.170, 0.630, 0.410)),
-    "yayla-yemek-evi": ("Yayla Yemek Evi", "yayla-yemek-evi.webp", (0.160, 0.122, 0.750, 0.778)),
+# slug: (cover file, {breakpoint: (x0, x1, cy)}), fractions of the source's width (x0, x1:
+# the crop's left and right edges) and height (cy: the crop's vertical centre); the height
+# follows from the size's aspect ratio. The wide desktop crops show the whole scene, the
+# taller phone crops close in on its subject.
+PROJECTS: dict[str, tuple[str, dict[str, tuple[float, float, float]]]] = {
+    "nedirbeo":        ("nedirbeo.webp",        {"desktop": (0.272, 0.873, 0.555),     # the word-of-the-day card
+                                                 "mobile":  (0.283, 0.620, 0.522)}),
+    "wipeout":         ("wipeout.webp",         {"desktop": (0.015, 0.981, 0.481),     # character select
+                                                 "mobile":  (0.019, 0.595, 0.440)}),
+    "hesappcim":       ("hesappcim.jpg",        {"desktop": (0.229, 0.636, 0.325),     # "You're owed TRY 0.00", 1.25x, the device edge across the corner
+                                                 "mobile":  (0.343, 0.643, 0.299)}),
+    "yayla-yemek-evi": ("yayla-yemek-evi.webp", {"desktop": (0.179, 0.777, 0.477),     # the site on the laptop's screen
+                                                 "mobile":  (0.200, 0.705, 0.475)}),
 }
 
 
-def crop_box(size: tuple[int, int], frac: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
-    """Return a float pixel box of exactly THUMB_W:THUMB_H, centred on the given box, clamped inside."""
+def crop_box(size: tuple[int, int], crop: tuple[float, float, float],
+             out: tuple[int, int]) -> tuple[float, float, float, float]:
+    """The pixel box x0..x1 across, centred on cy, with out's aspect ratio, clamped inside."""
     W, H = size
-    x0, y0, x1, y1 = frac
+    x0, x1, cy = crop
     w = (x1 - x0) * W
-    h = w * THUMB_H / THUMB_W
+    h = w * out[1] / out[0]
     if h > H:                          # too tall for the source: shrink around the centre
         h = float(H)
-        w = h * THUMB_W / THUMB_H
+        w = h * out[0] / out[1]
     cx = (x0 + x1) / 2 * W
-    cy = (y0 + y1) / 2 * H
     left = min(max(cx - w / 2, 0.0), W - w)
-    top = min(max(cy - h / 2, 0.0), H - h)
+    top = min(max(cy * H - h / 2, 0.0), H - h)
     return (left, top, left + w, top + h)
 
 
-def make_thumb(src: Path, frac) -> tuple[Image.Image, tuple[float, float, float, float]]:
+def make_thumb(src: Path, crop, out: tuple[int, int]) -> tuple[Image.Image, tuple[float, float, float, float]]:
     with Image.open(src) as im:
         im = im.convert("RGB")
-        box = crop_box(im.size, frac)
-        return im.resize((THUMB_W, THUMB_H), Image.Resampling.LANCZOS, box=box), box
+        box = crop_box(im.size, crop, out)
+        return im.resize(out, Image.Resampling.LANCZOS, box=box), box
 
 
-def encode_webp(im: Image.Image) -> bytes:
-    buf = io.BytesIO()
+def encode_webp(im: Image.Image, path: Path) -> int:
     # exact=False and no metadata keep the output byte-stable across runs
-    im.save(buf, "WEBP", quality=WEBP_QUALITY, method=WEBP_METHOD)
-    return buf.getvalue()
+    im.save(path, "WEBP", quality=WEBP_QUALITY, method=WEBP_METHOD)
+    return path.stat().st_size
 
 
-def svg_for(title: str, webp: bytes, slug: str) -> str:
-    b64 = base64.b64encode(webp).decode("ascii")
-    cid = f"c-{slug}"
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_W}" height="{SVG_H}" '
-        f'viewBox="0 0 {SVG_W} {SVG_H}" role="img">'
-        f"<title>{title}</title>"
-        f'<defs><clipPath id="{cid}"><rect width="{SVG_W}" height="{SVG_H}" rx="{RADIUS}"/></clipPath></defs>'
-        f'<image clip-path="url(#{cid})" width="{SVG_W}" height="{SVG_H}" preserveAspectRatio="xMidYMid slice" '
-        f'href="data:image/webp;base64,{b64}"/>'
-        f'<rect x="0.5" y="0.5" width="{SVG_W - 1}" height="{SVG_H - 1}" rx="{RADIUS - 0.5}" fill="none" '
-        f'stroke="#808080" stroke-opacity="0.35" stroke-width="1"/>'
-        "</svg>\n"
-    )
-
-
-def contact_sheets(thumbs: list[tuple[str, Image.Image]], out_dir: Path) -> list[Path]:
-    """Thumbs at 144x90 (72x45 CSS @2x) and 72x45 (@1x), on light and dark rows."""
-    out_dir.mkdir(parents=True, exist_ok=True)
-    paths = []
-    for tag, (w, h), pad in (("2x", (144, 90), 16), ("1x", (72, 45), 8)):
-        r = max(1, round(RADIUS * w / SVG_W))
-        cols = len(thumbs)
-        sheet = Image.new("RGB", (pad + cols * (w + pad), 2 * (h + pad) + pad), "#ffffff")
-        ImageDraw.Draw(sheet).rectangle([0, h + pad + pad // 2, sheet.width, sheet.height], fill="#0d1117")
-        mask = Image.new("L", (w, h), 0)
-        ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, h - 1], radius=r, fill=255)
-        for row in range(2):
-            for i, (_, im) in enumerate(thumbs):
-                small = im.resize((w, h), Image.Resampling.LANCZOS)
-                sheet.paste(small, (pad + i * (w + pad), pad + row * (h + pad)), mask)
-        p = out_dir / f"thumbs-sheet-{tag}.png"
-        sheet.save(p)
-        paths.append(p)
-    return paths
+def contact_sheet(thumbs: list[Image.Image], size: tuple[int, int], path: Path) -> Path:
+    """The thumbs side by side on the plate's colour, at their pixel size."""
+    pad = 16
+    sheet = Image.new("RGB", (pad + len(thumbs) * (size[0] + pad), size[1] + 2 * pad), "#101216")
+    for i, im in enumerate(thumbs):
+        sheet.paste(im, (pad + i * (size[0] + pad), pad))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(path)
+    return path
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -116,8 +98,8 @@ def main(argv: list[str] | None = None) -> int:
 
     COVERS.mkdir(parents=True, exist_ok=True)
     THUMBS.mkdir(parents=True, exist_ok=True)
-    built = []
-    for slug, (title, fname, frac) in PROJECTS.items():
+    built: dict[str, list[Image.Image]] = {bp: [] for bp in SIZES}
+    for slug, (fname, crops) in PROJECTS.items():
         cover = COVERS / fname
         if not cover.exists():
             if args.import_from and (args.import_from / fname).exists():
@@ -126,19 +108,17 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(f"missing cover: {cover}", file=sys.stderr)
                 return 1
-        im, box = make_thumb(cover, frac)
-        webp = encode_webp(im)
-        (THUMBS / f"{slug}.webp").write_bytes(webp)
-        svg = svg_for(title, webp, slug)  # kept for reference; the cards in build.py embed the WebP directly
         with Image.open(cover) as c:
             W, H = c.size
-        fx = (box[0] / W, box[1] / H, box[2] / W, box[3] / H)
-        print(f"{slug:16} crop x {fx[0]:.3f}-{fx[2]:.3f} y {fx[1]:.3f}-{fx[3]:.3f}  "
-              f"webp {len(webp):6,d} B  svg {len(svg.encode()):6,d} B")
-        built.append((slug, im))
+        for bp, size in SIZES.items():
+            im, box = make_thumb(cover, crops[bp], size)
+            n = encode_webp(im, THUMBS / f"{slug}{SUFFIX[bp]}.webp")
+            fx = (box[0] / W, box[1] / H, box[2] / W, box[3] / H)
+            print(f"{slug + SUFFIX[bp]:23} crop x {fx[0]:.3f}-{fx[2]:.3f} y {fx[1]:.3f}-{fx[3]:.3f}  webp {n:7,d} B")
+            built[bp].append(im)
     if args.sheet:
-        for p in contact_sheets(built, args.sheet):
-            print("sheet", p)
+        for bp, ims in built.items():
+            print("sheet", contact_sheet(ims, SIZES[bp], args.sheet / f"thumbs-{bp}.png"))
     return 0
 
 

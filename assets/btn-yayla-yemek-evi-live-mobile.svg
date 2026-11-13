@@ -1,21 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="309.6 522 50.4 70" width="50.4" height="70" role="img" aria-labelledby="t">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="288 798 72 72" width="72" height="72" role="img" aria-labelledby="t">
 <title id="t">Yayla Yemek Evi — live site</title>
 <defs>
-<clipPath id="pl-frame"><rect width="360" height="896" rx="12"/></clipPath>
+<clipPath id="pl-frame"><rect width="360" height="1174" rx="12"/></clipPath>
 <linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101216"/><stop offset="1" stop-color="#161920"/></linearGradient>
 <linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#d4b483" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
 <linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#272b34" stop-opacity="0"/><stop offset="0.06" stop-color="#272b34"/><stop offset="0.94" stop-color="#272b34"/><stop offset="1" stop-color="#272b34" stop-opacity="0"/></linearGradient>
 
 </defs>
 <g clip-path="url(#pl-frame)">
-<rect width="360" height="896" fill="url(#pl-surface)"/>
-<svg x="311.8" y="522" width="37" height="40" viewBox="0 0 37 40"><defs>
+<rect width="360" height="1174" fill="url(#pl-surface)"/>
+<svg x="291" y="798" width="58" height="40" viewBox="0 0 58 40"><defs>
 
 </defs>
-<rect x="0" y="0" width="37" height="40" rx="10" fill="#f4f5f7"/>
-<path d="M12.12 26.38L24.88 13.62M16.59 13.62H24.88V21.91" fill="none" stroke="#101216" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="0" y="0" width="58" height="40" rx="9" fill="#f4f5f7"/>
+<path d="M11.15 24.48L20.11 15.52M14.29 15.52H20.11V21.34" fill="none" stroke="#101216" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M30.43 15.98H29.02V24.02H33.8V22.72H30.43V15.98ZM35.52 17.5C35.96 17.5 36.33 17.13 36.33 16.68C36.33 16.23 35.96 15.88 35.52 15.88C35.06 15.88 34.7 16.23 34.7 16.68C34.7 17.13 35.06 17.5 35.52 17.5ZM34.85 24.02H36.2V18.59H34.85V24.02ZM39.23 24.02H40.55L42.82 18.59H41.43L40.44 21.08C40.21 21.68 40.01 22.25 39.94 22.59C39.87 22.29 39.68 21.73 39.45 21.08L38.51 18.59H37.08L39.23 24.02ZM45.86 24.16C47.28 24.16 48.27 23.45 48.5 22.26H47.26C47.11 22.78 46.62 23.06 45.89 23.06C45 23.06 44.49 22.58 44.39 21.62L48.48 21.61V21.2C48.48 19.51 47.45 18.42 45.82 18.42C44.23 18.42 43.11 19.6 43.11 21.3C43.11 22.99 44.25 24.16 45.86 24.16ZM45.83 19.52C46.63 19.52 47.15 20.02 47.15 20.76H44.42C44.56 19.95 45.04 19.52 45.83 19.52Z" fill="#101216"/>
 </svg>
-<rect x="24" y="432" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="592" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="832" width="312" height="1" fill="url(#pl-rule)"/>
-<rect x="0.5" y="0.5" width="359" height="895" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="312" height="1" fill="url(#pl-sheen)"/>
+<rect x="24" y="432" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="870" width="312" height="1" fill="url(#pl-rule)"/><rect x="24" y="1110" width="312" height="1" fill="url(#pl-rule)"/>
+<rect x="0.5" y="0.5" width="359" height="1173" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="312" height="1" fill="url(#pl-sheen)"/>
 </g>
 </svg>

@@ -270,6 +270,10 @@ def main(argv: list[str] | None = None) -> int:
             page = ctx.new_page()
             page.goto(ORIGIN + path, wait_until="load")
             page.wait_for_function("[...document.images].every(i => i.complete)")
+            # Chromium pauses SMIL in images outside the viewport: make the viewport as tall as
+            # the page, so everything below the fold plays during the wait as well
+            full = page.evaluate("document.documentElement.scrollHeight")
+            page.set_viewport_size({"width": vw, "height": max(900, full)})
             page.wait_for_timeout(args.wait)
             dims = page.evaluate("""() => {
                 const r = e => e.getBoundingClientRect();

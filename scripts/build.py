@@ -43,6 +43,7 @@ except ImportError:  # pragma: no cover
     movement = movement_defs = None
 from tools import icon as brand_icon   # brand icons (Simple Icons), scripts/tools.py
 from orbit import orbit, ORBIT, MARGIN_X as ORBIT_MARGIN_X   # the tools orbiting the asilturkmen.com lockup, scripts/orbit.py
+from thumbs import SIZES as COVER_PX, SUFFIX as COVER_SUFFIX     # the covers' crop sizes, scripts/thumbs.py
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
@@ -68,19 +69,25 @@ FOOT_KICKER = "MORE ABOUT MY WORK"
 FOOT_DOMAIN = "asilturkmen.com"
 FOOT_SUB = "projects · case studies · CV"
 
-# (slug, name, live site, public repo or None when the code is private).
-# The card links to the live site; under it sit a "Code" and a "Live" button
-# side by side, or a single full-width "Live" button when there is no repo.
-# Asil's one-line descriptions of the projects are in the README alt text.
+# (slug, name, live site, public repo or None when the code is private, description).
+# The projects form a grid of two rows of two, in this order. Each card (the cover set in an
+# aperture, the name and, on desktop, the description under it) links to the live site;
+# under it sit a "Code" button (the "Private" pill when there is no public repo) and a
+# "Live" button. The descriptions are Asil's sentences from the README alt text, without
+# their leading article.
 PROJECTS = [
-    ("nedirbeo", "NedirBeo", "https://nedirbeo.com", None),
-    ("wipeout", "Wipeout", "https://eyll.itch.io/wipeout", None),
-    ("hesappcim", "HesAppcım", "https://hes-appcim.vercel.app", "https://github.com/Asilturkmen/HesAppcim"),
-    ("yayla-yemek-evi", "Yayla Yemek Evi", "https://www.yaylayemekevi.com", "https://github.com/Asilturkmen/Yaylayemekevi"),
+    ("nedirbeo", "NedirBeo", "https://nedirbeo.com", None,
+     "Community dictionary for Cypriot Turkish."),
+    ("wipeout", "Wipeout", "https://eyll.itch.io/wipeout", None,
+     "Multiplayer parkour game played over LAN by 50+ people at an event."),
+    ("hesappcim", "HesAppcım", "https://hes-appcim.vercel.app", "https://github.com/Asilturkmen/HesAppcim",
+     "App for tracking shared expenses and calculating who owes whom."),
+    ("yayla-yemek-evi", "Yayla Yemek Evi", "https://www.yaylayemekevi.com", "https://github.com/Asilturkmen/Yaylayemekevi",
+     "Website of a village restaurant in Pamuklu, North Cyprus."),
 ]
 # The Live button's label and the verb in its title, where "Live" / "live site" is not the word.
 LIVE = {"wipeout": ("Play", "play on itch.io")}
-MEDIA = ROOT / "media" / "thumbs"
+MEDIA = ROOT / "media" / "thumbs"     # the covers, cropped per breakpoint by scripts/thumbs.py
 
 # Contact links: the plate's last row, three frameless windows (gold glyph + label), each
 # its own image wrapped in <a>: (slug, label, title = README alt text).
@@ -120,6 +127,10 @@ STILL_POSE = dict(minute=60.0, second=300.0)
 def num(v: float, nd: int = 1) -> str:
     s = f"{v:.{nd}f}".rstrip("0").rstrip(".")
     return "0" if s in ("-0", "") else s
+
+
+def pretty_url(url: str) -> str:
+    return url.split("://", 1)[-1].removeprefix("www.").rstrip("/")
 
 
 def fonts_ready() -> None:
@@ -204,45 +215,77 @@ def frame(W: int, H: int, t: dict) -> tuple[str, str]:
 
 
 # ----------------------------------------------------------------- plate (light mode)
-# On GitHub's white page the light set is ONE obsidian plate. Hero, project row,
-# button row, orbit and the contact links are laid out in one coordinate system
-# (846 units wide on desktop, 360 on phones) and every image is a window (its
-# viewBox) onto that plate. Each window draws the whole plate's surface, outline
-# and dividers, so neighbouring images continue each other exactly. The README
+# On GitHub's white page the light set is ONE obsidian plate. Hero, the project grid
+# (two rows of cards, each with its row of buttons), orbit and the contact links are laid
+# out in one coordinate system (846 units wide on desktop, 360 on phones) and every image
+# is a window (its viewBox) onto that plate. Each window draws the whole plate's surface,
+# outline and dividers, so neighbouring images continue each other exactly. The README
 # glues the images with no whitespace and align="top" (vertical-align: top), which
-# removes the gap GitHub would otherwise leave under every line of inline images.
-PLATE_COLS = (26, 24, 24, 26)                    # card images, % of the README width
-PLATE_BTNS = (14, 12, 12, 12, 12, 12, 12, 14)    # button images: the two halves under each card
-PLATE_INSET = 24                                 # the dividers' and the sheen's inset from the plate's sides
+# removes the gap GitHub would otherwise leave under every line of inline images. The
+# images of one line share a height and their widths add up to 100%, so they fill the
+# line exactly; the width="NN%" attribute is the same on desktop and phones, so both
+# plates split their rows at the same fractions.
+PLATE_COLS = (50, 50)              # card images, % of the README width: two projects to a row
+BTN_SPLIT = (30, 20)               # the button pair under one card, % of the README width: Code (or Private) wide, Live compact
+PLATE_BTNS = BTN_SPLIT * 2         # button images: the pair under each card
+PLATE_INSET = 24                   # the dividers' and the sheen's inset from the plate's sides
 assert ORBIT_MARGIN_X == PLATE_INSET, "orbit.MARGIN_X keeps the icons off the plate's sides by PLATE_INSET; keep them equal"
+assert all(sum(r) == 100 for r in (PLATE_COLS, PLATE_BTNS, PLATE_LINKS)), "a line of images must fill the README's width"
+
+# The project grid: PROJECTS in reading order, two rows of two. Each project owns half the
+# plate and sits `inset` in from that half's sides (on desktop PLATE_INSET, so the outer
+# apertures line up with the dividers and the hero text, and the columns are 2 * inset
+# apart). Its button pair spans the aperture, the gap between the two pills centred on
+# the boundary BTN_SPLIT puts between their two images. Per breakpoint, in plate units:
+#   inset      the aperture's inset from its half's sides (its width: half the plate less 2 * inset);
+#              the contact links keep it from their windows' sides too
+#   ah, r      aperture height and corner radius
+#   case, ring widths of the polished gold case line and of the minute track inside it; the
+#              cover sits case + ring in from the aperture's edge
+#   tick       the minute track's pitch
+#   name, desc type sizes of the name (Satoshi Bold) and the description (Satoshi Medium,
+#              muted); desc None: no description line (phones, where it would be ~5 px)
+#   no         size of the project's number (01..04, gold, tracked) at the name line's right end,
+#              on the name's baseline
+#   top, gap   space above the first row (below the hero's divider) and between the rows
+#   cap, lead  aperture to the name's cap line; name baseline to description baseline
+#   btn, foot  last caption baseline to the buttons; under the last buttons, to the orbit's divider
+GRID = {
+    "desktop": dict(inset=PLATE_INSET, ah=168, r=12, case=1.6, ring=8, tick=6, name=24, desc=12,
+                    no=19, top=40, gap=50, cap=16, lead=20, btn=16, foot=50),
+    "mobile": dict(inset=11, ah=101, r=8, case=1.2, ring=5, tick=4, name=13, desc=None,
+                   no=12, top=30, gap=32, cap=10, lead=0, btn=11, foot=32),
+}
+
+
+def _edges(widths, W: float) -> list[float]:
+    """Window edges, in plate units, of a line of images whose widths are % of the README."""
+    xs = [0.0]
+    for p in widths:
+        xs.append(xs[-1] + p * W / 100)
+    return xs
 
 
 class Plate:
     def __init__(self, mobile: bool, faces: dict):
         self.mobile = mobile
         W = self.W = 360 if mobile else 846
-        G = self.gutter = 8 if mobile else 16                    # gutter between covers
-        self.xs, self.bxs, self.lxs = [0.0], [0.0], [0.0]
-        for p in PLATE_COLS:
-            self.xs.append(self.xs[-1] + p * W / 100)
-        for p in PLATE_BTNS:
-            self.bxs.append(self.bxs[-1] + p * W / 100)
-        for p in PLATE_LINKS:
-            self.lxs.append(self.lxs[-1] + p * W / 100)
-        self.cw = PLATE_COLS[1] * W / 100 - G                    # cover width
-        self.cx = [self.xs[1] - G / 2 - self.cw] + [self.xs[i] + G / 2 for i in (1, 2, 3)]
-        self.ch = self.cw * 104 / 184                            # cover height (card ratio)
-        self.name_size = 9.6 if mobile else 20
-        self.pad_top, self.name_gap, pad_bot = (22, 6, 10) if mobile else (40, 13, 18)
-        # vertical breathing room inside each row (content is pushed down by pad[row]);
-        # the orbit row takes its content height and padding from orbit.ORBIT
+        g = self.grid = GRID["mobile" if mobile else "desktop"]
+        self.xs, self.bxs, self.lxs = (_edges(r, W) for r in (PLATE_COLS, PLATE_BTNS, PLATE_LINKS))
+        self.cw, self.ch = W / 2 - 2 * g["inset"], g["ah"]       # aperture size
+        self.cx = [self.xs[c] + g["inset"] for c in (0, 1)]       # apertures' left edges, per column
+        # vertical breathing room inside the hero and orbit rows (their content is pushed down
+        # by pad[row]; the grid and link rows draw in plate coordinates); the orbit row takes
+        # its content height and padding from orbit.ORBIT
         orbit_h, orbit_pad = ORBIT["mobile" if mobile else "desktop"]
-        self.pad = dict(hero=8 if mobile else 12, cards=0, buttons=0, orbit=orbit_pad, links=0)
-        cap = faces[700].cap_height(self.name_size)
+        self.pad = dict(hero=8 if mobile else 12, orbit=orbit_pad)
+        caption = g["cap"] + faces[700].cap_height(g["name"]) + (g["lead"] if g["desc"] else 0) + g["btn"]
         self.h = dict(
             hero=(416 + 16) if mobile else (300 + 24),
-            cards=math.ceil(self.pad_top + self.ch + self.name_gap + cap + pad_bot),
-            buttons=BTN_H + (30 if mobile else 44),
+            cards1=math.ceil(g["top"] + g["ah"] + caption),
+            buttons1=BTN_H[mobile],
+            cards2=math.ceil(g["gap"] + g["ah"] + caption),
+            buttons2=BTN_H[mobile] + g["foot"],
             orbit=orbit_h + 2 * orbit_pad,
             links=LINK_ROW["mobile" if mobile else "desktop"]["h"],
         )
@@ -251,6 +294,21 @@ class Plate:
             self.y[k] = y
             y += h
         self.H = y
+        # each button pair spans its aperture, the pills' gap centred on the boundary between
+        # the pair's two images: that boundary must lie inside the gap and the pair's outer
+        # boundaries outside the pills, so every pill sits whole in its own window
+        g2 = BTN_GAP[mobile] / 2
+        for c in (0, 1):
+            left, mid, right = self.bxs[2 * c:2 * c + 3]
+            x0, x1 = self.cx[c], self.cx[c] + self.cw
+            assert left <= x0 and x1 <= right and x0 + BTN_H[mobile] <= mid - g2 and mid + g2 + BTN_H[mobile] <= x1, (
+                f"BTN_SPLIT puts a button boundary at {mid:.1f}: a pair spanning {x0:.1f}..{x1:.1f} needs it inside "
+                f"its gap, with at least a pill's height (BTN_H) of pill either side, and its outer edges in the pair's windows")
+
+    def slot(self, i: int) -> tuple[int, int, float, float]:
+        """Project i's grid row (1, 2), column (0, 1) and its aperture's top-left corner."""
+        k, c = i // 2 + 1, i % 2
+        return k, c, self.cx[c], self.y[f"cards{k}"] + self.grid["top" if k == 1 else "gap"]
 
 
 def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str, title: str,
@@ -259,11 +317,11 @@ def plate_svg(pl: "Plate", t: dict, x0: float, x1: float, row: str, content: str
     the row's own coordinates (shift) or already in plate coordinates."""
     W, H, y0, h = pl.W, pl.H, pl.y[row], pl.h[row]
     edge = t.get("edge", t["border"])
-    dy = y0 + pl.pad[row]
+    dy = y0 + pl.pad.get(row, 0)
     if shift and dy:
         content = f'<g transform="translate(0 {dy})">{content}</g>'
     rules = "".join(f'<rect x="{PLATE_INSET}" y="{pl.y[k]}" width="{W - 2 * PLATE_INSET}" height="1" fill="url(#pl-rule)"/>'
-                    for k in ("cards", "orbit", "links"))
+                    for k in ("cards1", "orbit", "links"))
     w = num(x1 - x0, 2)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{num(x0, 2)} {y0} {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="t">\n'
             f'<title id="t">{title}</title>\n<defs>\n'
@@ -284,42 +342,163 @@ def _inner(svg: str) -> str:
     return body.rsplit("</svg>", 1)[0]
 
 
-def plate_card(pl: "Plate", i: int, slug: str, name: str, live: str, t: dict, faces: dict) -> str:
-    """Cover and name straight on the plate (no card frame): the plate is the card."""
-    x, y, w, h = pl.cx[i], pl.y["cards"] + pl.pad_top, pl.cw, pl.ch
-    r = 4 if pl.mobile else 7
-    data = base64.b64encode((MEDIA / f"{slug}.webp").read_bytes()).decode("ascii")
-    nm = faces[700].layout(name, pl.name_size, tracking=-0.01)
-    X, Y, Wd, Hd = num(x, 2), num(y, 2), num(w, 2), num(h, 2)
-    defs = f'<clipPath id="shot"><rect x="{X}" y="{Y}" width="{Wd}" height="{Hd}" rx="{r}"/></clipPath>'
-    parts = (f'<rect x="{X}" y="{Y}" width="{Wd}" height="{Hd}" rx="{r}" fill="{t["dial"]}"/>'
-             f'<image href="data:image/webp;base64,{data}" x="{X}" y="{Y}" width="{Wd}" height="{Hd}" '
-             f'preserveAspectRatio="xMidYMid slice" clip-path="url(#shot)"/>'
-             f'<rect x="{num(x + .5, 2)}" y="{num(y + .5, 2)}" width="{num(w - 1, 2)}" height="{num(h - 1, 2)}" rx="{r - .5}" '
-             f'fill="none" stroke="{t["sheen"]}" stroke-opacity="0.08"/>'
-             + nm.path(x, y + h + pl.name_gap + faces[700].cap_height(pl.name_size), t["ink"],
-                       nd=2 if pl.mobile else 1))
-    return plate_svg(pl, t, pl.xs[i], pl.xs[i + 1], "cards", parts, f"{name} — {pretty_url(live)}", defs, shift=False)
+# ----------------------------------------------------------------- the apertures
+# Each cover is set into the plate the way a dial is set into a rectangular watch case:
+# a polished gold case line (the hero watch's case gradient), a dark chapter ring carrying
+# a railway minute track (two hairline rails, a tick every `tick` units, every fifth in
+# gold) with gold indices at 12, 3, 6 and 9 (a double one at 12, as on the watch), and the
+# cover recessed behind it (a hairline shadow round its edge, a little shade from the top).
+# In the moving variants light glints across the apertures every GLINT_PERIOD seconds, as
+# when a watch is tilted: a narrow bright streak over the metal (case line and rails) and a
+# broad soft sheen over the cover's glass. Each card's first pass is GLINT_STEP later than
+# the one before it, so the light should travel through the grid in reading order, but
+# that is best effort: every <img> has its own timeline, starting when that image loads,
+# and browsers pause SMIL in images outside the viewport. Before its first pass, and in a
+# renderer without SMIL, the light waits off the aperture, so the still variants simply
+# leave it out.
+GLINT_PERIOD = 12.0                   # s between two passes over one card
+GLINT_PASS = 1.8                      # s one crossing takes
+GLINT_START, GLINT_STEP = 2.2, 0.8    # s: the first card's first pass (after the hero's entrance); card to card
 
 
-def plate_button(pl: "Plate", i: int, right: bool, kind: str, slug: str, name: str, theme: str, faces: dict) -> str:
+def _rrect(x: float, y: float, w: float, h: float, r: float, inset: float, attrs: str) -> str:
+    """The rounded rect x, y, w, h (corner radius r) shrunk by inset on every side."""
+    return (f'<rect x="{num(x + inset, 2)}" y="{num(y + inset, 2)}" width="{num(w - 2 * inset, 2)}" '
+            f'height="{num(h - 2 * inset, 2)}" rx="{num(max(r - inset, 0.5), 2)}" {attrs}/>')
+
+
+def aperture(pl: "Plate", i: int, t: dict, cover: str, still: bool) -> tuple[str, str]:
+    """Project i's aperture with `cover` (a data: URI) in it; returns (defs, drawing) in plate coordinates."""
+    g, mobile = pl.grid, pl.mobile
+    _, _, x, y = pl.slot(i)
+    w, h, R, cs, rg = pl.cw, pl.ch, g["r"], g["case"], g["ring"]
+    acc = t["accent"]
+    hi, lo = mix(acc, "#fff4dc", 0.42), mix(acc, "#3a2a10", 0.22)   # the watch's polished gold (movement._pal)
+    bevel = mix(acc, "#000000", 0.62)
+    ci = cs + rg                                                     # the cover's inset
+    defs = [f'<linearGradient id="ap-case" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{hi}"/>'
+            f'<stop offset=".5" stop-color="{lo}"/><stop offset="1" stop-color="{hi}"/></linearGradient>',
+            f'<linearGradient id="ap-shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".5"/>'
+            f'<stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>',
+            f'<clipPath id="ap-cover">{_rrect(x, y, w, h, R, ci, "")}</clipPath>']
+    out = [_rrect(x, y, w, h, R, -0.5, 'fill="none" stroke="#000" stroke-opacity=".45"'),       # the case's seat in the plate
+           _rrect(x, y, w, h, R, 0, f'fill="{t["dial"]}"'),                                     # chapter ring
+           _rrect(x, y, w, h, R, cs + 0.3, f'fill="none" stroke="{bevel}" stroke-opacity=".8" stroke-width=".6"')]
+
+    # railway minute track: rails, then ticks on the straight runs, symmetric about each side's centre
+    a0, a1 = cs + rg * 0.24, cs + rg * 0.76                          # the rails' insets
+    sw = 0.5 if mobile else 0.6
+    out.append(_rrect(x, y, w, h, R, a0, f'fill="none" stroke="{t["tick"]}" stroke-opacity=".45" stroke-width="{sw}"'))
+    out.append(_rrect(x, y, w, h, R, a1, f'fill="none" stroke="{t["tick"]}" stroke-opacity=".45" stroke-width="{sw}"'))
+    minor, major, index = [], [], []
+    xc, yc, s = x + w / 2, y + h / 2, g["tick"]
+    for half, c, near, far, horizontal in ((w / 2 - R, xc, y, y + h, True), (h / 2 - R, yc, x, x + w, False)):
+        for n in range(-int(half // s), int(half // s) + 1):
+            p = c + n * s
+            for edge, sign in ((near, 1), (far, -1)):
+                if n == 0:       # an index across the whole ring: 12 (double), 3, 6, 9
+                    q0, q1 = edge + sign * (cs + 0.6), edge + sign * (ci - 0.4)
+                    offs = (-0.36 * s, 0.36 * s) if (horizontal and sign == 1) else (0,)
+                    for o in offs:
+                        index.append(f'M{num(p + o, 2)} {num(q0, 2)}V{num(q1, 2)}' if horizontal
+                                     else f'M{num(q0, 2)} {num(p + o, 2)}H{num(q1, 2)}')
+                    continue
+                q0, q1 = edge + sign * a0, edge + sign * a1
+                d = f'M{num(p, 2)} {num(q0, 2)}V{num(q1, 2)}' if horizontal else f'M{num(q0, 2)} {num(p, 2)}H{num(q1, 2)}'
+                (major if n % 5 == 0 else minor).append(d)
+    out.append(f'<path d="{"".join(minor)}" stroke="{t["tick"]}" stroke-opacity=".7" stroke-width="{sw}"/>')
+    out.append(f'<path d="{"".join(major)}" stroke="{acc}" stroke-width="{num(sw * 1.6, 2)}"/>')
+    iw = 1.3 if mobile else 1.8
+    out.append(f'<path d="{"".join(index)}" transform="translate(.4 .5)" stroke="{bevel}" stroke-width="{num(iw + .3, 2)}"/>'
+               f'<path d="{"".join(index)}" stroke="url(#ap-case)" stroke-width="{iw}"/>')
+
+    # the case: polished gold line round the ring
+    out.append(_rrect(x, y, w, h, R, cs / 2, f'fill="none" stroke="url(#ap-case)" stroke-width="{cs}"'))
+
+    # the cover, recessed: a hairline shadow round it and shade falling from the top edge
+    X, Y, CW, CH = num(x + ci, 2), num(y + ci, 2), num(w - 2 * ci, 2), num(h - 2 * ci, 2)
+    out.append(f'<g clip-path="url(#ap-cover)"><rect x="{X}" y="{Y}" width="{CW}" height="{CH}" fill="{t["dial"]}"/>'
+               f'<image href="{cover}" x="{X}" y="{Y}" width="{CW}" height="{CH}" preserveAspectRatio="xMidYMid slice"/>'
+               f'<rect x="{X}" y="{Y}" width="{CW}" height="{num(h * 0.09, 2)}" fill="url(#ap-shade)"/></g>')
+    out.append(_rrect(x, y, w, h, R, ci + 0.5, 'fill="none" stroke="#000" stroke-opacity=".55"'))
+
+    if not still:
+        # Two slanted bands of light on one centre line: gradient vector (2b, 1b), so a band leans
+        # like "/" and spans 2.5b across. The line starts just left of the aperture (c0, at its
+        # top) and one pass slides it D right, until the broad band has cleared the bottom right.
+        b, B = (7, 18) if mobile else (14, 40)          # streak, sheen
+        c0 = x - 1.25 * B - 1
+        D = w + 2.5 * B + h / 2 + 2
+        f = GLINT_PASS / GLINT_PERIOD
+        slide = (f'<animateTransform attributeName="gradientTransform" type="translate" values="0 0;{num(D, 1)} 0;{num(D, 1)} 0" '
+                 f'keyTimes="0;{num(f, 4)};1" calcMode="spline" keySplines="0.4 0 0.6 1;0 0 1 1" '
+                 f'dur="{num(GLINT_PERIOD)}s" begin="{num(GLINT_START + i * GLINT_STEP, 2)}s" repeatCount="indefinite"/>')
+        for gid, k, peak in (("ap-glint", b, "1"), ("ap-glass", B, ".3")):
+            x1 = c0 - 1.25 * k
+            defs.append(f'<linearGradient id="{gid}" gradientUnits="userSpaceOnUse" x1="{num(x1, 2)}" y1="{num(y, 2)}" '
+                        f'x2="{num(x1 + 2 * k, 2)}" y2="{num(y + k, 2)}">'
+                        f'<stop offset="0" stop-color="#fffaf0" stop-opacity="0"/><stop offset=".5" stop-color="#fffaf0" stop-opacity="{peak}"/>'
+                        f'<stop offset="1" stop-color="#fffaf0" stop-opacity="0"/>{slide}</linearGradient>')
+        out.append(f'<rect x="{X}" y="{Y}" width="{CW}" height="{CH}" fill="url(#ap-glass)" clip-path="url(#ap-cover)"/>')
+        out.append(f'<g fill="none" stroke="url(#ap-glint)">'
+                   + _rrect(x, y, w, h, R, cs / 2, f'stroke-width="{num(cs + 1, 2)}"')
+                   + "".join(_rrect(x, y, w, h, R, a, f'stroke-width="{num(sw + .4, 2)}" stroke-opacity=".8"') for a in (a0, a1))
+                   + '</g>')
+    return "".join(defs), "".join(out)
+
+
+def plate_card(pl: "Plate", i: int, t: dict, faces: dict, still: bool) -> str:
+    """Project i: its cover in an aperture and, under it like an engraved plaque, its name, a
+    gold leader to its number at the aperture's right edge and (desktop) its description."""
+    slug, name, live, _, desc = PROJECTS[i]
+    g = pl.grid
+    k, c, x, y = pl.slot(i)
+    bp = "mobile" if pl.mobile else "desktop"
+    ci = g["case"] + g["ring"]
+    px = COVER_PX[bp]
+    assert abs((pl.cw - 2 * ci) / (pl.ch - 2 * ci) / (px[0] / px[1]) - 1) < 0.01, (
+        f"{slug}: the cover slot and thumbs.SIZES[{bp!r}] differ in aspect ratio; keep them in step")
+    data = base64.b64encode((MEDIA / f"{slug}{COVER_SUFFIX[bp]}.webp").read_bytes()).decode("ascii")
+    defs, parts = aperture(pl, i, t, f"data:image/webp;base64,{data}", still)
+    nm = faces[700].layout(name, g["name"], tracking=-0.01)
+    yb = y + pl.ch + g["cap"] + faces[700].cap_height(g["name"])
+    parts += nm.path(x, yb, t["ink"], nd=2 if pl.mobile else 1)
+    no = faces[700].layout(f"{i + 1:02d}", g["no"], tracking=0.1)
+    xn = x + pl.cw - no.width
+    parts += no.path(xn, yb, t["accent"], nd=2)
+    # a gold leader from the name to its number, fading in towards the number
+    gap = 14 if not pl.mobile else 8
+    l0, l1, yl = x + nm.width + gap, xn - gap * 0.7, yb - faces[700].cap_height(g["no"]) / 2
+    assert l1 - l0 >= 2 * gap, f"{slug}: no room for the leader between the name and its number"
+    defs += (f'<linearGradient id="cap-lead" gradientUnits="userSpaceOnUse" x1="{num(l0, 2)}" y1="0" x2="{num(l1, 2)}" y2="0">'
+             f'<stop offset="0" stop-color="{t["accent"]}" stop-opacity="0"/>'
+             f'<stop offset="1" stop-color="{t["accent"]}" stop-opacity=".9"/></linearGradient>')
+    parts += f'<path d="M{num(l0, 2)} {num(yl, 2)}H{num(l1, 2)}" stroke="url(#cap-lead)" stroke-width="{".9" if pl.mobile else "1.2"}"/>'
+    if g["desc"]:
+        run = faces[500].layout(desc, g["desc"], tracking=-0.01)
+        assert run.width <= pl.cw, f"{slug}: the description is {run.width:.0f} units wide, the aperture {pl.cw:.0f}"
+        parts += run.path(x, yb + g["lead"], t["muted"], nd=1)
+    return plate_svg(pl, t, pl.xs[c], pl.xs[c + 1], f"cards{k}", parts, f"{name} — {pretty_url(live)}", defs, shift=False)
+
+
+def plate_button(pl: "Plate", i: int, right: bool, kind: str, theme: str, faces: dict) -> str:
     """Left (Code, or the Private pill) or right (Live) half under card i, on the plate."""
-    g = BTN_GAP[pl.mobile]
-    if right:
-        x0, x1 = pl.cx[i] + pl.cw / 2 + g / 2, pl.cx[i] + pl.cw
-    else:
-        x0, x1 = pl.cx[i], pl.cx[i] + pl.cw / 2 - g / 2
+    slug, name = PROJECTS[i][:2]
+    k, c, x, _ = pl.slot(i)
+    j = 2 * c + int(right)
+    mid, g = pl.bxs[2 * c + 1], BTN_GAP[pl.mobile]          # the pair's two windows meet in the pills' gap (Plate checks)
+    x0, x1 = (mid + g / 2, x + pl.cw) if right else (x, mid - g / 2)
     w = round(x1 - x0, 2)
     if kind == "private":
         svg = private_button(pl.mobile, faces, name, width=w)
     else:
         label, verb = LIVE.get(slug, (None, None)) if kind == "live" else (None, None)
-        svg = button(kind, name, theme, pl.mobile, False, faces, width=w, label=label, verb=verb)
+        svg = button(kind, name, theme, pl.mobile, faces, width=w, label=label, verb=verb)
     title = svg.split('<title id="t">', 1)[1].split("</title>", 1)[0]
-    pill = (f'<svg x="{num(x0, 2)}" y="{pl.y["buttons"]}" width="{num(w, 2)}" height="{BTN_H}" '
-            f'viewBox="0 0 {num(w, 2)} {BTN_H}">{_inner(svg)}</svg>')
-    j = 2 * i + int(right)
-    return plate_svg(pl, THEMES[theme], pl.bxs[j], pl.bxs[j + 1], "buttons", pill, title, shift=False)
+    row = f"buttons{k}"
+    pill = (f'<svg x="{num(x0, 2)}" y="{pl.y[row]}" width="{num(w, 2)}" height="{BTN_H[pl.mobile]}" '
+            f'viewBox="0 0 {num(w, 2)} {BTN_H[pl.mobile]}">{_inner(svg)}</svg>')
+    return plate_svg(pl, THEMES[theme], pl.bxs[j], pl.bxs[j + 1], row, pill, title, shift=False)
 
 
 # ----------------------------------------------------------------- the watch
@@ -462,8 +641,8 @@ def lockup(t: dict, faces: dict, mobile: bool, still: bool, x0: float) -> tuple[
     statement "I build ___" at half its size, a quiet Medium lead and a gold
     Black word that keeps turning like a slot drum; and the facts collapsed
     into one small meta strip under a gold hairline, split by gold hairlines
-    (two short rows on phones). x0 is the block's left edge: the covers' left
-    edge in the card row (Plate.cx[0]), so the hero text and the covers line up."""
+    (two short rows on phones). x0 is the block's left edge: the apertures' left
+    edge in the project grid (Plate.cx[0]), so the hero text and the covers line up."""
     if mobile:
         yn, ns, band, floor = 88, 44, 72, 5   # the name's baseline leaves room for the counter above it (hero() H and cy move with it)
         sy, ss = 37, 22                    # statement: baseline below the name's, size
@@ -691,55 +870,18 @@ def hero(theme: str, mobile: bool, still: bool, faces: dict, plate: "Plate | Non
 
 
 
-# ----------------------------------------------------------------- cards
-def pretty_url(url: str) -> str:
-    return url.split("://", 1)[-1].removeprefix("www.").rstrip("/")
-
-
-def card(slug: str, name: str, live: str, theme: str, mobile: bool, faces: dict) -> str:
-    """Cover shot and the project's name, nothing else: the whole card links to
-    the live site and the buttons under it carry the calls to action."""
-    t = THEMES[theme]
-    W = 204
-    # desktop renders at ~203 px, mobile at ~74 px (24% of a 308 px column)
-    size, x, gap, H = (24, 12, 14, 160) if mobile else (22, 13, 16, 164)
-    data = base64.b64encode((MEDIA / f"{slug}.webp").read_bytes()).decode("ascii")
-    defs, body, border = frame(W, H, t)
-    defs += f'<clipPath id="shot"><rect x="10" y="10" width="184" height="104" rx="7"/></clipPath>'
-    nm = faces[700].layout(name, size, tracking=-0.01)
-    parts = [
-        f'<rect x="10" y="10" width="184" height="104" rx="7" fill="{t["dial"]}"/>',
-        f'<image href="data:image/webp;base64,{data}" x="10" y="10" width="184" height="104" '
-        f'preserveAspectRatio="xMidYMid slice" clip-path="url(#shot)"/>',
-        f'<rect x="10.5" y="10.5" width="183" height="103" rx="6.5" fill="none" stroke="{t["sheen"]}" stroke-opacity="0.08"/>',
-        nm.path(x, 114 + gap + faces[700].cap_height(size), t["ink"]),
-    ]
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
-<title id="t">{name} — {pretty_url(live)}</title>
-<defs>
-{defs}
-</defs>
-<g clip-path="url(#frame)">
-{body}
-{chr(10).join(parts)}
-{border}
-</g>
-</svg>
-'''
-
-
 # ----------------------------------------------------------------- buttons
-# Two links need two images on GitHub, so the buttons are images of their own,
-# drawn to sit in the card's column: a "Code" + "Live" pair at 12% + 12% of the
-# README width (glued together in the markup, no whitespace between them) or
-# one "Live" button at 24%. A pair is drawn edge to edge with BTN_GAP of
-# transparent space between the two pills, so pair and card share both edges.
-# Live is the primary action and is filled with the accent gold; Code is
-# outlined on the card surface. Mobile buttons (~37 px wide) are icon only.
-BTN_H = 40
-BTN_W = {(False, False): 204, (False, True): 102, (True, False): 84, (True, True): 42}  # (mobile, half)
-BTN_GAP = {False: 4.0, True: 4.4}   # ~3.9 px on screen, the width of the space between the cards
-BTN_LABEL = 14
+# Two links need two images on GitHub, so the buttons are images of their own: under
+# each card a pair (glued together in the markup, no whitespace between them), drawn by
+# plate_button so the pair spans the aperture's width with BTN_GAP of plate between the
+# two pills, centred on the boundary BTN_SPLIT puts between their images. In the "ink"
+# style Live is the primary action, filled with the ink white, so it is the compact one
+# (BTN_SPLIT 30 | 20) and the white stays smaller than the covers; Code is outlined on
+# the plate. Phones get the same icon and label, smaller.
+BTN_H = {False: 36, True: 40}          # pill height (desktop, phones)
+BTN_GAP = {False: 8.0, True: 6.0}      # between a pair's pills (desktop, phones)
+BTN_LABEL = {False: 14, True: 11}      # label size (Satoshi Bold)
+BTN_ICON = {False: 15, True: 13}       # icon size
 BTN_STYLE = "ink"   # one of: metal, ink, goldline, ghost
 
 
@@ -759,20 +901,15 @@ def arrow_ne(cx: float, cy: float, s: float, colour: str, sw: float) -> str:
             f'fill="none" stroke="{colour}" stroke-width="{num(sw, 2)}" stroke-linecap="round" stroke-linejoin="round"/>')
 
 
-def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: dict, width: float | None = None,
+def button(kind: str, name: str, theme: str, mobile: bool, faces: dict, width: float,
            label: str | None = None, verb: str | None = None, badge=None) -> str:
-    """kind is "code" (GitHub mark, links to the repo) or "live" (arrow, links to the site).
-    label and verb replace the button's word and the verb in its title (see LIVE, private_button);
-    badge(icx, cy, icon_size) -> svg draws something over the icon (the private padlock)."""
+    """A pill `width` units wide: kind is "code" (GitHub mark, links to the repo) or "live"
+    (arrow, links to the site). label and verb replace the button's word and the verb in its
+    title (see LIVE, private_button); badge(icx, cy, icon_size) -> svg draws something over the
+    icon (the private padlock)."""
     t = THEMES[theme]
-    W, H = (width or BTN_W[(mobile, half)]), BTN_H
-    x0, x1 = 0.0, float(W)
-    if half:
-        if kind == "code":
-            x1 -= BTN_GAP[mobile] / 2
-        else:
-            x0 += BTN_GAP[mobile] / 2
-    w, cy, r = x1 - x0, H / 2, 10
+    W, H = width, BTN_H[mobile]
+    x0, w, cy, r = 0.0, float(W), H / 2, 10 if not mobile else 9
     style = BTN_STYLE
     # colours per style: (fill kind, icon colour, label colour, border colour)
     if style == "metal" and kind == "live":
@@ -806,20 +943,20 @@ def button(kind: str, name: str, theme: str, mobile: bool, half: bool, faces: di
         if border != t["accent"]:
             shapes.append(f'<rect x="{num(x0 + 14)}" y="0.5" width="{num(w - 28)}" height="1" fill="url(#sheen)"/>')
 
-    icon_size = 18 if mobile else 15
-    label = None if mobile else faces[700].layout(label or kind.title(), BTN_LABEL, tracking=0.01)
-    gap = 8
-    group = icon_size + (gap + label.width if label else 0)
+    icon_size, size = BTN_ICON[mobile], BTN_LABEL[mobile]
+    label = faces[700].layout(label or kind.title(), size, tracking=0.01)
+    gap = 6 if mobile else 8
+    group = icon_size + gap + label.width
+    assert group <= w - 12, f"{name}: the button's icon and label do not fit its {w:.0f} units"
     gx = x0 + (w - group) / 2
     icx = gx + icon_size / 2
     if kind == "code":
         shapes.append(brand_icon("github", icx, cy, icon_size, fg))
     else:
-        shapes.append(arrow_ne(icx, cy, icon_size * 0.82, fg, 2.0 if mobile else 1.8))
+        shapes.append(arrow_ne(icx, cy, icon_size * 0.82, fg, 1.7 if mobile else 1.8))
     if badge:
         shapes.append(badge(icx, cy, icon_size))
-    if label:
-        shapes.append(label.path(gx + icon_size + gap, cy + faces[700].cap_height(BTN_LABEL) / 2, lab, nd=2))
+    shapes.append(label.path(gx + icon_size + gap, cy + faces[700].cap_height(size) / 2, lab, nd=2))
     title = f"{name} — {verb or ('source code on GitHub' if kind == 'code' else 'live site')}"
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t">
 <title id="t">{title}</title>
@@ -849,18 +986,18 @@ def lock_badge(cx: float, cy: float, s: float, colour: str, key: str, sw: float)
 PRIVATE_LABEL = "Private"
 
 
-def private_button(mobile: bool, faces: dict, name: str, width: float | None = None) -> str:
+def private_button(mobile: bool, faces: dict, name: str, width: float) -> str:
     """Left half for a project whose code is private: the Code pill itself (same frame, GitHub
     mark and type) reading "Private", with a small gold padlock badged on the mark's lower
-    right; not a link. Phones get the mark and the badge alone, like the other icon-only pills."""
+    right; not a link."""
     t = THEMES[THEME]
     key = mix(t["bg0"], t["bg1"], 0.5)          # the pill's surface, for the badge's keyline
 
     def badge(icx: float, cy: float, size: float) -> str:
-        s, sw = (10, 1.2) if mobile else (9, 1.1)
+        s, sw = (8, 1.0) if mobile else (9, 1.1)
         return lock_badge(icx + size * 0.4, cy + size * 0.4, s, t["accent"], key, sw)
 
-    return button("code", name, THEME, mobile, width is None, faces, width=width,
+    return button("code", name, THEME, mobile, faces, width=width,
                   label=PRIVATE_LABEL, verb=PRIVATE_LABEL, badge=badge)
 
 
@@ -902,7 +1039,7 @@ def plate_link(pl: "Plate", i: int, t: dict, faces: dict) -> str:
     cap = faces[500].cap_height(ls)
     group = gs + gap + run.width
     gx = pl.W / 2 + (i - 1) * g["spread"] - group / 2
-    margin = pl.gutter if pl.mobile else PLATE_INSET          # the group keeps the plate's inset (the cover gutter on phones) from its window's sides
+    margin = pl.grid["inset"]          # a group keeps the project grid's inset (PLATE_INSET on desktop) from its window's sides
     assert x0 + margin <= gx and gx + group <= x1 - margin, (
         f"links: {text!r} ({num(gx, 1)}..{num(gx + group, 1)}) leaves its window {num(x0, 1)}..{num(x1, 1)} less {margin}")
     yb = pl.y["links"] + g["cy"] + cap / 2                    # label baseline: cap centred on the group's centre line
@@ -923,6 +1060,14 @@ def main() -> None:
     assert any(f"{q}{VIEWS_TITLE}{q}" in render_js for q in ('"', "'")), (
         f"counter/render.js must contain the string literal {VIEWS_TITLE!r} (build.VIEWS_TITLE) verbatim; "
         "the two copies have drifted apart")
+    # the cards' descriptions are the README alt texts' sentences: "<name> — <A/An/The> <description>"
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for slug, name, _, _, desc in PROJECTS:
+        alt = re.search(rf'<img src="assets/card-{re.escape(slug)}\.svg"[^>]*\balt="([^"]*)"', readme)
+        assert alt and alt.group(1).startswith(f"{name} — "), f"README.md: no card image for {slug} with an alt text naming {name}"
+        sentence = re.sub(r"^(?:an?|the)\s+", "", alt.group(1)[len(name) + 3:], flags=re.I)
+        assert sentence.casefold() == desc.casefold(), (
+            f"{slug}: PROJECTS says {desc!r}, README.md's alt text {alt.group(1)!r}; keep them the same sentence")
     ASSETS.mkdir(exist_ok=True)
     written, theme = [], THEME
     for mobile in (False, True):
@@ -941,13 +1086,14 @@ def main() -> None:
             p = ASSETS / f"orbit{m}{s}.svg"
             p.write_text(orbit(theme, mobile, still, faces, pl), encoding="utf-8", newline="\n")
             written.append(p)
-        for i, (slug, name, live, repo) in enumerate(PROJECTS):
-            p = ASSETS / f"card-{slug}{m}.svg"
-            p.write_text(plate_card(pl, i, slug, name, live, THEMES[theme], faces), encoding="utf-8", newline="\n")
-            written.append(p)
+        for i, (slug, _, _, repo, _) in enumerate(PROJECTS):
+            for still in (False, True):
+                p = ASSETS / f"card-{slug}{m}{'-still' if still else ''}.svg"
+                p.write_text(plate_card(pl, i, THEMES[theme], faces, still), encoding="utf-8", newline="\n")
+                written.append(p)
             for right, kind in enumerate(("code" if repo else "private", "live")):
                 p = ASSETS / f"btn-{slug}-{kind}{m}.svg"
-                p.write_text(plate_button(pl, i, bool(right), kind, slug, name, theme, faces), encoding="utf-8", newline="\n")
+                p.write_text(plate_button(pl, i, bool(right), kind, theme, faces), encoding="utf-8", newline="\n")
                 written.append(p)
         for i, (slug, _, _) in enumerate(LINKS):
             p = ASSETS / f"link-{slug}{m}.svg"

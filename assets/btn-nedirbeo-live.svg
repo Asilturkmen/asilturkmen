@@ -1,22 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="118.44 516 101.52 84" width="101.52" height="84" role="img" aria-labelledby="t">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="253.8 602 169.2 36" width="169.2" height="36" role="img" aria-labelledby="t">
 <title id="t">NedirBeo — live site</title>
 <defs>
-<clipPath id="pl-frame"><rect width="846" height="964" rx="12"/></clipPath>
+<clipPath id="pl-frame"><rect width="846" height="1376" rx="12"/></clipPath>
 <linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101216"/><stop offset="1" stop-color="#161920"/></linearGradient>
 <linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#d4b483" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
 <linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#272b34" stop-opacity="0"/><stop offset="0.06" stop-color="#272b34"/><stop offset="0.94" stop-color="#272b34"/><stop offset="1" stop-color="#272b34" stop-opacity="0"/></linearGradient>
 
 </defs>
 <g clip-path="url(#pl-frame)">
-<rect width="846" height="964" fill="url(#pl-surface)"/>
-<svg x="120.44" y="516" width="91.52" height="40" viewBox="0 0 91.52 40"><defs>
+<rect width="846" height="1376" fill="url(#pl-surface)"/>
+<svg x="257.8" y="602" width="141.2" height="36" viewBox="0 0 141.2 36"><defs>
 
 </defs>
-<rect x="0" y="0" width="91.5" height="40" rx="10" fill="#f4f5f7"/>
-<path d="M23.31 25.25L33.81 14.75M26.99 14.75H33.81V21.57" fill="none" stroke="#101216" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M46.99 14.88H45.2V25.12H51.27V23.46H46.99V14.88ZM53.47 16.82C54.03 16.82 54.49 16.35 54.49 15.78C54.49 15.21 54.03 14.76 53.47 14.76C52.88 14.76 52.42 15.21 52.42 15.78C52.42 16.35 52.88 16.82 53.47 16.82ZM52.62 25.12H54.33V18.2H52.62V25.12ZM58.19 25.12H59.87L62.75 18.2H60.99L59.73 21.38C59.44 22.14 59.18 22.86 59.09 23.3C59 22.92 58.76 22.21 58.47 21.38L57.27 18.2H55.45L58.19 25.12ZM66.63 25.3C68.44 25.3 69.7 24.39 69.99 22.88H68.41C68.22 23.54 67.6 23.9 66.66 23.9C65.53 23.9 64.88 23.28 64.76 22.07L69.97 22.05V21.53C69.97 19.38 68.65 17.99 66.58 17.99C64.55 17.99 63.13 19.49 63.13 21.66C63.13 23.8 64.58 25.3 66.63 25.3ZM66.59 19.39C67.61 19.39 68.27 20.02 68.27 20.97H64.8C64.97 19.94 65.58 19.39 66.59 19.39Z" fill="#101216"/>
+<rect x="0" y="0" width="141.2" height="36" rx="10" fill="#f4f5f7"/>
+<path d="M48.15 23.25L58.65 12.75M51.83 12.75H58.65V19.57" fill="none" stroke="#101216" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M71.83 12.88H70.04V23.12H76.11V21.46H71.83V12.88ZM78.31 14.82C78.87 14.82 79.33 14.35 79.33 13.78C79.33 13.21 78.87 12.76 78.31 12.76C77.72 12.76 77.26 13.21 77.26 13.78C77.26 14.35 77.72 14.82 78.31 14.82ZM77.46 23.12H79.17V16.2H77.46V23.12ZM83.03 23.12H84.71L87.6 16.2H85.83L84.57 19.38C84.28 20.14 84.03 20.86 83.93 21.3C83.84 20.92 83.61 20.21 83.31 19.38L82.11 16.2H80.29L83.03 23.12ZM91.47 23.3C93.28 23.3 94.54 22.39 94.83 20.88H93.25C93.06 21.54 92.44 21.9 91.5 21.9C90.37 21.9 89.72 21.28 89.6 20.07L94.81 20.05V19.53C94.81 17.38 93.49 15.99 91.42 15.99C89.39 15.99 87.97 17.49 87.97 19.66C87.97 21.8 89.42 23.3 91.47 23.3ZM91.43 17.39C92.45 17.39 93.11 18.02 93.11 18.97H89.64C89.81 17.94 90.42 17.39 91.43 17.39Z" fill="#101216"/>
 </svg>
-<rect x="24" y="324" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="600" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="888" width="798" height="1" fill="url(#pl-rule)"/>
-<rect x="0.5" y="0.5" width="845" height="963" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="798" height="1" fill="url(#pl-sheen)"/>
+<rect x="24" y="324" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="1012" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="1300" width="798" height="1" fill="url(#pl-rule)"/>
+<rect x="0.5" y="0.5" width="845" height="1375" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="798" height="1" fill="url(#pl-sheen)"/>
 </g>
 </svg>

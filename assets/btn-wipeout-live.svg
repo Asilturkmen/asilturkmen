@@ -1,22 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="321.48 516 101.52 84" width="101.52" height="84" role="img" aria-labelledby="t">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="676.8 602 169.2 36" width="169.2" height="36" role="img" aria-labelledby="t">
 <title id="t">Wipeout — play on itch.io</title>
 <defs>
-<clipPath id="pl-frame"><rect width="846" height="964" rx="12"/></clipPath>
+<clipPath id="pl-frame"><rect width="846" height="1376" rx="12"/></clipPath>
 <linearGradient id="pl-surface" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101216"/><stop offset="1" stop-color="#161920"/></linearGradient>
 <linearGradient id="pl-sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#d4b483" stop-opacity="0.35"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
 <linearGradient id="pl-rule" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#272b34" stop-opacity="0"/><stop offset="0.06" stop-color="#272b34"/><stop offset="0.94" stop-color="#272b34"/><stop offset="1" stop-color="#272b34" stop-opacity="0"/></linearGradient>
 
 </defs>
 <g clip-path="url(#pl-frame)">
-<rect width="846" height="964" fill="url(#pl-surface)"/>
-<svg x="323.48" y="516" width="91.52" height="40" viewBox="0 0 91.52 40"><defs>
+<rect width="846" height="1376" fill="url(#pl-surface)"/>
+<svg x="680.8" y="602" width="141.2" height="36" viewBox="0 0 141.2 36"><defs>
 
 </defs>
-<rect x="0" y="0" width="91.5" height="40" rx="10" fill="#f4f5f7"/>
-<path d="M22.63 25.25L33.13 14.75M26.3 14.75H33.13V21.57" fill="none" stroke="#101216" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M48.56 21.59C50.6 21.59 51.95 20.2 51.95 18.23C51.95 16.23 50.62 14.88 48.56 14.88H44.51V25.12H46.3V21.59H48.56ZM48.21 16.48C49.4 16.48 50.07 17.09 50.07 18.21C50.07 19.34 49.41 19.99 48.18 19.99H46.3V16.48H48.21ZM55.07 25.12V14.7H53.37V25.12H55.07ZM59.06 25.3C60.14 25.3 61.08 24.81 61.37 24.1L61.49 25.12H62.99V20.92C62.99 19 61.84 17.99 59.98 17.99C58.11 17.99 56.88 18.97 56.88 20.47H58.33C58.33 19.74 58.89 19.32 59.9 19.32C60.77 19.32 61.33 19.7 61.33 20.64V20.79L59.26 20.95C57.62 21.07 56.69 21.87 56.69 23.14C56.69 24.45 57.59 25.3 59.06 25.3ZM59.62 24.01C58.85 24.01 58.43 23.7 58.43 23.07C58.43 22.51 58.84 22.16 59.9 22.07L61.34 21.95V22.32C61.34 23.38 60.67 24.01 59.62 24.01ZM64.02 28.32C64.39 28.42 64.81 28.48 65.29 28.48C66.42 28.48 67.15 27.95 67.67 26.66L71.06 18.2H69.29L67.42 23.24L65.64 18.2H63.83L66.62 25.41L66.42 25.93C66.13 26.74 65.71 26.89 65.04 26.89H64.02V28.32Z" fill="#101216"/>
+<rect x="0" y="0" width="141.2" height="36" rx="10" fill="#f4f5f7"/>
+<path d="M47.47 23.25L57.97 12.75M51.14 12.75H57.97V19.57" fill="none" stroke="#101216" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M73.4 19.59C75.44 19.59 76.79 18.2 76.79 16.23C76.79 14.23 75.46 12.88 73.4 12.88H69.35V23.12H71.14V19.59H73.4ZM73.05 14.48C74.24 14.48 74.91 15.1 74.91 16.21C74.91 17.34 74.25 17.99 73.02 17.99H71.14V14.48H73.05ZM79.91 23.12V12.7H78.21V23.12H79.91ZM83.9 23.3C84.98 23.3 85.91 22.81 86.21 22.1L86.33 23.12H87.83V18.92C87.83 17 86.68 15.99 84.82 15.99C82.95 15.99 81.71 16.97 81.71 18.47H83.17C83.17 17.74 83.73 17.32 84.74 17.32C85.61 17.32 86.17 17.7 86.17 18.64V18.79L84.09 18.95C82.46 19.07 81.53 19.87 81.53 21.14C81.53 22.45 82.43 23.3 83.9 23.3ZM84.46 22.01C83.69 22.01 83.27 21.7 83.27 21.07C83.27 20.51 83.67 20.16 84.74 20.07L86.18 19.95V20.32C86.18 21.38 85.51 22.01 84.46 22.01ZM88.85 26.32C89.23 26.42 89.65 26.48 90.13 26.48C91.26 26.48 91.99 25.95 92.51 24.66L95.9 16.2H94.13L92.26 21.24L90.48 16.2H88.67L91.46 23.41L91.26 23.93C90.97 24.74 90.55 24.89 89.88 24.89H88.85V26.32Z" fill="#101216"/>
 </svg>
-<rect x="24" y="324" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="600" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="888" width="798" height="1" fill="url(#pl-rule)"/>
-<rect x="0.5" y="0.5" width="845" height="963" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="798" height="1" fill="url(#pl-sheen)"/>
+<rect x="24" y="324" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="1012" width="798" height="1" fill="url(#pl-rule)"/><rect x="24" y="1300" width="798" height="1" fill="url(#pl-rule)"/>
+<rect x="0.5" y="0.5" width="845" height="1375" rx="11.5" fill="none" stroke="#363b45"/><rect x="24" y="0.5" width="798" height="1" fill="url(#pl-sheen)"/>
 </g>
 </svg>
